@@ -6,21 +6,20 @@ rules. Built for the Celo **Agents Open for Business** hackathon (Nov 20 – Dec
 
 ## Live demo
 
-**https://turbo-agate-o4df0vp.tmp.now** — the agent running on Vercel
+**https://celo-agent-vault.vercel.app** — the agent running on Vercel
 (serverless, sandbox). Type a task, check the price, then Pay & run; the
 payment settles in test USDC with a receipt and a Blockscout link.
 
-> Temporary Vercel deployment (expires ~1h after deploy unless claimed into
-> the owner's Vercel account). Deployed 2026-11-21 ~12:42 WIB with 4 services
-> (YouTube, Reddit, Instagram, TikTok). First paid call from this deployment
-> settled: tx `0x3f2edae9740c54bd6432453d42acd73994786220c2f9323bce6d7bd4ad5a64f9`
-> (0.005 test USDC, Instagram profile @nasa). The deployed function auto-creates its
-> own sandbox wallet and is auto-funded from the faucet — no private key is
-> shipped or stored in the repo. (Earlier deployments
-> `nimble-basalt-d2dqfhk`, `rushing-monsoon-bxnh1pk` and
-> `zippy-monsoon-aijmunw` are superseded;
-> `nimble-basalt-d2dqfhk` was claimed into the owner's account 2026-11-21
-> ~11:23 WIB and `rushing-monsoon-bxnh1pk` was claimed later the same day.)
+> Production deployment on the owner's Vercel account (project
+> `celo-agent-vault`, team bambang9) — permanent, no expiry. Deployed
+> 2026-11-21 ~12:57 WIB with 4 services (YouTube, Reddit, Instagram,
+> TikTok). First paid call from this deployment settled: tx
+> `0xee1a4ac94f08547ecb43e6a18d32a5e732e517e4be949d6de8c38d02f010440f` (0.005 test USDC, YouTube search). The deployed
+> function auto-creates its own sandbox wallet and is auto-funded from the
+> faucet — no private key is shipped or stored in the repo. (Earlier
+> temporary deployments `nimble-basalt-d2dqfhk`, `rushing-monsoon-bxnh1pk`,
+> `zippy-monsoon-aijmunw` and `turbo-agate-o4df0vp` were deleted
+> 2026-11-21 ~12:53 WIB.)
 
 ## Hackathon
 
