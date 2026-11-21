@@ -16,12 +16,12 @@ settlement transaction hash.
 
 ## Live demo
 
-- **https://zippy-monsoon-aijmunw.tmp.now** — Vercel serverless, sandbox.
-  Temporary deployment (2026-11-21 ~12:33 WIB, 4 services: YouTube, Reddit,
+- **https://turbo-agate-o4df0vp.tmp.now** — Vercel serverless, sandbox.
+  Temporary deployment (2026-11-21 ~12:42 WIB, 4 services: YouTube, Reddit,
   Instagram, TikTok); claim it into the owner's Vercel account to keep it
   permanent. First paid call from it settled 2026-11-21:
-  tx `0x9d4090f9780d82ea9cdbb7963bf4844479c60a48d2a1c93a5fad2de51abccf79`
-  (0.005 test USDC, Reddit search). The function auto-creates its own
+  tx `0x3f2edae9740c54bd6432453d42acd73994786220c2f9323bce6d7bd4ad5a64f9`
+  (0.005 test USDC, Instagram profile @nasa). The function auto-creates its own
   sandbox wallet and is auto-funded from the faucet; no private key is
   shipped or stored in the repo.
 - Demo video (English, 28.7s, MP4): recorded locally; the file is not in
@@ -118,6 +118,6 @@ after the owner's yes. Then `loops evaluate --sponsor agent-vault`.
 > Building for the @CeloDevs Agents Open for Business hackathon 🟡
 > Vault Checkout Agent — an agent that checks out and pays for data
 > services on Celo under Agent Vault rules. Live demo:
-> https://zippy-monsoon-aijmunw.tmp.now — paid proof onchain:
-> https://celo-sepolia.blockscout.com/tx/0x9d4090f9780d82ea9cdbb7963bf4844479c60a48d2a1c93a5fad2de51abccf79
+> https://turbo-agate-o4df0vp.tmp.now — paid proof onchain:
+> https://celo-sepolia.blockscout.com/tx/0x3f2edae9740c54bd6432453d42acd73994786220c2f9323bce6d7bd4ad5a64f9
 > Repo: https://github.com/je26/celo-vault-checkout-agent @celo

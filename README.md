@@ -6,18 +6,19 @@ rules. Built for the Celo **Agents Open for Business** hackathon (Nov 20 – Dec
 
 ## Live demo
 
-**https://zippy-monsoon-aijmunw.tmp.now** — the agent running on Vercel
+**https://turbo-agate-o4df0vp.tmp.now** — the agent running on Vercel
 (serverless, sandbox). Type a task, check the price, then Pay & run; the
 payment settles in test USDC with a receipt and a Blockscout link.
 
 > Temporary Vercel deployment (expires ~1h after deploy unless claimed into
-> the owner's Vercel account). Deployed 2026-11-21 ~12:33 WIB with 4 services
+> the owner's Vercel account). Deployed 2026-11-21 ~12:42 WIB with 4 services
 > (YouTube, Reddit, Instagram, TikTok). First paid call from this deployment
-> settled: tx `0x9d4090f9780d82ea9cdbb7963bf4844479c60a48d2a1c93a5fad2de51abccf79`
-> (0.005 test USDC, Reddit search). The deployed function auto-creates its
+> settled: tx `0x3f2edae9740c54bd6432453d42acd73994786220c2f9323bce6d7bd4ad5a64f9`
+> (0.005 test USDC, Instagram profile @nasa). The deployed function auto-creates its
 > own sandbox wallet and is auto-funded from the faucet — no private key is
 > shipped or stored in the repo. (Earlier deployments
-> `nimble-basalt-d2dqfhk` and `rushing-monsoon-bxnh1pk` are superseded;
+> `nimble-basalt-d2dqfhk`, `rushing-monsoon-bxnh1pk` and
+> `zippy-monsoon-aijmunw` are superseded;
 > `nimble-basalt-d2dqfhk` was claimed into the owner's account 2026-11-21
 > ~11:23 WIB and `rushing-monsoon-bxnh1pk` was claimed later the same day.)
 
