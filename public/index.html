@@ -55,10 +55,10 @@
     <label for="query" id="queryLabel">Task / keywords</label>
     <input type="text" id="query" value="celo" maxlength="512" placeholder="e.g. celo">
     <div id="flightFields" style="display:none">
-      <label for="origin">Origin airport (IATA, e.g. CGK)</label>
-      <input type="text" id="origin" value="CGK" maxlength="3" placeholder="CGK">
-      <label for="destination">Destination airport (IATA, e.g. SIN)</label>
-      <input type="text" id="destination" value="SIN" maxlength="3" placeholder="SIN">
+      <label for="origin">Origin (city or airport code, e.g. Jakarta or CGK)</label>
+      <input type="text" id="origin" value="Jakarta" maxlength="32" placeholder="Jakarta or CGK">
+      <label for="destination">Destination (city or airport code, e.g. Singapura or SIN)</label>
+      <input type="text" id="destination" value="Singapura" maxlength="32" placeholder="Singapura or SIN">
       <label for="flightDate">Departure date (YYYY-MM-DD)</label>
       <input type="text" id="flightDate" value="2026-12-15" maxlength="10" placeholder="2026-12-15">
     </div>
@@ -115,14 +115,45 @@ function requestBody() {
   const cap = currentCap();
   if (Array.isArray(cap.multi) && cap.multi.length > 0) {
     return {
-      origin: ($('origin').value.trim() || 'CGK').toUpperCase(),
-      destination: ($('destination').value.trim() || 'SIN').toUpperCase(),
+      origin: resolveAirport($('origin').value) || 'CGK',
+      destination: resolveAirport($('destination').value) || 'SIN',
       date: $('flightDate').value.trim() || '2026-12-15',
     };
   }
   const key = cap.bodyKey || 'query';
   const v = $('query').value.trim() || (key === 'username' ? 'nasa' : 'celo');
   return { [key]: v };
+}
+
+// City name to IATA airport code. A 3-letter code passes through as-is,
+// so both "Jakarta" and "CGK" work. Covers Indonesian and international cities.
+const CITY_TO_IATA = {
+  // Indonesia
+  'jakarta': 'CGK', 'bali': 'DPS', 'denpasar': 'DPS', 'surabaya': 'SUB', 'medan': 'KNO',
+  'yogyakarta': 'YIA', 'jogja': 'YIA', 'makassar': 'UPG', 'bandung': 'BDO', 'semarang': 'SRG',
+  'palembang': 'PLM', 'balikpapan': 'BPN', 'batam': 'BTH', 'pekanbaru': 'PKU', 'pontianak': 'PNK',
+  'banjarmasin': 'BDJ', 'manado': 'MDC', 'lombok': 'LOP', 'padang': 'PDG', 'solo': 'SOC', 'malang': 'MLG',
+  // Southeast Asia
+  'singapura': 'SIN', 'singapore': 'SIN', 'kuala lumpur': 'KUL', 'bangkok': 'BKK', 'manila': 'MNL',
+  'ho chi minh city': 'SGN', 'saigon': 'SGN', 'hanoi': 'HAN', 'phnom penh': 'PNH', 'yangon': 'RGN',
+  // East Asia
+  'tokyo': 'HND', 'osaka': 'KIX', 'seoul': 'ICN', 'hong kong': 'HKG', 'hongkong': 'HKG',
+  'taipei': 'TPE', 'shanghai': 'PVG', 'beijing': 'PEK', 'guangzhou': 'CAN', 'shenzhen': 'SZX',
+  // South Asia & Middle East
+  'delhi': 'DEL', 'mumbai': 'BOM', 'dubai': 'DXB', 'doha': 'DOH', 'jeddah': 'JED', 'istanbul': 'IST',
+  // Europe
+  'london': 'LHR', 'paris': 'CDG', 'amsterdam': 'AMS', 'frankfurt': 'FRA', 'zurich': 'ZRH',
+  'rome': 'FCO', 'madrid': 'MAD', 'barcelona': 'BCN', 'vienna': 'VIE', 'berlin': 'BER',
+  // Americas & Oceania
+  'new york': 'JFK', 'los angeles': 'LAX', 'san francisco': 'SFO', 'chicago': 'ORD', 'toronto': 'YYZ',
+  'sydney': 'SYD', 'melbourne': 'MEL', 'brisbane': 'BNE', 'perth': 'PER', 'auckland': 'AKL',
+};
+
+function resolveAirport(v) {
+  const t = (v || '').trim();
+  if (/^[A-Za-z]{3}$/.test(t)) return t.toUpperCase();
+  const code = CITY_TO_IATA[t.toLowerCase()];
+  return code || t.toUpperCase();
 }
 
 function profileRows(uname, name, bio, followers, following, media, verified, profileUrl) {
