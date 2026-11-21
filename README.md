@@ -51,14 +51,15 @@ removed 2026-11-21 ~12:31 WIB: the buy gateway route 502s at the provider.)
 
 This mirrors an Agent Vault agent card:
 
-- `ALLOWLIST` in `server.mjs` — approved sellers only. A capability outside
-  the list is refused with 403.
+- `ALLOWLIST` in `handler.mjs` (shared by `server.mjs` and `api/index.mjs`) —
+  approved sellers only. A capability outside the list is refused with 403.
 - `--max-amount` on every paid call — the per-call cap. buy refuses to sign
   above it.
 - `DAILY_CAP_USD` — enforced from the ledger before each payment.
-- The production deployment swaps the payer to the Agent Vault wallet: the
-  Vault holds the key, funds it with stablecoins, and the agent card's limits
-  apply to wallet payments exactly as they do to card fills.
+- Planned production setup (not yet live — no Agent Vault account exists
+  yet): the deployment swaps the payer to the Agent Vault wallet, the Vault
+  holds the key, funds it with stablecoins, and the agent card's limits apply
+  to wallet payments exactly as they do to card fills.
 
 ## Run it
 
@@ -87,9 +88,9 @@ VAULT_NETWORK=mainnet VAULT_MAINNET_OK=1 npm start
   0.005 USDC, 20 YouTube results for "celo".
 - A second paid call through the agent's own UI settled on Celo Sepolia:
   tx `0x8ce72a7e568df84b8cbca387c99b15bd6afed8c8b1619a0a232822da358ff71c`,
-  0.005 USDC, 20 YouTube results. Screen recording of that run:
-  `demo/page@ce3824867e0238a39667fe76a011c7b5.webm` (reproduce it with
-  `demo/record_demo.py`).
+  0.005 USDC, 20 YouTube results. A screen recording of that run was made
+  locally (`demo/record_demo.py`); the video file is not in this repo
+  (binary), it will be uploaded to YouTube.
 - Note: the buy gateway's X posts search route returned HTTP 502 repeatedly
   during testing (provider-side); the agent records such payments as
   `ambiguous` and never retries them blindly. X was removed from the

@@ -24,7 +24,8 @@ settlement transaction hash.
   (0.005 test USDC, Reddit search). The function auto-creates its own
   sandbox wallet and is auto-funded from the faucet; no private key is
   shipped or stored in the repo.
-- Demo video (English, 28.7s, MP4): `demo/demo-vault-checkout-agent-en.mp4`.
+- Demo video (English, 28.7s, MP4): recorded locally; the file is not in
+  this repo (binary), it will be uploaded to YouTube and linked here.
 
 ## Proof (sandbox, Celo Sepolia, test USDC)
 
@@ -42,12 +43,16 @@ settlement transaction hash.
   104,325,121 followers), TikTok profile @nasa (tx
   `0x5767fbfd7e77d13702a1ec0d20f8900da12ca2373a3a6e34dd577afc6b3faf98`,
   2,200,000 followers).
-- Demo video (English): `demo/demo-vault-checkout-agent-en.mp4` (28.7s, MP4).
+- Demo video (English, 28.7s, MP4): recorded locally; the file is not in
+  this repo (binary), it will be uploaded to YouTube and linked here.
 - Policy proof: a capability outside the allowlist is refused with 403.
 
 ## Proof (mainnet — TODO)
 
-- [ ] Fund the agent wallet with a few USDC on Celo mainnet (owner's step).
+- [x] Fund the agent wallet with a few USDC on Celo mainnet — DONE 2026-11-21
+  (owner funded it; verified live on Forno: 22.5149 CELO + 1.017749 USDC,
+  after swapping 19.5 CELO to USDC, tx
+  `0xb89e553057f9e1b3b1535889402164f394796bf8b23a65e957e4372197bf5f6e`).
 - [ ] Run one real paid call on mainnet, record the Celoscan tx link.
 - [ ] Upload the demo video to YouTube, add the link here.
 
@@ -58,8 +63,8 @@ settlement transaction hash.
 - Enroll URL: https://www.loops.house/agents-open-for-business/enroll
 - Loops CLI skill INSTALLED 2026-11-21 ~11:33 WIB in the project
   (`.agents/skills/loops-agents-open-for-business/SKILL.md`, CLI v0.7.1).
-  Auth NOT done yet — needs the owner's browser login
-  (`loops auth login`, Google/GitHub) or email code.
+  Auth DONE 2026-11-21 ~11:38 WIB via email code to blyjeje@gmail.com
+  (authenticated: true, userId `594a0b98-afe7-41b4-bf58-6e4adf4515b5`).
 - **Attribution tag: `celo_2da564e80a18`** — must be in every transaction the
   agent sends directly; untagged transactions are never credited, no backfill.
   Confirmed by the platform via `loops project get` (2026-11-21 ~11:38).
@@ -75,10 +80,12 @@ settlement transaction hash.
   playground). Register its **ERC-8004 identity** from that wallet before
   the deadline.
 - [x] Owner clicks Enroll on Loops House. — DONE 2026-11-21 ~11:31 WIB (email Loops House: "You're enrolled in Agents Open for Business", Jejeje26).
-- [ ] Agent wallet (mainnet) created/funded; address entered at submit.
+- [x] Agent wallet (mainnet) created/funded; address entered at submit.
   - Address (burner, made by the owner 2026-11-21): `0x0D89830F241383535c3708b6c521F09Ee7cddb1e`.
-  - Verified live on Celo mainnet (Forno, 2026-11-21 ~11:42): 0 CELO, 0 txs —
-    fresh and empty. Needs USDC + a little CELO for gas before any mainnet tx.
+  - Verified live on Celo mainnet (Forno, 2026-11-21 ~12:37): 22.5149 CELO +
+    1.017749 USDC, 5 txs. Funded by the owner, then 19.5 CELO swapped to
+    1.017749 USDC (tx
+    `0xb89e553057f9e1b3b1535889402164f394796bf8b23a65e957e4372197bf5f6e`).
   - NOT yet registered in Loops; register at project create/submit time.
 - [ ] ERC-8004 identity registered from the agent wallet.
 - [ ] Direct transactions carry the tag (via `toDataSuffix`); x402 calls
@@ -112,5 +119,5 @@ after the owner's yes. Then `loops evaluate --sponsor agent-vault`.
 > Vault Checkout Agent — an agent that checks out and pays for data
 > services on Celo under Agent Vault rules. Live demo:
 > https://zippy-monsoon-aijmunw.tmp.now — paid proof onchain:
-> https://celo-sepolia.blockscout.com/tx/0x07f9c8cedc438c98a8743d382d7baedb4c8c16e6140d47a461665edb4bf4fbc0
+> https://celo-sepolia.blockscout.com/tx/0x9d4090f9780d82ea9cdbb7963bf4844479c60a48d2a1c93a5fad2de51abccf79
 > Repo: https://github.com/je26/celo-vault-checkout-agent @celo

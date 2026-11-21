@@ -99,9 +99,9 @@ function requestBody() {
   return { [key]: v };
 }
 
-function profileRows(uname, name, bio, followers, following, media, verified) {
+function profileRows(uname, name, bio, followers, following, media, verified, profileUrl) {
   const rows = [];
-  if (uname) rows.push(`<b>@${escapeHtml(String(uname))}</b>${name ? ' — ' + escapeHtml(String(name)) : ''}`);
+  if (uname) rows.push(`<b>${profileUrl ? `<a href="${escapeHtml(profileUrl)}" target="_blank" rel="noopener">@${escapeHtml(String(uname))}</a>` : '@' + escapeHtml(String(uname))}</b>${name ? ' — ' + escapeHtml(String(name)) : ''}`);
   if (bio) rows.push(`<small>${escapeHtml(String(bio))}</small>`);
   const stats = [followers != null ? Number(followers).toLocaleString() + ' followers' : '', following != null ? Number(following).toLocaleString() + ' following' : '', media != null && Number(media) > 0 ? Number(media).toLocaleString() + ' posts' : '', verified ? 'verified' : ''].filter(Boolean).join(' · ');
   if (stats) rows.push(`<small>${escapeHtml(stats)}</small>`);
@@ -128,14 +128,14 @@ function renderResult(out) {
   const ui = out.userInfo || null;
   if (ui && ui.user) {
     const u = ui.user, st = ui.stats || {};
-    const rows = profileRows(u.uniqueId, u.nickname, u.signature, st.followerCount, st.followingCount, st.videoCount, u.verified);
+    const rows = profileRows(u.uniqueId, u.nickname, u.signature, st.followerCount, st.followingCount, st.videoCount, u.verified, u.uniqueId ? 'https://www.tiktok.com/@' + encodeURIComponent(u.uniqueId) : '');
     if (rows) return rows;
   }
   if (out.username) {
     const followers = out.edge_followed_by && out.edge_followed_by.count;
     const following = out.edge_follow && out.edge_follow.count;
     const media = out.edge_owner_to_timeline_media && out.edge_owner_to_timeline_media.count;
-    const rows = profileRows(out.username, out.full_name, out.biography, followers, following, media, out.is_verified);
+    const rows = profileRows(out.username, out.full_name, out.biography, followers, following, media, out.is_verified, 'https://www.instagram.com/' + encodeURIComponent(out.username));
     if (rows) return rows;
   }
   return '<pre class="quote">' + escapeHtml(JSON.stringify(out).slice(0, 2000)) + '</pre>';
