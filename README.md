@@ -4,6 +4,14 @@ An agent that checks out and pays for data services on Celo, under Agent Vault
 rules. Built for the Celo **Agents Open for Business** hackathon (Nov 20 – Dec 7,
 2026), track **Agent Vault** ($1,000).
 
+## Hackathon
+
+Celo **Agents Open for Business** (Nov 20 – Dec 7, 2026), track **Agent Vault**
+($1,000). Registration on **Loops House**. Attribution tag
+`celo_2da564e80a18` — required in every transaction the agent sends directly;
+x402 settlements attribute via the agent wallet address. **Scoring is Celo
+mainnet only** (chain 42220); testnet activity does not count.
+
 ## What it does
 
 You type a task ("search YouTube for celo"). The agent:

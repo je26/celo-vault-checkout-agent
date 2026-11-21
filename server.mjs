@@ -23,6 +23,13 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT || 8787);
 const LEDGER = path.join(__dirname, 'agent', 'ledger.jsonl');
 
+// Hackathon attribution (Loops House, "Agents Open for Business").
+// Every transaction the agent sends directly must carry this ERC-8021 tag.
+// x402 settlements go through buy's facilitator, which sends the settlement
+// tx itself, so those attribute via the agent wallet address instead — the
+// wallet registered at submission time.
+const ATTRIBUTION_TAG = 'celo_2da564e80a18';
+
 const NETWORK = process.env.VAULT_NETWORK === 'mainnet' ? 'mainnet' : 'sandbox';
 if (NETWORK === 'mainnet' && process.env.VAULT_MAINNET_OK !== '1') {
   console.error('Mainnet requested without VAULT_MAINNET_OK=1. Refusing to start.');
@@ -116,7 +123,7 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'GET' && url.pathname === '/api/wallet') {
     const args = SANDBOX ? ['--sandbox', 'whoami'] : ['whoami'];
     const r = await runBuy(args);
-    sendJson(res, 200, { network: NETWORK, output: r.out });
+    sendJson(res, 200, { network: NETWORK, attributionTag: ATTRIBUTION_TAG, output: r.out });
     return;
   }
 
@@ -133,7 +140,7 @@ const server = http.createServer(async (req, res) => {
         .map((c) => ({ id: c.id, title: c.title, url: c.url, price: c.price, maxUsd: ALLOWLIST[c.id].maxUsd }))
         // Working services first: the X posts route 502s often at the provider.
         .sort((a, b) => (a.id === 'youtube.videos.search' ? -1 : b.id === 'youtube.videos.search' ? 1 : 0));
-      sendJson(res, 200, { capabilities: caps, network: NETWORK });
+      sendJson(res, 200, { capabilities: caps, network: NETWORK, attributionTag: ATTRIBUTION_TAG });
     } catch (e) {
       sendJson(res, 502, { error: String(e.message || e) });
     }
