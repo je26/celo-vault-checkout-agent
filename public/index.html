@@ -8,10 +8,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root { --accent: #0d9488; --accent2: #2dd4bf; --link: #f59e0b; --bg: #10101a; --card: #1b1b2a; --text: #f3f4f6; --muted: #9ca3af; --green: #4ade80; --red: #f87171; --border: #2a2a3a; }
+  :root { --accent: #0d9488; --accent2: #2dd4bf; --link: #f3f4f6; --bg: #10101a; --card: #1b1b2a; --text: #f3f4f6; --muted: #9ca3af; --green: #4ade80; --red: #f87171; --border: #2a2a3a; }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--text); font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif; }
-  .wrap { max-width: 720px; margin: 0 auto; padding: 24px 16px 64px; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 24px 16px 80px; }
   h1 { font-family: "Space Grotesk", "Inter", system-ui, sans-serif; font-size: 30px; font-weight: 700; letter-spacing: -0.5px; margin: 8px 0 4px; }
   h1 span { color: var(--accent); }
   h3 { font-family: "Space Grotesk", "Inter", system-ui, sans-serif; font-weight: 600; letter-spacing: -0.2px; }
@@ -28,7 +28,7 @@
   .pill { display: inline-block; font-size: 12px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--accent); color: var(--accent); }
   .quote { white-space: pre-wrap; font-family: ui-monospace, monospace; font-size: 13px; background: #23233a; border-radius: 10px; padding: 12px; margin-top: 12px; max-height: 220px; overflow: auto; }
   .receipt { border: 1px solid var(--green); }
-  .receipt a { color: var(--link); word-break: break-all; }
+  .receipt a { color: var(--link); text-decoration: underline; word-break: break-all; }
   .ok { color: var(--green); font-weight: 700; }
   .bad { color: var(--red); font-weight: 700; }
   #formError { font-family: Georgia, "Times New Roman", serif; font-weight: 400; font-size: 15px; color: #fca5a5; line-height: 1.6; }
@@ -36,7 +36,7 @@
   .chip { flex: 1 1 0; min-width: 0; padding: 8px 4px; border-radius: 999px; border: 1px solid #3a3a4d; background: #1b1b2a; color: var(--muted); font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; overflow: hidden; text-align: center; }
   .chip.active { background: var(--accent); border-color: var(--accent); color: #ffffff; }
   .result { margin-top: 12px; }
-  .result a { color: var(--link); }
+  .result a { color: var(--link); text-decoration: underline; }
   .result .item { border-top: 1px solid var(--border); padding: 10px 0; }
   .result .item b { display: block; margin-bottom: 2px; }
   .result .item small { color: var(--muted); }
@@ -44,6 +44,7 @@
   td, th { text-align: left; padding: 8px 4px; border-bottom: 1px solid var(--border); vertical-align: top; }
   td small { color: var(--muted); }
   .muted { color: var(--muted); font-size: 13px; line-height: 1.5; }
+  .footer-fixed { position: fixed; bottom: 0; left: 0; right: 0; text-align: center; background: #10101a; color: var(--muted); font-size: 13px; padding: 10px 16px; margin: 0; border-top: 1px solid var(--border); z-index: 10; }
 </style>
 </head>
 <body>
@@ -94,7 +95,7 @@
 
   <p class="muted">Celo hackathon “Agents Open for Business”, Agent Vault track. Payments are tested on Celo Sepolia (test USDC, free from the faucet). Mainnet only with VAULT_NETWORK=mainnet and VAULT_MAINNET_OK=1. Attribution tag: <span id="tagLine">celo_2da564e80a18</span> — required in every mainnet transaction.</p>
 
-  <p class="muted" style="text-align:center; margin-top:28px;">© 2026 Sanjaya Purba</p>
+  <p class="footer-fixed">© 2026 Sanjaya Purba</p>
 </div>
 <script>
 const $ = (id) => document.getElementById(id);
@@ -117,9 +118,9 @@ function syncInput() {
   if (isFlights) return;
   const key = cap.bodyKey || 'query';
   $('queryLabel').textContent = cap.inputLabel || 'Task / keywords';
-  $('query').placeholder = key === 'username' ? 'e.g. nasa' : 'e.g. celo';
-  if (key === 'username' && $('query').value.trim() === 'celo') $('query').value = 'nasa';
-  if (key === 'query' && $('query').value.trim() === 'nasa') $('query').value = 'celo';
+  $('query').placeholder = key === 'username' ? 'e.g. binance' : 'e.g. celo';
+  if (key === 'username' && $('query').value.trim() === 'celo') $('query').value = 'binance';
+  if (key === 'query' && $('query').value.trim() === 'binance') $('query').value = 'celo';
 }
 
 function requestBody() {
@@ -132,7 +133,7 @@ function requestBody() {
     };
   }
   const key = cap.bodyKey || 'query';
-  const v = $('query').value.trim() || (key === 'username' ? 'nasa' : 'celo');
+  const v = $('query').value.trim() || (key === 'username' ? 'binance' : 'celo');
   return { [key]: v };
 }
 
@@ -233,11 +234,22 @@ function shortName(id) {
 }
 
 function renderChips() {
-  $('serviceChips').innerHTML = caps.map(c =>
+  const order = ['flights.search', 'youtube.videos.search', 'instagram.profile', 'tiktok.profile', 'reddit.posts.search'];
+  const sorted = [...caps].sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
+  $('serviceChips').innerHTML = sorted.map(c =>
     `<button class="chip${c.id === selectedCapId ? ' active' : ''}" data-cap="${c.id}">${shortName(c.id)}</button>`).join('');
   document.querySelectorAll('#serviceChips .chip').forEach(el => {
     el.onclick = () => { selectedCapId = el.dataset.cap; syncInput(); };
   });
+}
+
+// Random foreign-city destination for the flight form, picked fresh on
+// every page load so the demo never shows the same route twice in a row.
+const RANDOM_DESTINATIONS = ['Tokyo', 'London', 'Paris', 'Seoul', 'Bangkok', 'Dubai', 'Hong Kong', 'Taipei', 'Osaka', 'Amsterdam'];
+function randomDestination() {
+  const pick = RANDOM_DESTINATIONS[Math.floor(Math.random() * RANDOM_DESTINATIONS.length)];
+  $('destination').value = pick;
+  $('destination').placeholder = pick + ' or ' + (CITY_TO_IATA[pick.toLowerCase()] || '');
 }
 
 async function loadCaps() {
@@ -284,12 +296,16 @@ $('quoteBtn').onclick = async () => {
   if (ferr) { showFormError(ferr); return; }
   showFormError('');
   $('quoteBtn').disabled = true;
+  $('runBtn').disabled = true;
+  $('quoteBtn').textContent = 'Checking…';
   $('quoteBox').innerHTML = '<div class="quote">Asking for a price…</div>';
   const r = await fetch('/api/quote', { method: 'POST', headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ capabilityId: selectedCapId, body: requestBody() }) });
   const j = await r.json();
   $('quoteBox').innerHTML = '<div class="quote">' + escapeHtml(j.output || JSON.stringify(j)) + '</div>';
   $('quoteBtn').disabled = false;
+  $('runBtn').disabled = false;
+  $('quoteBtn').textContent = 'Check price first';
 };
 
 $('runBtn').onclick = async () => {
@@ -297,6 +313,8 @@ $('runBtn').onclick = async () => {
   if (ferr) { showFormError(ferr); return; }
   showFormError('');
   $('runBtn').disabled = true;
+  $('quoteBtn').disabled = true;
+  $('runBtn').textContent = 'Processing…';
   $('receiptCard').style.display = 'none';
   $('resultCard').style.display = 'none';
   $('quoteBox').innerHTML = '<div class="quote">Agent is paying and running…</div>';
@@ -318,6 +336,8 @@ $('runBtn').onclick = async () => {
     $('receiptCard').innerHTML = `<span class="bad">✗ ${e.status === 'ambiguous' ? 'Status unclear' : 'Failed'}</span><br>${escapeHtml(e.error || j.error || 'Payment did not complete. Check the ledger before retrying.')}`;
   }
   $('runBtn').disabled = false;
+  $('quoteBtn').disabled = false;
+  $('runBtn').textContent = 'Pay & run';
   loadLedger();
 };
 
@@ -343,6 +363,7 @@ $('copyAddrBtn').onclick = async () => {
 };
 
 function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+randomDestination();
 loadCaps();
 loadWallet();
 </script>
