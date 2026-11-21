@@ -55,6 +55,16 @@
     <div id="quoteBox"></div>
   </div>
 
+  <div class="card" id="walletCard" style="display:none">
+    <h3 style="margin-top:0">Agent wallet</h3>
+    <div class="muted">The agent pays from this wallet. No wallet connection needed — the agent never asks you to sign anything.</div>
+    <div style="margin-top:10px; display:flex; gap:8px; align-items:center;">
+      <code id="walletAddr" style="word-break:break-all; font-size:13px;">…</code>
+      <button class="ghost" id="copyAddrBtn" style="flex:0 0 auto; min-width:0; padding:8px 12px;">Copy</button>
+    </div>
+    <div class="muted" id="walletBal" style="margin-top:6px;"></div>
+  </div>
+
   <div class="card receipt" id="receiptCard" style="display:none"></div>
   <div class="card" id="resultCard" style="display:none"><h3 style="margin-top:0">Results</h3><div class="result" id="resultBox"></div></div>
 
@@ -127,8 +137,30 @@ $('runBtn').onclick = async () => {
   loadLedger();
 };
 
+async function loadWallet() {
+  try {
+    const r = await fetch('/api/wallet');
+    const j = await r.json();
+    const out = j.output || '';
+    const addr = (out.match(/0x[a-fA-F0-9]{40}/) || [])[0];
+    if (!addr) return;
+    $('walletAddr').textContent = addr;
+    const bal = (out.match(/balances[^\n]*/) || [])[0];
+    $('walletBal').textContent = bal ? bal.replace('balances ', 'Balance: ') : '';
+    $('walletCard').style.display = '';
+  } catch { /* wallet info is nice-to-have */ }
+}
+
+$('copyAddrBtn').onclick = async () => {
+  const addr = $('walletAddr').textContent;
+  try { await navigator.clipboard.writeText(addr); $('copyAddrBtn').textContent = 'Copied'; }
+  catch { $('copyAddrBtn').textContent = addr; }
+  setTimeout(() => { $('copyAddrBtn').textContent = 'Copy'; }, 2000);
+};
+
 function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 loadCaps();
+loadWallet();
 </script>
 </body>
 </html>
