@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root { --accent: #0d9488; --accent2: #2563eb; --bg: #f7f9fc; --card: #ffffff; --text: #111827; --muted: #6b7280; --green: #15803d; --red: #b91c1c; --border: #e5e7eb; }
+  :root { --accent: #0d9488; --accent2: #2563eb; --bg: #10101a; --card: #1b1b2a; --text: #f3f4f6; --muted: #9ca3af; --green: #4ade80; --red: #f87171; --border: #2a2a3a; }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--text); font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif; }
   .wrap { max-width: 720px; margin: 0 auto; padding: 24px 16px 64px; }
@@ -17,20 +17,24 @@
   h3 { font-family: "Space Grotesk", "Inter", system-ui, sans-serif; font-weight: 600; letter-spacing: -0.2px; }
   .rule { width: 48px; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 2px; margin: 12px 0 16px; }
   p.sub { color: var(--muted); margin: 0 0 20px; line-height: 1.5; }
-  .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; margin-bottom: 16px; box-shadow: 0 1px 8px rgba(0,0,0,.35); }
   label { display: block; font-size: 13px; color: var(--muted); margin: 12px 0 6px; }
-  select, input[type=text] { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #d1d5db; background: #ffffff; color: var(--text); font-size: 16px; }
+  select, input[type=text] { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #3a3a4d; background: #23233a; color: var(--text); font-size: 16px; }
   .row { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
   button { flex: 1; min-width: 140px; padding: 13px; border-radius: 10px; border: none; font-size: 15px; font-weight: 700; cursor: pointer; }
   button.primary { background: var(--accent); color: #ffffff; }
   button.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
   button:disabled { opacity: .5; cursor: wait; }
   .pill { display: inline-block; font-size: 12px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--accent); color: var(--accent); }
-  .quote { white-space: pre-wrap; font-family: ui-monospace, monospace; font-size: 13px; background: #f3f4f6; border-radius: 10px; padding: 12px; margin-top: 12px; max-height: 220px; overflow: auto; }
+  .quote { white-space: pre-wrap; font-family: ui-monospace, monospace; font-size: 13px; background: #23233a; border-radius: 10px; padding: 12px; margin-top: 12px; max-height: 220px; overflow: auto; }
   .receipt { border: 1px solid var(--green); }
   .receipt a { color: var(--accent2); word-break: break-all; }
   .ok { color: var(--green); font-weight: 700; }
   .bad { color: var(--red); font-weight: 700; }
+  #formError { font-family: Georgia, "Times New Roman", serif; font-weight: 400; font-size: 15px; color: #fca5a5; line-height: 1.6; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 16px; }
+  .chip { flex: 0 0 auto; min-width: 0; padding: 8px 16px; border-radius: 999px; border: 1px solid #3a3a4d; background: #1b1b2a; color: var(--muted); font-size: 14px; font-weight: 600; cursor: pointer; }
+  .chip.active { background: var(--accent); border-color: var(--accent); color: #ffffff; }
   .result { margin-top: 12px; }
   .result a { color: var(--accent2); }
   .result .item { border-top: 1px solid var(--border); padding: 10px 0; }
@@ -49,8 +53,10 @@
   <div class="rule"></div>
   <p class="sub">An agent that shops for itself on Celo. You type a task, the agent checks the price first, then pays per call over x402 with buy. Every payment is bounded by its agent card: only approved services, with a per-call cap and a daily cap. The agent never holds a wallet key.</p>
 
+  <div class="chips" id="serviceChips"></div>
+
   <div class="card">
-    <div id="formError" class="bad" style="display:none; margin-bottom:12px; line-height:1.5;"></div>
+    <div id="formError" style="display:none; margin-bottom:12px;"></div>
     <label for="service">Service (approved)</label>
     <select id="service"></select>
     <label for="query" id="queryLabel">Task / keywords</label>
@@ -100,6 +106,9 @@ function currentCap() { return caps.find(c => c.id === $('service').value) || ca
 // profile services take a username, flights take origin/destination/date.
 function syncInput() {
   const cap = currentCap();
+  document.querySelectorAll('#serviceChips .chip').forEach(el => {
+    el.classList.toggle('active', el.dataset.cap === cap.id);
+  });
   const isFlights = Array.isArray(cap.multi) && cap.multi.length > 0;
   $('flightFields').style.display = isFlights ? '' : 'none';
   $('query').style.display = isFlights ? 'none' : '';
@@ -218,6 +227,18 @@ function renderResult(out) {
   return '<pre class="quote">' + escapeHtml(JSON.stringify(out).slice(0, 2000)) + '</pre>';
 }
 
+function shortName(id) {
+  return { 'youtube.videos.search': 'YouTube', 'reddit.posts.search': 'Reddit', 'instagram.profile': 'Instagram', 'tiktok.profile': 'TikTok', 'flights.search': 'Flights' }[id] || id;
+}
+
+function renderChips() {
+  $('serviceChips').innerHTML = caps.map(c =>
+    `<button class="chip${c.id === $('service').value ? ' active' : ''}" data-cap="${c.id}">${shortName(c.id)}</button>`).join('');
+  document.querySelectorAll('#serviceChips .chip').forEach(el => {
+    el.onclick = () => { $('service').value = el.dataset.cap; syncInput(); };
+  });
+}
+
 async function loadCaps() {
   const r = await fetch('/api/catalog');
   const j = await r.json();
@@ -225,6 +246,7 @@ async function loadCaps() {
   $('service').innerHTML = caps.map(c =>
     `<option value="${c.id}">${c.title} — max $${c.maxUsd} / call</option>`).join('');
   $('service').onchange = syncInput;
+  renderChips();
   syncInput();
   $('networkPill').textContent = 'Network: ' + (j.network === 'mainnet' ? 'Celo mainnet' : 'Celo Sepolia (sandbox, free)');
   loadLedger();
