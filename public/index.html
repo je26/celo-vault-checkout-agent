@@ -296,7 +296,14 @@ function renderChips() {
   $('serviceChips').innerHTML = sorted.map(c =>
     `<button class="chip${c.id === selectedCapId ? ' active' : ''}" data-cap="${c.id}">${shortName(c.id)}</button>`).join('');
   document.querySelectorAll('#serviceChips .chip').forEach(el => {
-    el.onclick = () => { selectedCapId = el.dataset.cap; syncInput(); };
+    el.onclick = () => {
+      if (selectedCapId === el.dataset.cap) return;
+      selectedCapId = el.dataset.cap;
+      // Clear the previous service's receipt and results when switching.
+      $('receiptCard').style.display = 'none';
+      $('resultCard').style.display = 'none';
+      syncInput();
+    };
   });
 }
 
