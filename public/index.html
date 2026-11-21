@@ -20,7 +20,7 @@
   p.sub { color: var(--muted); margin: 0 0 20px; line-height: 1.5; }
   .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; margin-bottom: 16px; box-shadow: 0 1px 8px rgba(0,0,0,.35); }
   label { display: block; font-size: 13px; color: var(--muted); margin: 12px 0 6px; }
-  select, input[type=text] { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #3a3a4d; background: #23233a; color: var(--text); font-size: 16px; }
+  select, input[type=text], input[type=date] { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #3a3a4d; background: #23233a; color: var(--text); font-size: 16px; }
   .row { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
   button { flex: 1; min-width: 140px; padding: 13px; border-radius: 10px; border: none; font-size: 15px; font-weight: 700; cursor: pointer; }
   button.primary { background: var(--accent); color: #ffffff; }
@@ -400,7 +400,7 @@ async function runPayment() {
     $('resultBox').innerHTML = renderResult(out);
   } else {
     $('receiptCard').style.display = '';
-    $('receiptCard').innerHTML = `<span class="bad">✗ ${e.status === 'ambiguous' ? 'Status unclear' : 'Failed'}</span><br>${escapeHtml(e.error || j.error || 'Payment did not complete. Check the ledger before retrying.')}`;
+    $('receiptCard').innerHTML = `<span class="bad">✗ ${e.status === 'ambiguous' ? 'Status unclear' : 'Failed'}</span><br>${escapeHtml(e.error || j.error || 'Payment did not complete. Check the ledger before retrying.')}<br><span class="muted">${e.status === 'ambiguous' ? 'Payment status is unclear. Check the ledger before retrying.' : 'Payment did not go through. No money was charged. You can try again.'}</span>`;
   }
   $('quotePayBtn').disabled = false;
   $('quoteCancelBtn').style.display = '';
