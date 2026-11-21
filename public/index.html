@@ -40,6 +40,15 @@
   .chips { display: flex; gap: 6px; flex-wrap: nowrap; margin: 0 0 16px; }
   .chip { flex: 1 1 0; min-width: 0; padding: 8px 4px; border-radius: 999px; border: 1px solid #3a3a4d; background: #1b1b2a; color: var(--muted); font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; overflow: hidden; text-align: center; }
   .chip.active { background: var(--accent); border-color: var(--accent); color: #ffffff; }
+  /* Track tabs (one project, all tracks) — same shape as the multi-track mockup. */
+  .tracks { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: nowrap; }
+  .track { flex: 1 1 0; text-align: center; padding: 10px 4px; font-size: 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--muted); cursor: pointer; }
+  .track.active { background: var(--accent); color: #ffffff; border-color: var(--accent); font-weight: 700; }
+  .track .prize { display: block; font-size: 10px; margin-top: 2px; opacity: .8; }
+  .tag { font-size: 11px; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--accent); color: var(--accent); }
+  .mono { font-family: ui-monospace, monospace; font-size: 12px; word-break: break-all; }
+  button.danger { background: #7f1d1d; color: #ffffff; }
+  #pane-altana td:first-child, #pane-self td:first-child { color: var(--muted); width: 38%; }
   .result { margin-top: 12px; }
   .result a { color: var(--link); text-decoration: underline; }
   .result .item { border-top: 1px solid var(--border); padding: 10px 0; }
@@ -61,6 +70,14 @@
   <div class="rule"></div>
   <p class="sub">An agent that shops for itself on Celo. You type a task, the agent checks the price first, then pays per call over x402 with buy. Every payment is bounded by its agent card: only approved services, with a per-call cap and a daily cap. The agent never holds a wallet key.</p>
 
+  <div class="tracks" id="trackTabs">
+    <div class="track active" data-track="vault">Agent Vault<span class="prize">$1,000</span></div>
+    <div class="track" data-track="altana">Altana<span class="prize">$750 + $250</span></div>
+    <div class="track" data-track="self">Self ID<span class="prize">$1,000</span></div>
+    <div class="track" data-track="corridors">Corridors<span class="prize">$2,000</span></div>
+  </div>
+
+  <div id="pane-vault">
   <div class="chips" id="serviceChips"></div>
 
   <div class="card" id="serviceCard">
@@ -80,21 +97,6 @@
       <button class="ghost" id="quoteBtn">Check price</button>
     </div>
     <div id="quoteBox"></div>
-  </div>
-
-  <div class="card" id="altanaCard" style="display:none">
-    <h3 style="margin-top:0">Altana — agent wallet</h3>
-    <div class="muted">A non-custodial agent wallet on Celo. The owner grants a scoped session key — per-token daily cap, contract allowlist, expiry — enforced on-chain. The session pays for APIs with x402. The agent never holds a wallet key.</div>
-    <table style="margin-top:12px;">
-      <tr><td>Wallet</td><td><a href="https://celo-sepolia.blockscout.com/address/0x0D89830F241383535c3708b6c521F09Ee7cddb1e" target="_blank" rel="noopener">0x0D89…cddb1e</a></td></tr>
-      <tr><td>Session key</td><td>granted — <a href="https://celo-sepolia.blockscout.com/tx/0x8ad58db9195e85facbc3330a463e3399c35a906ec9207238623e2cd34a3b1b9b" target="_blank" rel="noopener">tx ↗</a><br><small>0.5 USDC/day + 2 CELO/day · expires 28 Nov 2026</small></td></tr>
-      <tr><td>Keystore</td><td><a href="https://explorer.altana.network" target="_blank" rel="noopener">explorer.altana.network ↗</a><br><small>grant recorded in the public Keystore</small></td></tr>
-      <tr><td>x402 paid</td><td>$0.005/call — settled: <a href="https://celo-sepolia.blockscout.com/tx/0x85763827f3df0e07f9e656ebd86e527b23bd7b893d700930e23ab3ba69832563" target="_blank" rel="noopener">tx ↗</a></td></tr>
-    </table>
-    <div class="muted" style="margin-top:10px;">The buy gateway does not accept smart-account signatures, so this demo pays its own x402 API (same Celo facilitator, same $0.005 price) and gets live data back.</div>
-    <div class="row">
-      <a href="https://altana-x402-api.vercel.app" target="_blank" rel="noopener" style="flex:1; text-align:center; padding:13px; border-radius:10px; border:1px solid var(--accent); color:var(--accent); text-decoration:none; font-weight:700;">Open the x402 API ↗</a>
-    </div>
   </div>
 
   <div id="quoteModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:50; align-items:center; justify-content:center; padding:16px;">
@@ -129,6 +131,71 @@
   <div style="text-align:center; margin:16px 0;">
     <button class="ghost" id="refreshBtn" style="padding:10px 20px; font-size:15px;">↻ Refresh</button>
   </div>
+  </div><!-- /pane-vault -->
+
+  <div id="pane-altana" style="display:none">
+    <div class="card">
+      <h3 style="margin-top:0">Altana wallet</h3>
+      <div class="muted">A non-custodial wallet for the agent. You keep the keys and set the rules — the agent acts under a session key you grant and can revoke.</div>
+      <p class="mono" style="margin-top:12px;">0x0D89830F241383535c3708b6c521F09Ee7cddb1e</p>
+      <p class="muted">Same address on Celo, BNB Chain and Ethereum.<br>Balance: 22.5 CELO, 1.02 USDC</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Session key <span class="tag">ACTIVE</span></h3>
+      <table style="margin-top:12px;">
+        <tr><td>Status</td><td><span class="ok">Active</span> — granted onchain, recorded in Keystore</td></tr>
+        <tr><td>Spend cap</td><td>$0.50 / day (USDC)</td></tr>
+        <tr><td>Used today</td><td>$0.005</td></tr>
+        <tr><td>Allowed contracts</td><td>x402 facilitator, buy gateway</td></tr>
+        <tr><td>Expires</td><td>2026-12-07 16:00 WIB</td></tr>
+        <tr><td>Keystore proof</td><td><span class="mono">explorer.altana.network</span></td></tr>
+      </table>
+      <button class="danger" id="revokeBtn" style="width:100%; margin-top:14px;">Revoke session (1 transaction)</button>
+      <p class="muted" id="revokeNote" style="margin-top:10px">Revoking takes effect before the agent's next action. The agent can never act beyond these limits — a call outside them reverts onchain.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">What the agent did with this wallet</h3>
+      <table>
+        <tr><td>x402 API</td><td>$0.005/call · settled: <a href="https://celo-sepolia.blockscout.com/tx/0x85763827f3df0e07f9e656ebd86e527b23bd7b893d700930e23ab3ba69832563" target="_blank" rel="noopener">tx ↗</a></td></tr>
+        <tr><td>Session execute</td><td>0.0001 CELO · <a href="https://celo-sepolia.blockscout.com/tx/0x3e84f904ab9b6f2efad2cc4d1d0e10f92fd7263e7c4824adb3b23df21c4c19d7" target="_blank" rel="noopener">tx ↗</a></td></tr>
+      </table>
+      <div class="muted" style="margin-top:10px;">The buy gateway does not accept smart-account signatures, so this demo pays its own x402 API (same Celo facilitator, same $0.005 price) and gets live data back.</div>
+      <div class="row" style="margin-top:14px;">
+        <a href="https://altana-x402-api.vercel.app" target="_blank" rel="noopener" style="flex:1; text-align:center; padding:13px; border-radius:10px; border:1px solid var(--accent); color:var(--accent); text-decoration:none; font-weight:700;">Open the x402 API ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="pane-self" style="display:none">
+    <div class="card">
+      <h3 style="margin-top:0">Self Agent ID</h3>
+      <div class="muted">Proves a real, unique person stands behind this agent. The agent's requests are signed, and its identity is verifiable on Celo.</div>
+      <table style="margin-top:12px;">
+        <tr><td>Status</td><td><span class="bad">Pending</span> — document check not done yet</td></tr>
+        <tr><td>Agent ID (mainnet)</td><td>—</td></tr>
+        <tr><td>Verified person</td><td>Sanjaya Purba</td></tr>
+        <tr><td>Document</td><td>KTP (acceptance unconfirmed — checking)</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">How it works</h3>
+      <div class="muted">1. Scan your document in the Self app.<br>2. Self issues a verified Agent ID on Celo mainnet.<br>3. The agent signs every request with that identity — judges can verify it onchain.</div>
+    </div>
+  </div>
+
+  <div id="pane-corridors" style="display:none">
+    <div class="card">
+      <h3 style="margin-top:0">Stablecoin Corridors</h3>
+      <div class="muted">The agent pays and gets paid in a local stablecoin — rupiah (IDRX) — converting on Textile FX between USD and IDRX.</div>
+      <label style="margin-top:12px;">Amount (USDC)</label>
+      <input type="text" value="10" readonly>
+      <label>Pay in</label>
+      <input type="text" value="IDRX (Indonesian rupiah)" readonly>
+      <p class="muted" style="margin-top:10px">Rate via Textile FX (RFQ): 1 USDC ≈ 16,400 IDRX<br>Recipient gets: ≈ 164,000 IDRX</p>
+      <button class="primary" id="corridorBtn" style="width:100%; margin-top:14px;">Check rate &amp; pay</button>
+      <p class="muted" id="corridorNote" style="margin-top:10px">No corridor payments yet — this track is the hardest and comes last.</p>
+    </div>
+  </div>
 
   <p class="muted" style="text-align:center">Built for the Celo “Agents Open for Business” hackathon — Agent Vault track.</p>
 
@@ -147,8 +214,6 @@ const DEFAULT_CAPS = [
 ];
 let caps = [...DEFAULT_CAPS];
 let selectedCapId = 'flights.search';
-// Altana is not a buy service — it is a separate tab showing the agent wallet.
-const ALTANA_ID = 'altana';
 
 function currentCap() { return caps.find(c => c.id === selectedCapId) || caps[0] || {}; }
 
@@ -162,16 +227,11 @@ const CAP_DESC = {
 };
 // The input field adapts to the service: search services take keywords,
 // profile services take a username, flights take origin/destination/date.
-// Altana hides the form and shows its own panel instead.
 function syncInput() {
-  const isAltana = selectedCapId === ALTANA_ID;
-  document.querySelectorAll('#serviceChips .chip').forEach(el => {
-    el.classList.toggle('active', el.dataset.cap === selectedCapId);
-  });
-  $('serviceCard').style.display = isAltana ? 'none' : '';
-  $('altanaCard').style.display = isAltana ? '' : 'none';
-  if (isAltana) return;
   const cap = currentCap();
+  document.querySelectorAll('#serviceChips .chip').forEach(el => {
+    el.classList.toggle('active', el.dataset.cap === cap.id);
+  });
   $('capDesc').textContent = (CAP_DESC[cap.id] || cap.title || '') + ' $' + cap.maxUsd + ' per call.';
   const isFlights = Array.isArray(cap.multi) && cap.multi.length > 0;
   $('flightFields').style.display = isFlights ? '' : 'none';
@@ -328,8 +388,7 @@ function renderChips() {
   const order = ['flights.search', 'youtube.videos.search', 'instagram.profile', 'tiktok.profile', 'reddit.posts.search'];
   const sorted = [...caps].sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
   $('serviceChips').innerHTML = sorted.map(c =>
-    `<button class="chip${c.id === selectedCapId ? ' active' : ''}" data-cap="${c.id}">${shortName(c.id)}</button>`).join('') +
-    `<button class="chip${selectedCapId === ALTANA_ID ? ' active' : ''}" data-cap="${ALTANA_ID}">Altana</button>`;
+    `<button class="chip${c.id === selectedCapId ? ' active' : ''}" data-cap="${c.id}">${shortName(c.id)}</button>`).join('');
   document.querySelectorAll('#serviceChips .chip').forEach(el => {
     el.onclick = () => {
       if (selectedCapId === el.dataset.cap) return;
@@ -362,7 +421,7 @@ async function loadCaps() {
     const j = await r.json();
     if (j.capabilities && j.capabilities.length) {
       caps = j.capabilities;
-      if (selectedCapId !== ALTANA_ID && !caps.some(c => c.id === selectedCapId) && caps.length) selectedCapId = caps[0].id;
+      if (!caps.some(c => c.id === selectedCapId) && caps.length) selectedCapId = caps[0].id;
       renderChips();
       syncInput();
       $('networkPill').textContent = 'Network: ' + (j.network === 'mainnet' ? 'Celo mainnet' : 'Celo Sepolia (sandbox, free)');
@@ -559,6 +618,28 @@ $('copyAddrBtn').onclick = async () => {
   try { await navigator.clipboard.writeText(addr); $('copyAddrBtn').textContent = 'Copied'; }
   catch { $('copyAddrBtn').textContent = addr; }
   setTimeout(() => { $('copyAddrBtn').textContent = 'Copy'; }, 2000);
+};
+
+// Track tabs: one project, all tracks (same as the multi-track mockup).
+const TRACK_PANES = ['vault', 'altana', 'self', 'corridors'];
+document.querySelectorAll('#trackTabs .track').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('#trackTabs .track').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    TRACK_PANES.forEach(k => {
+      const pane = $('pane-' + k);
+      if (pane) pane.style.display = (k === t.dataset.track) ? '' : 'none';
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+// Revoke needs the wallet owner's signature — not available in this demo.
+$('revokeBtn').onclick = () => {
+  $('revokeNote').textContent = 'Revoking needs the wallet owner\u2019s signature — it cannot be done from this demo page.';
+};
+// Corridors track is not started yet.
+$('corridorBtn').onclick = () => {
+  $('corridorNote').textContent = 'Corridors is not started yet — this track is the hardest and comes last.';
 };
 
 function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
