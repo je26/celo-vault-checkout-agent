@@ -75,6 +75,17 @@
     <div id="quoteBox"></div>
   </div>
 
+  <div id="quoteModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:50; align-items:center; justify-content:center; padding:16px;">
+    <div class="card" style="width:100%; max-width:420px; margin:0;">
+      <h3 style="margin-top:0">Price</h3>
+      <div id="quoteModalBody" class="muted" style="line-height:1.8;"></div>
+      <div class="row">
+        <button class="ghost" id="quoteCancelBtn">Cancel</button>
+        <button class="primary" id="quotePayBtn">Pay &amp; run</button>
+      </div>
+    </div>
+  </div>
+
   <div class="card" id="walletCard" style="display:none">
     <h3 style="margin-top:0">Agent wallet</h3>
     <div class="muted">The agent pays from this wallet. No wallet connection needed — the agent never asks you to sign anything.</div>
@@ -272,6 +283,47 @@ async function loadLedger() {
     j.entries.map(e => `<tr><td><small>${e.ts.replace('T', ' ').slice(0, 19)}</small></td><td>${e.capabilityId}<br><small>${e.query || ''}</small></td><td>${e.priceUsd != null ? '$' + e.priceUsd : '—'}</td><td>${e.status}${e.txHash ? `<br><small><a href="https://celo-sepolia.blockscout.com/tx/${e.txHash}" target="_blank" rel="noopener">tx ↗</a></small>` : ''}</td></tr>`).join('') + '</table>';
 }
 
+function parseQuotePrice(text) {
+  const m = String(text || '').match(/(\d+(?:\.\d+)?)\s*(USDC|CELO)/i);
+  if (m) return { amount: m[1], currency: m[2].toUpperCase() };
+  const cap = currentCap();
+  return { amount: String(cap.maxUsd || ''), currency: 'USDC' };
+}
+
+function taskSummary() {
+  const cap = currentCap();
+  if (Array.isArray(cap.multi) && cap.multi.length > 0) {
+    const o = $('origin').value.trim() || 'Dubai';
+    const d = $('destination').value.trim() || '';
+    const dt = $('flightDate').value.trim() || '2026-12-15';
+    return `${o} → ${d} · ${dt}`;
+  }
+  const key = cap.bodyKey || 'query';
+  return $('query').value.trim() || (key === 'username' ? 'binance' : 'celo');
+}
+
+function showQuoteModal(priceText) {
+  const cap = currentCap();
+  const p = parseQuotePrice(priceText);
+  $('quoteModalBody').innerHTML =
+    `<div style="font-size:28px; font-weight:700; color:var(--text);">$${p.amount} ${p.currency}</div>
+     <div style="margin-top:8px;">Service: ${escapeHtml(cap.title || cap.id || '')}</div>
+     <div>Task: ${escapeHtml(taskSummary())}</div>
+     <div>Network: Celo Sepolia (sandbox, free)</div>`;
+  $('quoteModal').style.display = 'flex';
+}
+
+function hideQuoteModal() {
+  $('quoteModal').style.display = 'none';
+}
+
+$('quoteCancelBtn').onclick = hideQuoteModal;
+
+$('quotePayBtn').onclick = () => {
+  hideQuoteModal();
+  $('runBtn').click();
+};
+
 function flightInputError() {
   const cap = currentCap();
   if (!Array.isArray(cap.multi) || !cap.multi.length) return '';
@@ -298,14 +350,13 @@ $('quoteBtn').onclick = async () => {
   $('quoteBtn').disabled = true;
   $('runBtn').disabled = true;
   $('quoteBtn').textContent = 'Checking…';
-  $('quoteBox').innerHTML = '<div class="quote">Asking for a price…</div>';
   const r = await fetch('/api/quote', { method: 'POST', headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ capabilityId: selectedCapId, body: requestBody() }) });
   const j = await r.json();
-  $('quoteBox').innerHTML = '<div class="quote">' + escapeHtml(j.output || JSON.stringify(j)) + '</div>';
   $('quoteBtn').disabled = false;
   $('runBtn').disabled = false;
   $('quoteBtn').textContent = 'Check price first';
+  showQuoteModal(j.output || JSON.stringify(j));
 };
 
 $('runBtn').onclick = async () => {
