@@ -140,15 +140,17 @@
       <p class="mono" style="margin-top:12px;">0x0D89830F241383535c3708b6c521F09Ee7cddb1e</p>
       <p class="muted">Same address on Celo, BNB Chain and Ethereum.<br>Balance: 22.5 CELO, 1.02 USDC</p>
     </div>
-    <div class="card">
+    <div class="card" style="background:linear-gradient(135deg, rgba(212,175,55,.14), rgba(212,175,55,.03)); border:1px solid rgba(212,175,55,.45);">
       <h3 style="margin-top:0">Session key <span class="tag">ACTIVE</span></h3>
       <table style="margin-top:12px;">
         <tr><td>Status</td><td><span class="ok">Active</span> — granted onchain, recorded in Keystore</td></tr>
         <tr><td>Spend cap</td><td>$0.50 / day (USDC)</td></tr>
-        <tr><td>Used today</td><td>$0.005</td></tr>
+        <tr><td>Used today</td><td>$0.005 of $0.50
+          <div style="height:8px; border-radius:99px; background:rgba(255,255,255,.12); margin-top:6px; overflow:hidden;"><div style="width:1%; height:100%; border-radius:99px; background:var(--accent);"></div></div>
+          <span class="muted" style="font-size:12px;">1% used</span></td></tr>
         <tr><td>Allowed contracts</td><td>x402 facilitator, buy gateway</td></tr>
         <tr><td>Expires</td><td>2026-12-07 16:00 WIB</td></tr>
-        <tr><td>Keystore proof</td><td><span class="mono">explorer.altana.network</span></td></tr>
+        <tr><td>Keystore proof</td><td><a href="https://explorer.altana.network" target="_blank" rel="noopener">explorer.altana.network ↗</a> · <a href="https://celo-sepolia.blockscout.com/address/0xCC3df52B6aD826781AAD86EcEB1459ed0b1Ae3F6" target="_blank" rel="noopener">Keystore contract ↗</a></td></tr>
       </table>
       <button class="danger" id="revokeBtn" style="width:100%; margin-top:14px;">Revoke session (demo)</button>
       <p class="muted" id="revokeNote" style="margin-top:10px">Demo only — this button does not revoke onchain. Real revoking needs the wallet owner's signature (1 transaction) and takes effect before the agent's next action. The agent can never act beyond these limits — a call outside them reverts onchain.</p>
@@ -156,6 +158,7 @@
     <div class="card">
       <h3 style="margin-top:0">What the agent did with this wallet</h3>
       <table>
+        <tr><td>Session granted</td><td>onchain, Keystore · <a href="https://celo-sepolia.blockscout.com/tx/0x8ad58db9195e85facbc3330a463e3399c35a906ec9207238623e2cd34a3b1b9b" target="_blank" rel="noopener">tx ↗</a></td></tr>
         <tr><td>x402 API</td><td>$0.005/call · settled: <a href="https://celo-sepolia.blockscout.com/tx/0x85763827f3df0e07f9e656ebd86e527b23bd7b893d700930e23ab3ba69832563" target="_blank" rel="noopener">tx ↗</a></td></tr>
         <tr><td>Session execute</td><td>0.0001 CELO · <a href="https://celo-sepolia.blockscout.com/tx/0x3e84f904ab9b6f2efad2cc4d1d0e10f92fd7263e7c4824adb3b23df21c4c19d7" target="_blank" rel="noopener">tx ↗</a></td></tr>
       </table>
