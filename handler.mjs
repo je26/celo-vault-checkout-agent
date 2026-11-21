@@ -34,16 +34,42 @@ const SANDBOX = NETWORK === 'sandbox';
 const ATTRIBUTION_TAG = 'celo_2da564e80a18';
 
 // Agent card: approved sellers and their per-call caps (USDC).
+// bodyKey is the request-body field the gateway expects for that service.
 const ALLOWLIST = {
   'youtube.videos.search': {
     url: 'https://gateway.usebuy.ai/v1/social/youtube/videos/search',
     maxUsd: 0.01,
     title: 'Search YouTube videos',
+    bodyKey: 'query',
+    inputLabel: 'Task / keywords',
   },
   'x.posts.search': {
     url: 'https://gateway.usebuy.ai/v1/social/x/posts/search',
     maxUsd: 0.01,
     title: 'Search X posts',
+    bodyKey: 'query',
+    inputLabel: 'Task / keywords',
+  },
+  'reddit.posts.search': {
+    url: 'https://gateway.usebuy.ai/v1/social/reddit/posts/search',
+    maxUsd: 0.01,
+    title: 'Search Reddit',
+    bodyKey: 'query',
+    inputLabel: 'Task / keywords',
+  },
+  'instagram.profile': {
+    url: 'https://gateway.usebuy.ai/v1/social/instagram/profile',
+    maxUsd: 0.01,
+    title: 'Read an Instagram profile',
+    bodyKey: 'username',
+    inputLabel: 'Username (without @)',
+  },
+  'tiktok.profile': {
+    url: 'https://gateway.usebuy.ai/v1/social/tiktok/profile',
+    maxUsd: 0.01,
+    title: 'Read a TikTok profile',
+    bodyKey: 'username',
+    inputLabel: 'Username (without @)',
   },
 };
 const DAILY_CAP_USD = 0.5;
@@ -174,7 +200,7 @@ export async function handleRequest(req, res) {
       const cat = await getCatalog();
       const caps = (cat.capabilities || [])
         .filter((c) => ALLOWLIST[c.id])
-        .map((c) => ({ id: c.id, title: c.title, url: c.url, price: c.price, maxUsd: ALLOWLIST[c.id].maxUsd }))
+        .map((c) => ({ id: c.id, title: c.title, url: c.url, price: c.price, maxUsd: ALLOWLIST[c.id].maxUsd, bodyKey: ALLOWLIST[c.id].bodyKey, inputLabel: ALLOWLIST[c.id].inputLabel }))
         // Working services first: the X posts route 502s often at the provider.
         .sort((a, b) => (a.id === 'youtube.videos.search' ? -1 : b.id === 'youtube.videos.search' ? 1 : 0));
       sendJson(res, 200, { capabilities: caps, network: NETWORK, attributionTag: ATTRIBUTION_TAG });
@@ -208,7 +234,7 @@ export async function handleRequest(req, res) {
     const entry = {
       ts: new Date().toISOString(),
       capabilityId: body.capabilityId,
-      query: (body.body && body.body.query) || '',
+      query: (body.body && (body.body.query || body.body.username)) || '',
       network: NETWORK,
       maxUsd: cap.maxUsd,
       status: 'unknown',

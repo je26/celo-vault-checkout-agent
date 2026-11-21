@@ -46,7 +46,7 @@
   <div class="card">
     <label for="service">Service (approved)</label>
     <select id="service"></select>
-    <label for="query">Task / keywords</label>
+    <label for="query" id="queryLabel">Task / keywords</label>
     <input type="text" id="query" value="celo" maxlength="512" placeholder="e.g. celo">
     <div class="row">
       <button class="ghost" id="quoteBtn">Check price first</button>
@@ -79,12 +79,76 @@
 const $ = (id) => document.getElementById(id);
 let caps = [];
 
+function currentCap() { return caps.find(c => c.id === $('service').value) || caps[0] || {}; }
+
+// The input field adapts to the service: search services take keywords,
+// profile services take a username.
+function syncInput() {
+  const cap = currentCap();
+  const key = cap.bodyKey || 'query';
+  $('queryLabel').textContent = cap.inputLabel || 'Task / keywords';
+  $('query').placeholder = key === 'username' ? 'e.g. nasa' : 'e.g. celo';
+  if (key === 'username' && $('query').value.trim() === 'celo') $('query').value = 'nasa';
+  if (key === 'query' && $('query').value.trim() === 'nasa') $('query').value = 'celo';
+}
+
+function requestBody() {
+  const cap = currentCap();
+  const key = cap.bodyKey || 'query';
+  const v = $('query').value.trim() || (key === 'username' ? 'nasa' : 'celo');
+  return { [key]: v };
+}
+
+function profileRows(uname, name, bio, followers, following, media, verified) {
+  const rows = [];
+  if (uname) rows.push(`<b>@${escapeHtml(String(uname))}</b>${name ? ' — ' + escapeHtml(String(name)) : ''}`);
+  if (bio) rows.push(`<small>${escapeHtml(String(bio))}</small>`);
+  const stats = [followers != null ? Number(followers).toLocaleString() + ' followers' : '', following != null ? Number(following).toLocaleString() + ' following' : '', media != null && Number(media) > 0 ? Number(media).toLocaleString() + ' posts' : '', verified ? 'verified' : ''].filter(Boolean).join(' · ');
+  if (stats) rows.push(`<small>${escapeHtml(stats)}</small>`);
+  return rows.map(r => `<div class="item">${r}</div>`).join('');
+}
+
+function renderResult(out) {
+  const videos = out.videos || [];
+  if (Array.isArray(videos) && videos.length) {
+    return videos.slice(0, 10).map(v => `<div class="item"><b><a href="https://www.youtube.com/watch?v=${v.video_id}" target="_blank" rel="noopener">${escapeHtml(v.title || v.video_id)}</a></b><small>${escapeHtml(v.author || '')} · ${v.number_of_views != null ? Number(v.number_of_views).toLocaleString() + ' views' : ''} · ${escapeHtml(v.video_length || '')}</small></div>`).join('');
+  }
+  const children = out.children || [];
+  if (Array.isArray(children) && children.length && children[0].post) {
+    return children.slice(0, 10).map(c => {
+      const p = c.post || {};
+      const title = p.postTitle || p.title || '';
+      const author = (p.authorInfo && p.authorInfo.name) || p.author || '';
+      const sub = (p.subreddit && (p.subreddit.prefixedName || ('r/' + p.subreddit.name))) || '';
+      const meta = [author, sub, p.score != null ? Number(p.score).toLocaleString() + ' upvotes' : '', p.commentCount != null ? p.commentCount + ' comments' : ''].filter(Boolean).join(' · ');
+      const link = p.url || (p.permalink ? 'https://www.reddit.com' + p.permalink : '');
+      return `<div class="item"><b>${link ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener">${escapeHtml(title)}</a>` : escapeHtml(title)}</b>${meta ? `<small>${escapeHtml(meta)}</small>` : ''}</div>`;
+    }).join('');
+  }
+  const ui = out.userInfo || null;
+  if (ui && ui.user) {
+    const u = ui.user, st = ui.stats || {};
+    const rows = profileRows(u.uniqueId, u.nickname, u.signature, st.followerCount, st.followingCount, st.videoCount, u.verified);
+    if (rows) return rows;
+  }
+  if (out.username) {
+    const followers = out.edge_followed_by && out.edge_followed_by.count;
+    const following = out.edge_follow && out.edge_follow.count;
+    const media = out.edge_owner_to_timeline_media && out.edge_owner_to_timeline_media.count;
+    const rows = profileRows(out.username, out.full_name, out.biography, followers, following, media, out.is_verified);
+    if (rows) return rows;
+  }
+  return '<pre class="quote">' + escapeHtml(JSON.stringify(out).slice(0, 2000)) + '</pre>';
+}
+
 async function loadCaps() {
   const r = await fetch('/api/catalog');
   const j = await r.json();
   caps = j.capabilities || [];
   $('service').innerHTML = caps.map(c =>
     `<option value="${c.id}">${c.title} — max $${c.maxUsd} / call</option>`).join('');
+  $('service').onchange = syncInput;
+  syncInput();
   $('networkPill').textContent = 'Network: ' + (j.network === 'mainnet' ? 'Celo mainnet' : 'Celo Sepolia (sandbox, free)');
   loadLedger();
 }
@@ -102,7 +166,7 @@ $('quoteBtn').onclick = async () => {
   $('quoteBtn').disabled = true;
   $('quoteBox').innerHTML = '<div class="quote">Asking for a price…</div>';
   const r = await fetch('/api/quote', { method: 'POST', headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ capabilityId: $('service').value, body: { query: $('query').value.trim() || 'celo' } }) });
+    body: JSON.stringify({ capabilityId: $('service').value, body: requestBody() }) });
   const j = await r.json();
   $('quoteBox').innerHTML = '<div class="quote">' + escapeHtml(j.output || JSON.stringify(j)) + '</div>';
   $('quoteBtn').disabled = false;
@@ -114,7 +178,7 @@ $('runBtn').onclick = async () => {
   $('resultCard').style.display = 'none';
   $('quoteBox').innerHTML = '<div class="quote">Agent is paying and running…</div>';
   const r = await fetch('/api/run', { method: 'POST', headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ capabilityId: $('service').value, body: { query: $('query').value.trim() || 'celo' } }) });
+    body: JSON.stringify({ capabilityId: $('service').value, body: requestBody() }) });
   const j = await r.json();
   const e = j.entry || {};
   $('quoteBox').innerHTML = '';
@@ -124,11 +188,8 @@ $('runBtn').onclick = async () => {
       Service: ${e.capabilityId}<br>Price: $${e.priceUsd} USDC<br>
       Transaction: <a href="https://celo-sepolia.blockscout.com/tx/${e.txHash}" target="_blank" rel="noopener">${e.txHash}</a>`;
     const out = e.result || {};
-    const videos = out.videos || [];
     $('resultCard').style.display = '';
-    $('resultBox').innerHTML = videos.length
-      ? videos.slice(0, 10).map(v => `<div class="item"><b><a href="https://www.youtube.com/watch?v=${v.video_id}" target="_blank" rel="noopener">${escapeHtml(v.title || v.video_id)}</a></b><small>${escapeHtml(v.author || '')} · ${v.number_of_views != null ? Number(v.number_of_views).toLocaleString() + ' views' : ''} · ${escapeHtml(v.video_length || '')}</small></div>`).join('')
-      : '<pre class="quote">' + escapeHtml(JSON.stringify(out).slice(0, 2000)) + '</pre>';
+    $('resultBox').innerHTML = renderResult(out);
   } else {
     $('receiptCard').style.display = '';
     $('receiptCard').innerHTML = `<span class="bad">✗ ${e.status === 'ambiguous' ? 'Status unclear' : 'Failed'}</span><br>${escapeHtml(e.error || j.error || 'Payment did not complete. Check the ledger before retrying.')}`;

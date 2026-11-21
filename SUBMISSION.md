@@ -34,6 +34,14 @@ settlement transaction hash.
 - Settled through the agent UI: tx
   `0x8ce72a7e568df84b8cbca387c99b15bd6afed8c8b1619a0a232822da358ff71c`,
   0.005 USDC, 20 YouTube results.
+- Three more services verified settled (2026-11-21 ~12:15 WIB, 0.005 USDC
+  each): Reddit post search "celo" (tx
+  `0x381f333e235110a4ee6f65fb0bbc067b19037054c1ca0c878508e7b372706d15`, 7 posts),
+  Instagram profile @nasa (tx
+  `0x12ec03f3077498b4ec1dbab18f78a314b2150ba9e8f40dc529c47ddd9ebc0772`,
+  104,325,121 followers), TikTok profile @nasa (tx
+  `0x5767fbfd7e77d13702a1ec0d20f8900da12ca2373a3a6e34dd577afc6b3faf98`,
+  2,200,000 followers).
 - Demo video (English): `demo/demo-vault-checkout-agent-en.mp4` (28.7s, MP4).
 - Policy proof: a capability outside the allowlist is refused with 403.
 
@@ -54,6 +62,9 @@ settlement transaction hash.
   (`loops auth login`, Google/GitHub) or email code.
 - **Attribution tag: `celo_2da564e80a18`** — must be in every transaction the
   agent sends directly; untagged transactions are never credited, no backfill.
+  Confirmed by the platform via `loops project get` (2026-11-21 ~11:38).
+  dataSuffix to append to direct tx data:
+  `0x63656c6f5f326461353634653830613138110080218021802180218021802180218021`.
   For x402 payments through buy, attribution rides the agent wallet address
   (the facilitator sends the settlement tx, so the tag cannot be attached
   to it).
@@ -65,6 +76,10 @@ settlement transaction hash.
   the deadline.
 - [x] Owner clicks Enroll on Loops House. — DONE 2026-11-21 ~11:31 WIB (email Loops House: "You're enrolled in Agents Open for Business", Jejeje26).
 - [ ] Agent wallet (mainnet) created/funded; address entered at submit.
+  - Address (burner, made by the owner 2026-11-21): `0x0D89830F241383535c3708b6c521F09Ee7cddb1e`.
+  - Verified live on Celo mainnet (Forno, 2026-11-21 ~11:42): 0 CELO, 0 txs —
+    fresh and empty. Needs USDC + a little CELO for gas before any mainnet tx.
+  - NOT yet registered in Loops; register at project create/submit time.
 - [ ] ERC-8004 identity registered from the agent wallet.
 - [ ] Direct transactions carry the tag (via `toDataSuffix`); x402 calls
   attribute via the wallet address.

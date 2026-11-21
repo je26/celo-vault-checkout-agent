@@ -29,7 +29,11 @@ mainnet only** (chain 42220); testnet activity does not count.
 
 ## What it does
 
-You type a task ("search YouTube for celo"). The agent:
+You type a task ("search YouTube for celo", or look up an Instagram/TikTok
+profile). The agent:
+
+Approved services (5, each 0.005 USDC per call): YouTube video search,
+X post search, Reddit post search, Instagram profile, TikTok profile.
 
 1. **Quotes first** — asks buy for the exact price before any money moves.
 2. **Checks the agent card** — only allowlisted (approved) services can be
@@ -86,6 +90,17 @@ VAULT_NETWORK=mainnet VAULT_MAINNET_OK=1 npm start
 - Note: the buy gateway's X posts search route returned HTTP 502 twice during
   testing (provider-side); the agent records such payments as `ambiguous` and
   never retries them blindly.
+- Three more services verified settled on Celo Sepolia (2026-11-21 ~12:15 WIB,
+  0.005 USDC each):
+  - Reddit post search "celo": tx
+    `0x381f333e235110a4ee6f65fb0bbc067b19037054c1ca0c878508e7b372706d15`,
+    7 posts.
+  - Instagram profile @nasa: tx
+    `0x12ec03f3077498b4ec1dbab18f78a314b2150ba9e8f40dc529c47ddd9ebc0772`,
+    104,325,121 followers.
+  - TikTok profile @nasa: tx
+    `0x5767fbfd7e77d13702a1ec0d20f8900da12ca2373a3a6e34dd577afc6b3faf98`,
+    2,200,000 followers.
 
 ## Stack
 
