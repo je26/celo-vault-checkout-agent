@@ -69,8 +69,7 @@
       <input type="text" id="flightDate" value="2026-12-15" maxlength="10" placeholder="2026-12-15">
     </div>
     <div class="row">
-      <button class="ghost" id="quoteBtn">Check price first</button>
-      <button class="primary" id="runBtn">Pay &amp; run</button>
+      <button class="ghost" id="quoteBtn">Check price</button>
     </div>
     <div id="quoteBox"></div>
   </div>
@@ -320,8 +319,7 @@ function hideQuoteModal() {
 $('quoteCancelBtn').onclick = hideQuoteModal;
 
 $('quotePayBtn').onclick = () => {
-  hideQuoteModal();
-  $('runBtn').click();
+  runPayment();
 };
 
 function flightInputError() {
@@ -348,32 +346,29 @@ $('quoteBtn').onclick = async () => {
   if (ferr) { showFormError(ferr); return; }
   showFormError('');
   $('quoteBtn').disabled = true;
-  $('runBtn').disabled = true;
   $('quoteBtn').textContent = 'Checking…';
   const r = await fetch('/api/quote', { method: 'POST', headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ capabilityId: selectedCapId, body: requestBody() }) });
   const j = await r.json();
   $('quoteBtn').disabled = false;
-  $('runBtn').disabled = false;
-  $('quoteBtn').textContent = 'Check price first';
+  $('quoteBtn').textContent = 'Check price';
   showQuoteModal(j.output || JSON.stringify(j));
 };
 
-$('runBtn').onclick = async () => {
+async function runPayment() {
   const ferr = flightInputError();
   if (ferr) { showFormError(ferr); return; }
   showFormError('');
-  $('runBtn').disabled = true;
-  $('quoteBtn').disabled = true;
-  $('runBtn').textContent = 'Processing…';
+  $('quotePayBtn').disabled = true;
+  $('quoteCancelBtn').disabled = true;
+  $('quotePayBtn').textContent = 'Processing…';
   $('receiptCard').style.display = 'none';
   $('resultCard').style.display = 'none';
-  $('quoteBox').innerHTML = '<div class="quote">Agent is paying and running…</div>';
+  $('quoteModalBody').innerHTML = '<div class="quote">Agent is paying and running…</div>';
   const r = await fetch('/api/run', { method: 'POST', headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ capabilityId: selectedCapId, body: requestBody() }) });
   const j = await r.json();
   const e = j.entry || {};
-  $('quoteBox').innerHTML = '';
   if (e.status === 'settled') {
     $('receiptCard').style.display = '';
     $('receiptCard').innerHTML = `<span class="ok">✓ Payment settled</span><br>
@@ -386,11 +381,12 @@ $('runBtn').onclick = async () => {
     $('receiptCard').style.display = '';
     $('receiptCard').innerHTML = `<span class="bad">✗ ${e.status === 'ambiguous' ? 'Status unclear' : 'Failed'}</span><br>${escapeHtml(e.error || j.error || 'Payment did not complete. Check the ledger before retrying.')}`;
   }
-  $('runBtn').disabled = false;
-  $('quoteBtn').disabled = false;
-  $('runBtn').textContent = 'Pay & run';
+  $('quotePayBtn').disabled = false;
+  $('quoteCancelBtn').disabled = false;
+  $('quotePayBtn').textContent = 'Pay & run';
+  hideQuoteModal();
   loadLedger();
-};
+}
 
 async function loadWallet() {
   try {
