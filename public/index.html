@@ -16,7 +16,7 @@
   #capDesc { font-size: 14px; color: #c3c7d3; }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--text); font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif; }
-  .wrap { max-width: 720px; margin: 0 auto; padding: 24px 16px 80px; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 24px 16px; }
   h1 { font-family: "Space Grotesk", "Inter", system-ui, sans-serif; font-size: 30px; font-weight: 700; letter-spacing: -0.5px; margin: 8px 0 4px; }
   h1 span { color: var(--accent); }
   h3 { font-family: "Space Grotesk", "Inter", system-ui, sans-serif; font-weight: 600; letter-spacing: -0.2px; }
@@ -51,7 +51,7 @@
   .muted { color: var(--muted); font-size: 13px; line-height: 1.5; }
   .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid var(--accent); border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: -3px; margin-right: 8px; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .footer-fixed { position: fixed; bottom: 0; left: 0; right: 0; text-align: center; background: #10101a; color: var(--muted); font-size: 13px; padding: 10px 16px; margin: 0; border-top: 1px solid var(--border); z-index: 10; }
+  .footer { text-align: center; color: var(--muted); font-size: 13px; padding: 16px; margin: 0; border-top: 1px solid var(--border); }
 </style>
 </head>
 <body>
@@ -117,7 +117,7 @@
 
   <p class="muted" style="text-align:center">Built for the Celo “Agents Open for Business” hackathon — Agent Vault track.</p>
 
-  <p class="footer-fixed">© 2026 Sanjaya Purba</p>
+  <p class="footer">© 2026 Sanjaya Purba</p>
 </div>
 <script>
 const $ = (id) => document.getElementById(id);
@@ -216,18 +216,49 @@ function profileRows(uname, name, bio, followers, following, media, verified, pr
   return rows.map(r => `<div class="item">${r}</div>`).join('');
 }
 
+// Flight results: one at a time (item 28), with prev/next navigation.
+let currentFlights = [];
+let flightIdx = 0;
+let flightHead = '';
+
+function flightItemHtml(f) {
+  const title = `${f.airline || ''} ${f.flight_number || ''}`.trim();
+  const times = `${f.departure_time || ''} → ${f.arrival_time || ''}`;
+  const meta = [times, f.duration || '', f.stops_detail || '', f.price || ''].filter(Boolean).join(' · ');
+  const link = f.booking_url || '';
+  return `<div class="item"><b>${link ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener">${escapeHtml(title)}</a>` : escapeHtml(title)}</b>${meta ? `<small>${escapeHtml(meta)}</small>` : ''}</div>`;
+}
+
+function renderFlightsPage() {
+  const n = currentFlights.length;
+  if (!n) return '';
+  const nav = `<div class="row" style="margin-top:10px;">
+    <button class="ghost" id="flightPrevBtn" ${flightIdx === 0 ? 'disabled' : ''}>‹ Previous</button>
+    <span class="muted" style="align-self:center">${flightIdx + 1} of ${n}</span>
+    <button class="ghost" id="flightNextBtn" ${flightIdx === n - 1 ? 'disabled' : ''}>Next ›</button>
+  </div>`;
+  return flightHead + flightItemHtml(currentFlights[flightIdx]) + nav;
+}
+
+function bindFlightNav() {
+  const prev = $('flightPrevBtn');
+  const next = $('flightNextBtn');
+  if (prev) prev.onclick = () => { if (flightIdx > 0) { flightIdx--; $('resultBox').innerHTML = renderFlightsPage(); bindFlightNav(); } };
+  if (next) next.onclick = () => { if (flightIdx < currentFlights.length - 1) { flightIdx++; $('resultBox').innerHTML = renderFlightsPage(); bindFlightNav(); } };
+}
+
 function renderResult(out) {
+  currentFlights = [];
+  flightIdx = 0;
+  flightHead = '';
   const flightList = (out.flights && out.flights.flights) || [];
   if (Array.isArray(flightList) && flightList.length) {
     const sp = out.search_params || {};
-    const head = sp.origin && sp.destination ? `<div class="item"><b>${escapeHtml(sp.origin)} → ${escapeHtml(sp.destination)}</b><small>${escapeHtml(sp.depart_date || '')} · one-way · prices in USD</small></div>` : '';
-    return head + flightList.slice(0, 10).map(f => {
-      const title = `${f.airline || ''} ${f.flight_number || ''}`.trim();
-      const times = `${f.departure_time || ''} → ${f.arrival_time || ''}`;
-      const meta = [times, f.duration || '', f.stops_detail || '', f.price || ''].filter(Boolean).join(' · ');
-      const link = f.booking_url || '';
-      return `<div class="item"><b>${link ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener">${escapeHtml(title)}</a>` : escapeHtml(title)}</b>${meta ? `<small>${escapeHtml(meta)}</small>` : ''}</div>`;
-    }).join('');
+    flightHead = sp.origin && sp.destination ? `<div class="item"><b>${escapeHtml(sp.origin)} → ${escapeHtml(sp.destination)}</b><small>${escapeHtml(sp.depart_date || '')} · one-way · prices in USD</small></div>` : '';
+    currentFlights = flightList.slice(0, 10);
+    flightIdx = 0;
+    setTimeout(bindFlightNav, 0);
+    return renderFlightsPage();
   }
   const videos = out.videos || [];
   if (Array.isArray(videos) && videos.length) {
@@ -319,10 +350,21 @@ async function loadCaps() {
 async function loadLedger() {
   const r = await fetch('/api/ledger');
   const j = await r.json();
-  $('spentLine').textContent = `— spent today $${Number(j.spentTodayUsd || 0).toFixed(3)} of $${j.dailyCapUsd} cap`;
-  if (!j.entries.length) { $('ledgerBox').textContent = 'No payments yet.'; return; }
+  let entries = j.entries || [];
+  // Merge this browser's saved entries so the Ledger survives a refresh
+  // even when the server-side ledger file is empty (item 31).
+  let local = [];
+  try { local = JSON.parse(localStorage.getItem('vaultLedger') || '[]'); } catch (err) { local = []; }
+  const seen = new Set(entries.map(e => e.txHash).filter(Boolean));
+  const extra = local.filter(e => e.txHash && !seen.has(e.txHash));
+  entries = [...entries, ...extra].sort((a, b) => String(b.ts || '').localeCompare(String(a.ts || '')));
+  let spent = Number(j.spentTodayUsd || 0);
+  const today = new Date().toISOString().slice(0, 10);
+  extra.forEach(e => { if (String(e.ts || '').startsWith(today) && e.status === 'settled') spent += Number(e.priceUsd || 0); });
+  $('spentLine').textContent = `— spent today $${spent.toFixed(3)} of $${j.dailyCapUsd} cap`;
+  if (!entries.length) { $('ledgerBox').textContent = 'No payments yet.'; return; }
   $('ledgerBox').innerHTML = '<table><tr><th>Time</th><th>Service</th><th>Price</th><th>Status</th></tr>' +
-    j.entries.map(e => `<tr><td><small>${e.ts.replace('T', ' ').slice(0, 19)}</small></td><td>${e.capabilityId}<br><small>${e.query || ''}</small></td><td>${e.priceUsd != null ? '$' + e.priceUsd : '—'}</td><td>${e.status}${e.txHash ? `<br><small><a href="https://celo-sepolia.blockscout.com/tx/${e.txHash}" target="_blank" rel="noopener">tx ↗</a></small>` : ''}</td></tr>`).join('') + '</table>';
+    entries.map(e => `<tr><td><small>${e.ts.replace('T', ' ').slice(0, 19)}</small></td><td>${e.capabilityId}<br><small>${e.query || ''}</small></td><td>${e.priceUsd != null ? '$' + e.priceUsd : '—'}</td><td>${e.status}${e.txHash ? `<br><small><a href="https://celo-sepolia.blockscout.com/tx/${e.txHash}" target="_blank" rel="noopener">tx ↗</a></small>` : ''}</td></tr>`).join('') + '</table>';
 }
 
 function parseQuotePrice(text) {
@@ -365,7 +407,10 @@ function showQuoteModal(priceText) {
 }
 
 function hideQuoteModal() {
+  // Keep the page position exactly where it was (item 27).
+  const y = window.scrollY;
   $('quoteModal').style.display = 'none';
+  window.scrollTo(0, y);
 }
 
 $('quoteCancelBtn').onclick = hideQuoteModal;
@@ -436,10 +481,20 @@ async function runPayment() {
   const e = j.entry || {};
   if (e.status === 'settled') {
     $('receiptCard').style.display = '';
-    $('receiptCard').innerHTML = `<span class="ok">✓ Payment settled</span><br>
-      Service: ${e.capabilityId}<br>Price: $${e.priceUsd} USDC<br>
-      Transaction: <a href="https://celo-sepolia.blockscout.com/tx/${e.txHash}" target="_blank" rel="noopener">${e.txHash}</a><br>
+    $('receiptCard').innerHTML = `<span class="ok">✓ Payment settled</span>
+      <table>
+        <tr><td>Service</td><td>${escapeHtml(e.capabilityId)}</td></tr>
+        <tr><td>Price</td><td>$${e.priceUsd} USDC</td></tr>
+        <tr><td>Transaction</td><td><a href="https://celo-sepolia.blockscout.com/tx/${e.txHash}" target="_blank" rel="noopener">${e.txHash}</a></td></tr>
+        <tr><td>Status</td><td>settled</td></tr>
+      </table>
       <span class="muted">Payment successful. The agent paid $${e.priceUsd} USDC for this task — the results are below.</span>`;
+    // Save a copy in this browser so the Ledger survives a refresh (item 31).
+    try {
+      const local = JSON.parse(localStorage.getItem('vaultLedger') || '[]');
+      local.push({ ts: e.ts || new Date().toISOString(), capabilityId: e.capabilityId, query: e.query || '', priceUsd: e.priceUsd, status: e.status, txHash: e.txHash });
+      localStorage.setItem('vaultLedger', JSON.stringify(local.slice(-50)));
+    } catch (err) { /* localStorage unavailable */ }
     const out = e.result || {};
     $('resultCard').style.display = '';
     $('resultBox').innerHTML = renderResult(out);
