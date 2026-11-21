@@ -10,6 +10,12 @@
 <style>
   :root { --accent: #0d9488; --accent2: #2dd4bf; --link: #f3f4f6; --bg: #10101a; --card: #1b1b2a; --text: #f3f4f6; --muted: #9ca3af; --green: #4ade80; --red: #f87171; --border: #2a2a3a; color-scheme: dark; }
   input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.8; cursor: pointer; }
+  /* Single-field services (YouTube/IG/TikTok/Reddit): make the one input taller
+     and the description brighter so the card does not look empty. */
+  #query { padding: 16px 12px; font-size: 17px; }
+  #capDesc { font-size: 14px; color: #c3c7d3; }
+  .ex-chip { background: var(--input); color: var(--text); border: 1px solid var(--border); border-radius: 999px; padding: 6px 12px; font-size: 13px; cursor: pointer; }
+  .ex-chip:hover { border-color: var(--accent); }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--text); font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif; }
   .wrap { max-width: 720px; margin: 0 auto; padding: 24px 16px 80px; }
@@ -64,6 +70,7 @@
     <div id="capDesc" class="muted" style="margin-bottom:12px"></div>
     <label for="query" id="queryLabel" style="display:none">Task / keywords</label>
     <input type="text" id="query" value="celo" maxlength="512" placeholder="e.g. celo" style="display:none">
+    <div id="capExamples" style="display:none; margin-top:10px; display:flex; flex-wrap:wrap; gap:6px;"></div>
     <div id="flightFields">
       <label for="origin">Origin (city or airport code, e.g. Dubai or DXB)</label>
       <input type="text" id="origin" value="Dubai" maxlength="32" placeholder="Dubai or DXB">
@@ -144,6 +151,24 @@ function syncInput() {
   });
   $('capDesc').textContent = (CAP_DESC[cap.id] || cap.title || '') + ' $' + cap.maxUsd + ' per call.';
   const isFlights = Array.isArray(cap.multi) && cap.multi.length > 0;
+  // Example chips for single-field services: tap to fill the input.
+  const CAP_EXAMPLES = {
+    'youtube.videos.search': ['celo', 'bitcoin', 'drama china'],
+    'reddit.posts.search': ['celo', 'bitcoin', 'crypto'],
+    'instagram.profile': ['binance', 'nasa', 'celo'],
+    'tiktok.profile': ['binance', 'nasa', 'celo'],
+  };
+  const ex = CAP_EXAMPLES[cap.id] || [];
+  const exDiv = $('capExamples');
+  if (isFlights || !ex.length) {
+    exDiv.style.display = 'none';
+  } else {
+    exDiv.style.display = 'flex';
+    exDiv.innerHTML = ex.map(e => `<button type="button" class="ex-chip" data-ex="${e}">${e}</button>`).join('');
+    exDiv.querySelectorAll('.ex-chip').forEach(b => {
+      b.onclick = () => { $('query').value = b.dataset.ex; };
+    });
+  }
   $('flightFields').style.display = isFlights ? '' : 'none';
   $('query').style.display = isFlights ? 'none' : '';
   $('queryLabel').style.display = isFlights ? 'none' : '';
