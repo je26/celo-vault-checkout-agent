@@ -17,8 +17,9 @@ settlement transaction hash.
 ## Live demo
 
 - **https://nimble-basalt-d2dqfhk.tmp.now** — Vercel serverless, sandbox.
-  Temporary deployment (expires ~1h after deploy unless claimed into the
-  owner's Vercel account). First paid call from it settled 2026-11-21:
+  Claimed 2026-11-21 ~11:23 WIB into the owner's Vercel account as project
+  `nimble-basalt-d2dqfhk` — now permanent. First paid call from it settled
+  2026-11-21:
   tx `0x07f9c8cedc438c98a8743d382d7baedb4c8c16e6140d47a461665edb4bf4fbc0`
   (0.005 test USDC, YouTube search). The function auto-creates its own
   sandbox wallet and is auto-funded from the faucet; no private key is

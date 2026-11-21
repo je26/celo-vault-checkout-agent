@@ -11,8 +11,9 @@ rules. Built for the Celo **Agents Open for Business** hackathon (Nov 20 – Dec
 payment settles in test USDC with a receipt and a Blockscout link.
 
 > Temporary Vercel deployment (expires ~1h after deploy unless claimed into
-> the owner's Vercel account). Deployed 2026-11-21 ~11:15 WIB; first paid call
-> from the deployment settled: tx
+> the owner's Vercel account). CLAIMED 2026-11-21 ~11:23 WIB into the owner's
+> account as project `nimble-basalt-d2dqfhk` — now permanent. Deployed
+> 2026-11-21 ~11:15 WIB; first paid call from the deployment settled: tx
 > `0x07f9c8cedc438c98a8743d382d7baedb4c8c16e6140d47a461665edb4bf4fbc0`
 > (0.005 test USDC, YouTube search). The deployed function auto-creates its
 > own sandbox wallet and is auto-funded from the faucet — no private key is
