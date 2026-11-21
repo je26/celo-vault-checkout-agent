@@ -393,7 +393,8 @@ async function runPayment() {
     $('receiptCard').style.display = '';
     $('receiptCard').innerHTML = `<span class="ok">✓ Payment settled</span><br>
       Service: ${e.capabilityId}<br>Price: $${e.priceUsd} USDC<br>
-      Transaction: <a href="https://celo-sepolia.blockscout.com/tx/${e.txHash}" target="_blank" rel="noopener">${e.txHash}</a>`;
+      Transaction: <a href="https://celo-sepolia.blockscout.com/tx/${e.txHash}" target="_blank" rel="noopener">${e.txHash}</a><br>
+      <span class="muted">Payment successful. The agent paid $${e.priceUsd} USDC for this task — the results are below.</span>`;
     const out = e.result || {};
     $('resultCard').style.display = '';
     $('resultBox').innerHTML = renderResult(out);
