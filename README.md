@@ -32,8 +32,9 @@ mainnet only** (chain 42220); testnet activity does not count.
 You type a task ("search YouTube for celo", or look up an Instagram/TikTok
 profile). The agent:
 
-Approved services (5, each 0.005 USDC per call): YouTube video search,
-X post search, Reddit post search, Instagram profile, TikTok profile.
+Approved services (4, each 0.005 USDC per call): YouTube video search,
+Reddit post search, Instagram profile, TikTok profile. (X post search was
+removed 2026-11-21 ~12:31 WIB: the buy gateway route 502s at the provider.)
 
 1. **Quotes first** — asks buy for the exact price before any money moves.
 2. **Checks the agent card** — only allowlisted (approved) services can be
@@ -87,9 +88,10 @@ VAULT_NETWORK=mainnet VAULT_MAINNET_OK=1 npm start
   0.005 USDC, 20 YouTube results. Screen recording of that run:
   `demo/page@ce3824867e0238a39667fe76a011c7b5.webm` (reproduce it with
   `demo/record_demo.py`).
-- Note: the buy gateway's X posts search route returned HTTP 502 twice during
-  testing (provider-side); the agent records such payments as `ambiguous` and
-  never retries them blindly.
+- Note: the buy gateway's X posts search route returned HTTP 502 repeatedly
+  during testing (provider-side); the agent records such payments as
+  `ambiguous` and never retries them blindly. X was removed from the
+  allowlist 2026-11-21 ~12:31 WIB for that reason.
 - Three more services verified settled on Celo Sepolia (2026-11-21 ~12:15 WIB,
   0.005 USDC each):
   - Reddit post search "celo": tx

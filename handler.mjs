@@ -43,13 +43,6 @@ const ALLOWLIST = {
     bodyKey: 'query',
     inputLabel: 'Task / keywords',
   },
-  'x.posts.search': {
-    url: 'https://gateway.usebuy.ai/v1/social/x/posts/search',
-    maxUsd: 0.01,
-    title: 'Search X posts',
-    bodyKey: 'query',
-    inputLabel: 'Task / keywords',
-  },
   'reddit.posts.search': {
     url: 'https://gateway.usebuy.ai/v1/social/reddit/posts/search',
     maxUsd: 0.01,
