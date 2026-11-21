@@ -69,7 +69,7 @@
       <label for="destination">Destination (city or airport code, e.g. Singapura or SIN)</label>
       <input type="text" id="destination" value="Singapura" maxlength="32" placeholder="Singapura or SIN">
       <label for="flightDate">Departure date (YYYY-MM-DD)</label>
-      <input type="text" id="flightDate" value="2026-12-15" maxlength="10" placeholder="2026-12-15">
+      <input type="date" id="flightDate" value="2026-12-15">
     </div>
     <div class="row">
       <button class="ghost" id="quoteBtn">Check price</button>
@@ -431,6 +431,9 @@ $('copyAddrBtn').onclick = async () => {
 };
 
 function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+// Open the native calendar when the date field is tapped (some browsers only
+// show the keyboard unless showPicker is called explicitly).
+$('flightDate').addEventListener('click', () => { try { $('flightDate').showPicker(); } catch (e) {} });
 randomDestination();
 loadCaps();
 loadWallet();
