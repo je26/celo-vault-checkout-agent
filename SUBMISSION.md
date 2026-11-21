@@ -47,6 +47,11 @@ settlement transaction hash.
 
 - Platform: **Loops House**, event "Agents Open for Business". Enrollment is
   Step 2 of 2; the owner clicks **Enroll** on the event page.
+- Enroll URL: https://www.loops.house/agents-open-for-business/enroll
+- Loops CLI skill INSTALLED 2026-11-21 ~11:33 WIB in the project
+  (`.agents/skills/loops-agents-open-for-business/SKILL.md`, CLI v0.7.1).
+  Auth NOT done yet — needs the owner's browser login
+  (`loops auth login`, Google/GitHub) or email code.
 - **Attribution tag: `celo_2da564e80a18`** — must be in every transaction the
   agent sends directly; untagged transactions are never credited, no backfill.
   For x402 payments through buy, attribution rides the agent wallet address
@@ -66,6 +71,25 @@ settlement transaction hash.
 - [ ] Post on X tagging @CeloDevs + @Celo with the repo link — from the
   owner's OTHER X account (not @Beinztepn); needs his explicit go and the
   account handle.
+
+## Submission fields (from the Loops skill — authoritative)
+
+Track: Agent Vault, bounties 1st $700 (`4379f770-3b52-4bb9-93cf-a2853765658f`),
+2nd $300 (`ddee9cee-4065-43cd-a43b-c74aa9b55e74`). Judging: integration 30%,
+innovation/value 30%, named user + real job 25%, real use 15%.
+ERC-8004 registry (mainnet): `0x8004A169FB4a3325136EB29fA0ceB6D2e539a432`.
+Required extra fields: agent-wallet, team contacts, payout wallet on Celo,
+ERC-8004 agent ID, Self Agent ID (mainnet agentId), attribution tag, named
+user, founder/project X handles, follow @Celo + @CeloDevs on X.
+OPEN QUESTIONS: (1) Self Agent ID is listed required — Jeje has KTP only,
+no passport; verify whether the Agent Vault track really needs it.
+(2) Agent Vault integration gap: the agent pays via buy x402 but has no
+Agent Vault account/wallet yet (owner creates it at app.agentvault.io);
+the track's "Quality of the integration" (30%) needs Agent Vault central,
+not an add-on.
+Submission flow: `loops project fields` first, then `loops project create`
+WITHOUT --confirm (draft), show the draft, re-run with --confirm only
+after the owner's yes. Then `loops evaluate --sponsor agent-vault`.
 
 ## Draft X post (needs owner's go before posting)
 
