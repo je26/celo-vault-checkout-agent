@@ -111,7 +111,10 @@ function profileRows(uname, name, bio, followers, following, media, verified, pr
 function renderResult(out) {
   const videos = out.videos || [];
   if (Array.isArray(videos) && videos.length) {
-    return videos.slice(0, 10).map(v => `<div class="item"><b><a href="https://www.youtube.com/watch?v=${v.video_id}" target="_blank" rel="noopener">${escapeHtml(v.title || v.video_id)}</a></b><small>${escapeHtml(v.author || '')} · ${v.number_of_views != null ? Number(v.number_of_views).toLocaleString() + ' views' : ''} · ${escapeHtml(v.video_length || '')}</small></div>`).join('');
+    return videos.slice(0, 10).map(v => {
+      const authorLink = v.channel_id ? `<a href="https://www.youtube.com/channel/${encodeURIComponent(v.channel_id)}" target="_blank" rel="noopener">${escapeHtml(v.author || '')}</a>` : escapeHtml(v.author || '');
+      return `<div class="item"><b><a href="https://www.youtube.com/watch?v=${v.video_id}" target="_blank" rel="noopener">${escapeHtml(v.title || v.video_id)}</a></b><small>${authorLink} · ${v.number_of_views != null ? Number(v.number_of_views).toLocaleString() + ' views' : ''} · ${escapeHtml(v.video_length || '')}</small></div>`;
+    }).join('');
   }
   const children = out.children || [];
   if (Array.isArray(children) && children.length && children[0].post) {
@@ -120,9 +123,12 @@ function renderResult(out) {
       const title = p.postTitle || p.title || '';
       const author = (p.authorInfo && p.authorInfo.name) || p.author || '';
       const sub = (p.subreddit && (p.subreddit.prefixedName || ('r/' + p.subreddit.name))) || '';
-      const meta = [author, sub, p.score != null ? Number(p.score).toLocaleString() + ' upvotes' : '', p.commentCount != null ? p.commentCount + ' comments' : ''].filter(Boolean).join(' · ');
+      const subName = (p.subreddit && p.subreddit.name) || (sub ? sub.replace(/^r\//, '') : '');
+      const authorLink = author ? `<a href="https://www.reddit.com/user/${encodeURIComponent(author)}" target="_blank" rel="noopener">${escapeHtml(author)}</a>` : '';
+      const subLink = subName ? `<a href="https://www.reddit.com/r/${encodeURIComponent(subName)}" target="_blank" rel="noopener">${escapeHtml(sub)}</a>` : '';
+      const meta = [authorLink, subLink, p.score != null ? Number(p.score).toLocaleString() + ' upvotes' : '', p.commentCount != null ? p.commentCount + ' comments' : ''].filter(Boolean).join(' · ');
       const link = p.url || (p.permalink ? 'https://www.reddit.com' + p.permalink : '');
-      return `<div class="item"><b>${link ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener">${escapeHtml(title)}</a>` : escapeHtml(title)}</b>${meta ? `<small>${escapeHtml(meta)}</small>` : ''}</div>`;
+      return `<div class="item"><b>${link ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener">${escapeHtml(title)}</a>` : escapeHtml(title)}</b>${meta ? `<small>${meta}</small>` : ''}</div>`;
     }).join('');
   }
   const ui = out.userInfo || null;
