@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vault Checkout Agent — Celo</title>
+<style>
+  :root { --gold: #d4a017; --bg: #0d0d0f; --card: #17171b; --text: #f2ede3; --muted: #9a958a; --green: #3fb96a; --red: #d65454; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 24px 16px 64px; }
+  h1 { font-size: 26px; margin: 8px 0 4px; }
+  h1 span { color: var(--gold); }
+  p.sub { color: var(--muted); margin: 0 0 20px; line-height: 1.5; }
+  .card { background: var(--card); border: 1px solid #2a2a30; border-radius: 14px; padding: 18px; margin-bottom: 16px; }
+  label { display: block; font-size: 13px; color: var(--muted); margin: 12px 0 6px; }
+  select, input[type=text] { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #33333a; background: #101013; color: var(--text); font-size: 16px; }
+  .row { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+  button { flex: 1; min-width: 140px; padding: 13px; border-radius: 10px; border: none; font-size: 15px; font-weight: 700; cursor: pointer; }
+  button.primary { background: var(--gold); color: #171204; }
+  button.ghost { background: transparent; color: var(--gold); border: 1px solid var(--gold); }
+  button:disabled { opacity: .5; cursor: wait; }
+  .pill { display: inline-block; font-size: 12px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--gold); color: var(--gold); }
+  .quote { white-space: pre-wrap; font-family: ui-monospace, monospace; font-size: 13px; background: #101013; border-radius: 10px; padding: 12px; margin-top: 12px; max-height: 220px; overflow: auto; }
+  .receipt { border: 1px solid var(--green); }
+  .receipt a { color: var(--gold); word-break: break-all; }
+  .ok { color: var(--green); font-weight: 700; }
+  .bad { color: var(--red); font-weight: 700; }
+  .result { margin-top: 12px; }
+  .result a { color: var(--gold); }
+  .result .item { border-top: 1px solid #2a2a30; padding: 10px 0; }
+  .result .item b { display: block; margin-bottom: 2px; }
+  .result .item small { color: var(--muted); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  td, th { text-align: left; padding: 8px 4px; border-bottom: 1px solid #2a2a30; vertical-align: top; }
+  td small { color: var(--muted); }
+  .muted { color: var(--muted); font-size: 13px; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="pill" id="networkPill">…</span>
+  <h1>Vault <span>Checkout</span> Agent</h1>
+  <p class="sub">Agent yang belanja sendiri di Celo. Kamu ketik tugas, agent cek harga dulu, lalu bayar per panggilan lewat x402 dengan buy. Setiap pembayaran dibatasi agent card: hanya layanan yang disetujui, ada batas per panggilan dan batas harian. Agent tidak pernah pegang kunci dompet.</p>
+
+  <div class="card">
+    <label for="service">Layanan (yang disetujui)</label>
+    <select id="service"></select>
+    <label for="query">Tugas / kata kunci</label>
+    <input type="text" id="query" value="celo" maxlength="512" placeholder="mis. celo">
+    <div class="row">
+      <button class="ghost" id="quoteBtn">Lihat harga dulu</button>
+      <button class="primary" id="runBtn">Bayar &amp; jalankan</button>
+    </div>
+    <div id="quoteBox"></div>
+  </div>
+
+  <div class="card receipt" id="receiptCard" style="display:none"></div>
+  <div class="card" id="resultCard" style="display:none"><h3 style="margin-top:0">Hasil</h3><div class="result" id="resultBox"></div></div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Buku kas <span class="muted" id="spentLine"></span></h3>
+    <div id="ledgerBox" class="muted">Memuat…</div>
+  </div>
+
+  <p class="muted">Hackathon Celo “Agents Open for Business”, track Agent Vault. Pembayaran diuji di Celo Sepolia (test USDC, gratis dari faucet). Pindah ke mainnet hanya dengan VAULT_NETWORK=mainnet dan VAULT_MAINNET_OK=1.</p>
+</div>
+<script>
+const $ = (id) => document.getElementById(id);
+let caps = [];
+
+async function loadCaps() {
+  const r = await fetch('/api/catalog');
+  const j = await r.json();
+  caps = j.capabilities || [];
+  $('service').innerHTML = caps.map(c =>
+    `<option value="${c.id}">${c.title} — maks $${c.maxUsd} / panggilan</option>`).join('');
+  $('networkPill').textContent = 'Jaringan: ' + (j.network === 'mainnet' ? 'Celo mainnet' : 'Celo Sepolia (sandbox, gratis)');
+  loadLedger();
+}
+
+async function loadLedger() {
+  const r = await fetch('/api/ledger');
+  const j = await r.json();
+  $('spentLine').textContent = `— terpakai hari ini $${Number(j.spentTodayUsd || 0).toFixed(3)} dari batas $${j.dailyCapUsd}`;
+  if (!j.entries.length) { $('ledgerBox').textContent = 'Belum ada pembayaran.'; return; }
+  $('ledgerBox').innerHTML = '<table><tr><th>Waktu</th><th>Layanan</th><th>Harga</th><th>Status</th></tr>' +
+    j.entries.map(e => `<tr><td><small>${e.ts.replace('T', ' ').slice(0, 19)}</small></td><td>${e.capabilityId}<br><small>${e.query || ''}</small></td><td>${e.priceUsd != null ? '$' + e.priceUsd : '—'}</td><td>${e.status}${e.txHash ? `<br><small><a href="https://celo-sepolia.blockscout.com/tx/${e.txHash}" target="_blank" rel="noopener">tx ↗</a></small>` : ''}</td></tr>`).join('') + '</table>';
+}
+
+$('quoteBtn').onclick = async () => {
+  $('quoteBtn').disabled = true;
+  $('quoteBox').innerHTML = '<div class="quote">Meminta harga…</div>';
+  const r = await fetch('/api/quote', { method: 'POST', headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ capabilityId: $('service').value, body: { query: $('query').value.trim() || 'celo' } }) });
+  const j = await r.json();
+  $('quoteBox').innerHTML = '<div class="quote">' + escapeHtml(j.output || JSON.stringify(j)) + '</div>';
+  $('quoteBtn').disabled = false;
+};
+
+$('runBtn').onclick = async () => {
+  $('runBtn').disabled = true;
+  $('receiptCard').style.display = 'none';
+  $('resultCard').style.display = 'none';
+  $('quoteBox').innerHTML = '<div class="quote">Agent membayar dan menjalankan…</div>';
+  const r = await fetch('/api/run', { method: 'POST', headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ capabilityId: $('service').value, body: { query: $('query').value.trim() || 'celo' } }) });
+  const j = await r.json();
+  const e = j.entry || {};
+  $('quoteBox').innerHTML = '';
+  if (e.status === 'settled') {
+    $('receiptCard').style.display = '';
+    $('receiptCard').innerHTML = `<span class="ok">✓ Pembayaran lunas</span><br>
+      Layanan: ${e.capabilityId}<br>Harga: $${e.priceUsd} USDC<br>
+      Transaksi: <a href="https://celo-sepolia.blockscout.com/tx/${e.txHash}" target="_blank" rel="noopener">${e.txHash}</a>`;
+    const out = e.result || {};
+    const videos = out.videos || [];
+    $('resultCard').style.display = '';
+    $('resultBox').innerHTML = videos.length
+      ? videos.slice(0, 10).map(v => `<div class="item"><b><a href="https://www.youtube.com/watch?v=${v.video_id}" target="_blank" rel="noopener">${escapeHtml(v.title || v.video_id)}</a></b><small>${escapeHtml(v.author || '')} · ${v.number_of_views != null ? Number(v.number_of_views).toLocaleString() + ' views' : ''} · ${escapeHtml(v.video_length || '')}</small></div>`).join('')
+      : '<pre class="quote">' + escapeHtml(JSON.stringify(out).slice(0, 2000)) + '</pre>';
+  } else {
+    $('receiptCard').style.display = '';
+    $('receiptCard').innerHTML = `<span class="bad">✗ ${e.status === 'ambiguous' ? 'Status tidak pasti' : 'Gagal'}</span><br>${escapeHtml(e.error || j.error || 'Pembayaran tidak selesai. Cek buku kas sebelum mengulang.')}`;
+  }
+  $('runBtn').disabled = false;
+  loadLedger();
+};
+
+function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+loadCaps();
+</script>
+</body>
+</html>

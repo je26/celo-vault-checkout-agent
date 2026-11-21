@@ -1,0 +1,1 @@
+{"description":"An agent that checks out and pays for data services on Celo through Agent Vault rules, settling per-call payments over x402 with buy.","engines":{"node":">=22"},"license":"MIT","name":"vault-checkout-agent","scripts":{"dev":"node server.mjs","start":"node server.mjs"},"type":"module","version":"0.1.0"}
