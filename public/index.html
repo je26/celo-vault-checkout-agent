@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root { --accent: #0d9488; --accent2: #2dd4bf; --bg: #10101a; --card: #1b1b2a; --text: #f3f4f6; --muted: #9ca3af; --green: #4ade80; --red: #f87171; --border: #2a2a3a; }
+  :root { --accent: #0d9488; --accent2: #2dd4bf; --link: #f59e0b; --bg: #10101a; --card: #1b1b2a; --text: #f3f4f6; --muted: #9ca3af; --green: #4ade80; --red: #f87171; --border: #2a2a3a; }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--text); font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif; }
   .wrap { max-width: 720px; margin: 0 auto; padding: 24px 16px 64px; }
@@ -28,7 +28,7 @@
   .pill { display: inline-block; font-size: 12px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--accent); color: var(--accent); }
   .quote { white-space: pre-wrap; font-family: ui-monospace, monospace; font-size: 13px; background: #23233a; border-radius: 10px; padding: 12px; margin-top: 12px; max-height: 220px; overflow: auto; }
   .receipt { border: 1px solid var(--green); }
-  .receipt a { color: var(--accent2); word-break: break-all; }
+  .receipt a { color: var(--link); word-break: break-all; }
   .ok { color: var(--green); font-weight: 700; }
   .bad { color: var(--red); font-weight: 700; }
   #formError { font-family: Georgia, "Times New Roman", serif; font-weight: 400; font-size: 15px; color: #fca5a5; line-height: 1.6; }
@@ -36,7 +36,7 @@
   .chip { flex: 1 1 0; min-width: 0; padding: 8px 4px; border-radius: 999px; border: 1px solid #3a3a4d; background: #1b1b2a; color: var(--muted); font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; overflow: hidden; text-align: center; }
   .chip.active { background: var(--accent); border-color: var(--accent); color: #ffffff; }
   .result { margin-top: 12px; }
-  .result a { color: var(--accent2); }
+  .result a { color: var(--link); }
   .result .item { border-top: 1px solid var(--border); padding: 10px 0; }
   .result .item b { display: block; margin-bottom: 2px; }
   .result .item small { color: var(--muted); }
