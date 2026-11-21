@@ -54,6 +54,14 @@
     <select id="service"></select>
     <label for="query" id="queryLabel">Task / keywords</label>
     <input type="text" id="query" value="celo" maxlength="512" placeholder="e.g. celo">
+    <div id="flightFields" style="display:none">
+      <label for="origin">Origin airport (IATA, e.g. CGK)</label>
+      <input type="text" id="origin" value="CGK" maxlength="3" placeholder="CGK">
+      <label for="destination">Destination airport (IATA, e.g. SIN)</label>
+      <input type="text" id="destination" value="SIN" maxlength="3" placeholder="SIN">
+      <label for="flightDate">Departure date (YYYY-MM-DD)</label>
+      <input type="text" id="flightDate" value="2026-12-15" maxlength="10" placeholder="2026-12-15">
+    </div>
     <div class="row">
       <button class="ghost" id="quoteBtn">Check price first</button>
       <button class="primary" id="runBtn">Pay &amp; run</button>
@@ -88,9 +96,14 @@ let caps = [];
 function currentCap() { return caps.find(c => c.id === $('service').value) || caps[0] || {}; }
 
 // The input field adapts to the service: search services take keywords,
-// profile services take a username.
+// profile services take a username, flights take origin/destination/date.
 function syncInput() {
   const cap = currentCap();
+  const isFlights = Array.isArray(cap.multi) && cap.multi.length > 0;
+  $('flightFields').style.display = isFlights ? '' : 'none';
+  $('query').style.display = isFlights ? 'none' : '';
+  $('queryLabel').style.display = isFlights ? 'none' : '';
+  if (isFlights) return;
   const key = cap.bodyKey || 'query';
   $('queryLabel').textContent = cap.inputLabel || 'Task / keywords';
   $('query').placeholder = key === 'username' ? 'e.g. nasa' : 'e.g. celo';
@@ -100,6 +113,13 @@ function syncInput() {
 
 function requestBody() {
   const cap = currentCap();
+  if (Array.isArray(cap.multi) && cap.multi.length > 0) {
+    return {
+      origin: ($('origin').value.trim() || 'CGK').toUpperCase(),
+      destination: ($('destination').value.trim() || 'SIN').toUpperCase(),
+      date: $('flightDate').value.trim() || '2026-12-15',
+    };
+  }
   const key = cap.bodyKey || 'query';
   const v = $('query').value.trim() || (key === 'username' ? 'nasa' : 'celo');
   return { [key]: v };
@@ -115,6 +135,18 @@ function profileRows(uname, name, bio, followers, following, media, verified, pr
 }
 
 function renderResult(out) {
+  const flightList = (out.flights && out.flights.flights) || [];
+  if (Array.isArray(flightList) && flightList.length) {
+    const sp = out.search_params || {};
+    const head = sp.origin && sp.destination ? `<div class="item"><b>${escapeHtml(sp.origin)} → ${escapeHtml(sp.destination)}</b><small>${escapeHtml(sp.depart_date || '')} · one-way · prices in USD</small></div>` : '';
+    return head + flightList.slice(0, 10).map(f => {
+      const title = `${f.airline || ''} ${f.flight_number || ''}`.trim();
+      const times = `${f.departure_time || ''} → ${f.arrival_time || ''}`;
+      const meta = [times, f.duration || '', f.stops_detail || '', f.price || ''].filter(Boolean).join(' · ');
+      const link = f.booking_url || '';
+      return `<div class="item"><b>${link ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener">${escapeHtml(title)}</a>` : escapeHtml(title)}</b>${meta ? `<small>${escapeHtml(meta)}</small>` : ''}</div>`;
+    }).join('');
+  }
   const videos = out.videos || [];
   if (Array.isArray(videos) && videos.length) {
     return videos.slice(0, 10).map(v => {

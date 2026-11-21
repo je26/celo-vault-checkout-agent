@@ -64,6 +64,19 @@ const ALLOWLIST = {
     bodyKey: 'username',
     inputLabel: 'Username (without @)',
   },
+  'flights.search': {
+    url: 'https://gateway.usebuy.ai/v1/travel/flights/search',
+    maxUsd: 0.03,
+    title: 'Search flights',
+    bodyKey: 'origin',
+    inputLabel: 'Origin airport (IATA)',
+    multi: ['origin', 'destination', 'date'],
+    inputLabels: {
+      origin: 'Origin airport (IATA, e.g. CGK)',
+      destination: 'Destination airport (IATA, e.g. SIN)',
+      date: 'Departure date (YYYY-MM-DD)',
+    },
+  },
 };
 const DAILY_CAP_USD = 0.5;
 
@@ -193,7 +206,7 @@ export async function handleRequest(req, res) {
       const cat = await getCatalog();
       const caps = (cat.capabilities || [])
         .filter((c) => ALLOWLIST[c.id])
-        .map((c) => ({ id: c.id, title: c.title, url: c.url, price: c.price, maxUsd: ALLOWLIST[c.id].maxUsd, bodyKey: ALLOWLIST[c.id].bodyKey, inputLabel: ALLOWLIST[c.id].inputLabel }))
+        .map((c) => ({ id: c.id, title: c.title, url: c.url, price: c.price, maxUsd: ALLOWLIST[c.id].maxUsd, bodyKey: ALLOWLIST[c.id].bodyKey, inputLabel: ALLOWLIST[c.id].inputLabel, multi: ALLOWLIST[c.id].multi || null, inputLabels: ALLOWLIST[c.id].inputLabels || null }))
         // Working services first: the X posts route 502s often at the provider.
         .sort((a, b) => (a.id === 'youtube.videos.search' ? -1 : b.id === 'youtube.videos.search' ? 1 : 0));
       sendJson(res, 200, { capabilities: caps, network: NETWORK, attributionTag: ATTRIBUTION_TAG });
@@ -227,7 +240,7 @@ export async function handleRequest(req, res) {
     const entry = {
       ts: new Date().toISOString(),
       capabilityId: body.capabilityId,
-      query: (body.body && (body.body.query || body.body.username)) || '',
+      query: (body.body && (body.body.query || body.body.username || ((body.body.origin && body.body.destination) ? body.body.origin + ' → ' + body.body.destination + ' ' + (body.body.date || '') : ''))) || '',
       network: NETWORK,
       maxUsd: cap.maxUsd,
       status: 'unknown',
