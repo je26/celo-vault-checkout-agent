@@ -4,6 +4,20 @@ An agent that checks out and pays for data services on Celo, under Agent Vault
 rules. Built for the Celo **Agents Open for Business** hackathon (Nov 20 – Dec 7,
 2026), track **Agent Vault** ($1,000).
 
+## Live demo
+
+**https://nimble-basalt-d2dqfhk.tmp.now** — the agent running on Vercel
+(serverless, sandbox). Type a task, check the price, then Pay & run; the
+payment settles in test USDC with a receipt and a Blockscout link.
+
+> Temporary Vercel deployment (expires ~1h after deploy unless claimed into
+> the owner's Vercel account). Deployed 2026-11-21 ~11:15 WIB; first paid call
+> from the deployment settled: tx
+> `0x07f9c8cedc438c98a8743d382d7baedb4c8c16e6140d47a461665edb4bf4fbc0`
+> (0.005 test USDC, YouTube search). The deployed function auto-creates its
+> own sandbox wallet and is auto-funded from the faucet — no private key is
+> shipped or stored in the repo.
+
 ## Hackathon
 
 Celo **Agents Open for Business** (Nov 20 – Dec 7, 2026), track **Agent Vault**

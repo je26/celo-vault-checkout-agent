@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -41,29 +41,29 @@
 <div class="wrap">
   <span class="pill" id="networkPill">…</span>
   <h1>Vault <span>Checkout</span> Agent</h1>
-  <p class="sub">Agent yang belanja sendiri di Celo. Kamu ketik tugas, agent cek harga dulu, lalu bayar per panggilan lewat x402 dengan buy. Setiap pembayaran dibatasi agent card: hanya layanan yang disetujui, ada batas per panggilan dan batas harian. Agent tidak pernah pegang kunci dompet.</p>
+  <p class="sub">An agent that shops for itself on Celo. You type a task, the agent checks the price first, then pays per call over x402 with buy. Every payment is bounded by its agent card: only approved services, with a per-call cap and a daily cap. The agent never holds a wallet key.</p>
 
   <div class="card">
-    <label for="service">Layanan (yang disetujui)</label>
+    <label for="service">Service (approved)</label>
     <select id="service"></select>
-    <label for="query">Tugas / kata kunci</label>
-    <input type="text" id="query" value="celo" maxlength="512" placeholder="mis. celo">
+    <label for="query">Task / keywords</label>
+    <input type="text" id="query" value="celo" maxlength="512" placeholder="e.g. celo">
     <div class="row">
-      <button class="ghost" id="quoteBtn">Lihat harga dulu</button>
-      <button class="primary" id="runBtn">Bayar &amp; jalankan</button>
+      <button class="ghost" id="quoteBtn">Check price first</button>
+      <button class="primary" id="runBtn">Pay &amp; run</button>
     </div>
     <div id="quoteBox"></div>
   </div>
 
   <div class="card receipt" id="receiptCard" style="display:none"></div>
-  <div class="card" id="resultCard" style="display:none"><h3 style="margin-top:0">Hasil</h3><div class="result" id="resultBox"></div></div>
+  <div class="card" id="resultCard" style="display:none"><h3 style="margin-top:0">Results</h3><div class="result" id="resultBox"></div></div>
 
   <div class="card">
-    <h3 style="margin-top:0">Buku kas <span class="muted" id="spentLine"></span></h3>
-    <div id="ledgerBox" class="muted">Memuat…</div>
+    <h3 style="margin-top:0">Ledger <span class="muted" id="spentLine"></span></h3>
+    <div id="ledgerBox" class="muted">Loading…</div>
   </div>
 
-  <p class="muted">Hackathon Celo “Agents Open for Business”, track Agent Vault. Pembayaran diuji di Celo Sepolia (test USDC, gratis dari faucet). Pindah ke mainnet hanya dengan VAULT_NETWORK=mainnet dan VAULT_MAINNET_OK=1. Tag atribusi: <span id="tagLine">celo_2da564e80a18</span> — wajib di setiap transaksi mainnet.</p>
+  <p class="muted">Celo hackathon “Agents Open for Business”, Agent Vault track. Payments are tested on Celo Sepolia (test USDC, free from the faucet). Mainnet only with VAULT_NETWORK=mainnet and VAULT_MAINNET_OK=1. Attribution tag: <span id="tagLine">celo_2da564e80a18</span> — required in every mainnet transaction.</p>
 </div>
 <script>
 const $ = (id) => document.getElementById(id);
@@ -74,23 +74,23 @@ async function loadCaps() {
   const j = await r.json();
   caps = j.capabilities || [];
   $('service').innerHTML = caps.map(c =>
-    `<option value="${c.id}">${c.title} — maks $${c.maxUsd} / panggilan</option>`).join('');
-  $('networkPill').textContent = 'Jaringan: ' + (j.network === 'mainnet' ? 'Celo mainnet' : 'Celo Sepolia (sandbox, gratis)');
+    `<option value="${c.id}">${c.title} — max $${c.maxUsd} / call</option>`).join('');
+  $('networkPill').textContent = 'Network: ' + (j.network === 'mainnet' ? 'Celo mainnet' : 'Celo Sepolia (sandbox, free)');
   loadLedger();
 }
 
 async function loadLedger() {
   const r = await fetch('/api/ledger');
   const j = await r.json();
-  $('spentLine').textContent = `— terpakai hari ini $${Number(j.spentTodayUsd || 0).toFixed(3)} dari batas $${j.dailyCapUsd}`;
-  if (!j.entries.length) { $('ledgerBox').textContent = 'Belum ada pembayaran.'; return; }
-  $('ledgerBox').innerHTML = '<table><tr><th>Waktu</th><th>Layanan</th><th>Harga</th><th>Status</th></tr>' +
+  $('spentLine').textContent = `— spent today $${Number(j.spentTodayUsd || 0).toFixed(3)} of $${j.dailyCapUsd} cap`;
+  if (!j.entries.length) { $('ledgerBox').textContent = 'No payments yet.'; return; }
+  $('ledgerBox').innerHTML = '<table><tr><th>Time</th><th>Service</th><th>Price</th><th>Status</th></tr>' +
     j.entries.map(e => `<tr><td><small>${e.ts.replace('T', ' ').slice(0, 19)}</small></td><td>${e.capabilityId}<br><small>${e.query || ''}</small></td><td>${e.priceUsd != null ? '$' + e.priceUsd : '—'}</td><td>${e.status}${e.txHash ? `<br><small><a href="https://celo-sepolia.blockscout.com/tx/${e.txHash}" target="_blank" rel="noopener">tx ↗</a></small>` : ''}</td></tr>`).join('') + '</table>';
 }
 
 $('quoteBtn').onclick = async () => {
   $('quoteBtn').disabled = true;
-  $('quoteBox').innerHTML = '<div class="quote">Meminta harga…</div>';
+  $('quoteBox').innerHTML = '<div class="quote">Asking for a price…</div>';
   const r = await fetch('/api/quote', { method: 'POST', headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ capabilityId: $('service').value, body: { query: $('query').value.trim() || 'celo' } }) });
   const j = await r.json();
@@ -102,7 +102,7 @@ $('runBtn').onclick = async () => {
   $('runBtn').disabled = true;
   $('receiptCard').style.display = 'none';
   $('resultCard').style.display = 'none';
-  $('quoteBox').innerHTML = '<div class="quote">Agent membayar dan menjalankan…</div>';
+  $('quoteBox').innerHTML = '<div class="quote">Agent is paying and running…</div>';
   const r = await fetch('/api/run', { method: 'POST', headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ capabilityId: $('service').value, body: { query: $('query').value.trim() || 'celo' } }) });
   const j = await r.json();
@@ -110,9 +110,9 @@ $('runBtn').onclick = async () => {
   $('quoteBox').innerHTML = '';
   if (e.status === 'settled') {
     $('receiptCard').style.display = '';
-    $('receiptCard').innerHTML = `<span class="ok">✓ Pembayaran lunas</span><br>
-      Layanan: ${e.capabilityId}<br>Harga: $${e.priceUsd} USDC<br>
-      Transaksi: <a href="https://celo-sepolia.blockscout.com/tx/${e.txHash}" target="_blank" rel="noopener">${e.txHash}</a>`;
+    $('receiptCard').innerHTML = `<span class="ok">✓ Payment settled</span><br>
+      Service: ${e.capabilityId}<br>Price: $${e.priceUsd} USDC<br>
+      Transaction: <a href="https://celo-sepolia.blockscout.com/tx/${e.txHash}" target="_blank" rel="noopener">${e.txHash}</a>`;
     const out = e.result || {};
     const videos = out.videos || [];
     $('resultCard').style.display = '';
@@ -121,7 +121,7 @@ $('runBtn').onclick = async () => {
       : '<pre class="quote">' + escapeHtml(JSON.stringify(out).slice(0, 2000)) + '</pre>';
   } else {
     $('receiptCard').style.display = '';
-    $('receiptCard').innerHTML = `<span class="bad">✗ ${e.status === 'ambiguous' ? 'Status tidak pasti' : 'Gagal'}</span><br>${escapeHtml(e.error || j.error || 'Pembayaran tidak selesai. Cek buku kas sebelum mengulang.')}`;
+    $('receiptCard').innerHTML = `<span class="bad">✗ ${e.status === 'ambiguous' ? 'Status unclear' : 'Failed'}</span><br>${escapeHtml(e.error || j.error || 'Payment did not complete. Check the ledger before retrying.')}`;
   }
   $('runBtn').disabled = false;
   loadLedger();
