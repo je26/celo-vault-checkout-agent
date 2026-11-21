@@ -559,7 +559,21 @@ async function runPayment() {
   $('quoteModalBody').innerHTML = '<div class="quote"><span class="spinner"></span>Agent is paying and running…</div>';
   const r = await fetch('/api/run', { method: 'POST', headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ capabilityId: selectedCapId, body: requestBody() }) });
-  const j = await r.json();
+  let j = null;
+  try { j = await r.json(); } catch { j = null; }
+  if (!j || !r.ok && !j.entry) {
+    // Server error (e.g. a crashed function) — show a real failure instead
+    // of leaving the modal stuck on "Paying...".
+    $('receiptCard').style.display = '';
+    $('receiptCard').innerHTML = `<span class="bad">✗ Failed</span><br>Payment did not complete (server error, HTTP ${r.status}). No money was charged. You can try again.`;
+    $('quoteModalTitle').textContent = '✗ Payment failed';
+    $('quoteModalBody').innerHTML = `<div class="quote">Payment did not complete (server error, HTTP ${r.status}).</div><div class="muted" style="margin-top:8px">No money was charged. You can try again.</div>`;
+    $('quotePayBtn').disabled = false;
+    $('quotePayBtn').textContent = 'Close';
+    $('quotePayBtn').onclick = () => { hideQuoteModal(); resetQuoteModal(); $('receiptCard').scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+    loadLedger();
+    return;
+  }
   const e = j.entry || {};
   if (e.status === 'settled') {
     $('receiptCard').style.display = '';

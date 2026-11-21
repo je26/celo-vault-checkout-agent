@@ -84,11 +84,23 @@ const DAILY_CAP_USD = 0.5;
 const LEDGER = process.env.LEDGER_PATH || path.join(__dirname, 'agent', 'ledger.jsonl');
 
 function ledgerEntries() {
-  try {
-    if (!fs.existsSync(LEDGER)) return [];
-    return fs.readFileSync(LEDGER, 'utf8')
-      .split('\n').filter(Boolean).map((l) => JSON.parse(l));
-  } catch { return []; }
+  // Read the deployed ledger and the /tmp fallback (serverless writes go
+  // there when the deployed path is read-only), deduplicated.
+  const seen = new Set();
+  const out = [];
+  for (const p of [LEDGER, '/tmp/ledger.jsonl']) {
+    try {
+      if (!fs.existsSync(p)) continue;
+      for (const l of fs.readFileSync(p, 'utf8').split('\n').filter(Boolean)) {
+        const e = JSON.parse(l);
+        const k = (e.ts || '') + '|' + (e.capabilityId || '') + '|' + (e.txHash || '');
+        if (seen.has(k)) continue;
+        seen.add(k);
+        out.push(e);
+      }
+    } catch { /* ignore a bad ledger file */ }
+  }
+  return out;
 }
 
 function spentTodayUsd() {
@@ -99,8 +111,20 @@ function spentTodayUsd() {
 }
 
 function appendLedger(entry) {
-  fs.mkdirSync(path.dirname(LEDGER), { recursive: true });
-  fs.appendFileSync(LEDGER, JSON.stringify(entry) + '\n');
+  // A ledger write must never crash a payment: the payment result is what
+  // matters. On serverless the deployed files are read-only, so fall back
+  // to /tmp when the configured path is not writable.
+  const line = JSON.stringify(entry) + '\n';
+  const candidates = [LEDGER];
+  if (LEDGER !== '/tmp/ledger.jsonl') candidates.push('/tmp/ledger.jsonl');
+  for (const p of candidates) {
+    try {
+      fs.mkdirSync(path.dirname(p), { recursive: true });
+      fs.appendFileSync(p, line);
+      return;
+    } catch { /* try the next path */ }
+  }
+  console.error('ledger write failed for', entry.capabilityId);
 }
 
 // Resolve the buy CLI: explicit BUY_BIN, else the bundled @celo/buy package,
