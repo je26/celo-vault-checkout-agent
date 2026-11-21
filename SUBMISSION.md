@@ -58,7 +58,7 @@ settlement transaction hash.
   The address is entered at submit time (or from the Celo button in the
   playground). Register its **ERC-8004 identity** from that wallet before
   the deadline.
-- [ ] Owner clicks Enroll on Loops House.
+- [x] Owner clicks Enroll on Loops House. — DONE 2026-11-21 ~11:31 WIB (email Loops House: "You're enrolled in Agents Open for Business", Jejeje26).
 - [ ] Agent wallet (mainnet) created/funded; address entered at submit.
 - [ ] ERC-8004 identity registered from the agent wallet.
 - [ ] Direct transactions carry the tag (via `toDataSuffix`); x402 calls
