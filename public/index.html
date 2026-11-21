@@ -58,9 +58,9 @@
 
   <div class="card">
     <div id="formError" style="display:none; margin-bottom:12px;"></div>
-    <label for="query" id="queryLabel">Task / keywords</label>
-    <input type="text" id="query" value="celo" maxlength="512" placeholder="e.g. celo">
-    <div id="flightFields" style="display:none">
+    <label for="query" id="queryLabel" style="display:none">Task / keywords</label>
+    <input type="text" id="query" value="celo" maxlength="512" placeholder="e.g. celo" style="display:none">
+    <div id="flightFields">
       <label for="origin">Origin (city or airport code, e.g. Dubai or DXB)</label>
       <input type="text" id="origin" value="Dubai" maxlength="32" placeholder="Dubai or DXB">
       <label for="destination">Destination (city or airport code, e.g. Singapura or SIN)</label>
@@ -109,7 +109,16 @@
 </div>
 <script>
 const $ = (id) => document.getElementById(id);
-let caps = [];
+// Static fallback so the chips and the Flights form show instantly, even
+// before /api/catalog answers (Vercel cold start can be slow on refresh).
+const DEFAULT_CAPS = [
+  { id: 'flights.search', title: 'Search flights', maxUsd: 0.03, bodyKey: null, inputLabel: null, multi: ['origin', 'destination', 'date'] },
+  { id: 'youtube.videos.search', title: 'Search YouTube videos', maxUsd: 0.01, bodyKey: 'query', inputLabel: 'Task / keywords', multi: null },
+  { id: 'instagram.profile', title: 'Read an Instagram profile', maxUsd: 0.01, bodyKey: 'username', inputLabel: 'Instagram username', multi: null },
+  { id: 'tiktok.profile', title: 'Read a TikTok profile', maxUsd: 0.01, bodyKey: 'username', inputLabel: 'TikTok username', multi: null },
+  { id: 'reddit.posts.search', title: 'Search Reddit', maxUsd: 0.01, bodyKey: 'query', inputLabel: 'Task / keywords', multi: null },
+];
+let caps = [...DEFAULT_CAPS];
 let selectedCapId = 'flights.search';
 
 function currentCap() { return caps.find(c => c.id === selectedCapId) || caps[0] || {}; }
@@ -263,14 +272,22 @@ function randomDestination() {
 }
 
 async function loadCaps() {
-  const r = await fetch('/api/catalog');
-  const j = await r.json();
-  caps = j.capabilities || [];
-  if (!caps.some(c => c.id === selectedCapId) && caps.length) selectedCapId = caps[0].id;
+  // Show the UI instantly from the static list, then confirm with the live catalog.
   renderChips();
   syncInput();
-  $('networkPill').textContent = 'Network: ' + (j.network === 'mainnet' ? 'Celo mainnet' : 'Celo Sepolia (sandbox, free)');
+  $('networkPill').textContent = 'Network: Celo Sepolia (sandbox, free)';
   loadLedger();
+  try {
+    const r = await fetch('/api/catalog');
+    const j = await r.json();
+    if (j.capabilities && j.capabilities.length) {
+      caps = j.capabilities;
+      if (!caps.some(c => c.id === selectedCapId) && caps.length) selectedCapId = caps[0].id;
+      renderChips();
+      syncInput();
+      $('networkPill').textContent = 'Network: ' + (j.network === 'mainnet' ? 'Celo mainnet' : 'Celo Sepolia (sandbox, free)');
+    }
+  } catch { /* keep the static list if the catalog is unreachable */ }
 }
 
 async function loadLedger() {
