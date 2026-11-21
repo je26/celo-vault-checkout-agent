@@ -55,6 +55,11 @@ VAULT_NETWORK=mainnet VAULT_MAINNET_OK=1 npm start
 - A sandbox paid call settled on Celo Sepolia:
   tx `0x35de96ba0ce0af2db82699ed6f73de6c5466d8a56feb46430001c89eae35a989`,
   0.005 USDC, 20 YouTube results for "celo".
+- A second paid call through the agent's own UI settled on Celo Sepolia:
+  tx `0x8ce72a7e568df84b8cbca387c99b15bd6afed8c8b1619a0a232822da358ff71c`,
+  0.005 USDC, 20 YouTube results. Screen recording of that run:
+  `demo/page@ce3824867e0238a39667fe76a011c7b5.webm` (reproduce it with
+  `demo/record_demo.py`).
 - Note: the buy gateway's X posts search route returned HTTP 502 twice during
   testing (provider-side); the agent records such payments as `ambiguous` and
   never retries them blindly.

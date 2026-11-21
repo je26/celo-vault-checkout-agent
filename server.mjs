@@ -130,7 +130,9 @@ const server = http.createServer(async (req, res) => {
       const cat = await getCatalog();
       const caps = (cat.capabilities || [])
         .filter((c) => ALLOWLIST[c.id])
-        .map((c) => ({ id: c.id, title: c.title, url: c.url, price: c.price, maxUsd: ALLOWLIST[c.id].maxUsd }));
+        .map((c) => ({ id: c.id, title: c.title, url: c.url, price: c.price, maxUsd: ALLOWLIST[c.id].maxUsd }))
+        // Working services first: the X posts route 502s often at the provider.
+        .sort((a, b) => (a.id === 'youtube.videos.search' ? -1 : b.id === 'youtube.videos.search' ? 1 : 0));
       sendJson(res, 200, { capabilities: caps, network: NETWORK });
     } catch (e) {
       sendJson(res, 502, { error: String(e.message || e) });
