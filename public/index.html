@@ -67,7 +67,7 @@
     <div id="formError" style="display:none; margin-bottom:12px;"></div>
     <div id="capDesc" class="muted" style="margin-bottom:12px"></div>
     <label for="query" id="queryLabel" style="display:none">Task / keywords</label>
-    <input type="text" id="query" value="celo" maxlength="512" placeholder="e.g. celo" style="display:none">
+    <input type="text" id="query" maxlength="512" placeholder="e.g. celo" style="display:none">
     <div id="flightFields">
       <label for="origin">Origin (city or airport code, e.g. Dubai or DXB)</label>
       <input type="text" id="origin" value="Dubai" maxlength="32" placeholder="Dubai or DXB">
@@ -155,8 +155,6 @@ function syncInput() {
   const key = cap.bodyKey || 'query';
   $('queryLabel').textContent = cap.inputLabel || 'Task / keywords';
   $('query').placeholder = key === 'username' ? 'e.g. binance' : 'e.g. celo';
-  if (key === 'username' && $('query').value.trim() === 'celo') $('query').value = 'binance';
-  if (key === 'query' && $('query').value.trim() === 'binance') $('query').value = 'celo';
 }
 
 function requestBody() {
@@ -375,6 +373,16 @@ function flightInputError() {
   return bad.join(' and ') + ' is not a city or airport code. Try a city name like Beijing, Shanghai, Tokyo, or Jakarta, or a 3-letter airport code like PEK, SIN, or CGK. A country name like "China" has no single airport code.';
 }
 
+function queryInputError() {
+  const cap = currentCap();
+  if (Array.isArray(cap.multi) && cap.multi.length) return '';
+  if ($('query').value.trim()) return '';
+  const key = cap.bodyKey || 'query';
+  return key === 'username'
+    ? 'Type a username first, for example binance.'
+    : 'Type a keyword first, for example celo.';
+}
+
 function showFormError(msg) {
   const el = $('formError');
   if (!msg) { el.style.display = 'none'; el.textContent = ''; return; }
@@ -383,7 +391,7 @@ function showFormError(msg) {
 }
 
 $('quoteBtn').onclick = async () => {
-  const ferr = flightInputError();
+  const ferr = flightInputError() || queryInputError();
   if (ferr) { showFormError(ferr); return; }
   showFormError('');
   $('quoteBtn').disabled = true;
@@ -397,7 +405,7 @@ $('quoteBtn').onclick = async () => {
 };
 
 async function runPayment() {
-  const ferr = flightInputError();
+  const ferr = flightInputError() || queryInputError();
   if (ferr) { showFormError(ferr); return; }
   showFormError('');
   $('quotePayBtn').disabled = true;
