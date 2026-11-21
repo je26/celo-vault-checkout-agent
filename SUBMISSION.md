@@ -33,7 +33,7 @@ settlement transaction hash.
 - Settled through the agent UI: tx
   `0x8ce72a7e568df84b8cbca387c99b15bd6afed8c8b1619a0a232822da358ff71c`,
   0.005 USDC, 20 YouTube results.
-- Demo video: `demo/page@ce3824867e0238a39667fe76a011c7b5.webm` (24.7s).
+- Demo video (English): `demo/demo-vault-checkout-agent-en.mp4` (28.7s, MP4).
 - Policy proof: a capability outside the allowlist is refused with 403.
 
 ## Proof (mainnet — TODO)
@@ -70,5 +70,7 @@ settlement transaction hash.
 
 > Building for the @CeloDevs Agents Open for Business hackathon 🟡
 > Vault Checkout Agent — an agent that checks out and pays for data
-> services on Celo under Agent Vault rules. Paid proof onchain:
-> [tx link] Repo: https://github.com/je26/celo-vault-checkout-agent @celo
+> services on Celo under Agent Vault rules. Live demo:
+> https://nimble-basalt-d2dqfhk.tmp.now — paid proof onchain:
+> https://celo-sepolia.blockscout.com/tx/0x07f9c8cedc438c98a8743d382d7baedb4c8c16e6140d47a461665edb4bf4fbc0
+> Repo: https://github.com/je26/celo-vault-checkout-agent @celo
