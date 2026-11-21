@@ -139,6 +139,7 @@ const CITY_TO_IATA = {
   // East Asia
   'tokyo': 'HND', 'osaka': 'KIX', 'seoul': 'ICN', 'hong kong': 'HKG', 'hongkong': 'HKG',
   'taipei': 'TPE', 'shanghai': 'PVG', 'beijing': 'PEK', 'guangzhou': 'CAN', 'shenzhen': 'SZX',
+  'chengdu': 'CTU', 'wuhan': 'WUH', 'xian': 'XIY', 'hangzhou': 'HGH', 'nanjing': 'NKG', 'chongqing': 'CKG',
   // South Asia & Middle East
   'delhi': 'DEL', 'mumbai': 'BOM', 'dubai': 'DXB', 'doha': 'DOH', 'jeddah': 'JED', 'istanbul': 'IST',
   // Europe
@@ -237,7 +238,21 @@ async function loadLedger() {
     j.entries.map(e => `<tr><td><small>${e.ts.replace('T', ' ').slice(0, 19)}</small></td><td>${e.capabilityId}<br><small>${e.query || ''}</small></td><td>${e.priceUsd != null ? '$' + e.priceUsd : '—'}</td><td>${e.status}${e.txHash ? `<br><small><a href="https://celo-sepolia.blockscout.com/tx/${e.txHash}" target="_blank" rel="noopener">tx ↗</a></small>` : ''}</td></tr>`).join('') + '</table>';
 }
 
+function flightInputError() {
+  const cap = currentCap();
+  if (!Array.isArray(cap.multi) || !cap.multi.length) return '';
+  const o = resolveAirport($('origin').value);
+  const d = resolveAirport($('destination').value);
+  const bad = [];
+  if (!/^[A-Z]{3}$/.test(o)) bad.push('Origin "' + $('origin').value.trim() + '"');
+  if (!/^[A-Z]{3}$/.test(d)) bad.push('Destination "' + $('destination').value.trim() + '"');
+  if (!bad.length) return '';
+  return bad.join(' and ') + ' is not a city or airport code. Try a city name like Beijing, Shanghai, Tokyo, or Jakarta, or a 3-letter airport code like PEK, SIN, or CGK. A country name like "China" has no single airport code.';
+}
+
 $('quoteBtn').onclick = async () => {
+  const ferr = flightInputError();
+  if (ferr) { $('quoteBox').innerHTML = '<div class="quote">' + escapeHtml(ferr) + '</div>'; return; }
   $('quoteBtn').disabled = true;
   $('quoteBox').innerHTML = '<div class="quote">Asking for a price…</div>';
   const r = await fetch('/api/quote', { method: 'POST', headers: { 'content-type': 'application/json' },
@@ -248,6 +263,12 @@ $('quoteBtn').onclick = async () => {
 };
 
 $('runBtn').onclick = async () => {
+  const ferr = flightInputError();
+  if (ferr) {
+    $('receiptCard').style.display = '';
+    $('receiptCard').innerHTML = `<span class="bad">✗ ${escapeHtml(ferr)}</span>`;
+    return;
+  }
   $('runBtn').disabled = true;
   $('receiptCard').style.display = 'none';
   $('resultCard').style.display = 'none';
