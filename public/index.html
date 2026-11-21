@@ -61,6 +61,7 @@
 
   <div class="card">
     <div id="formError" style="display:none; margin-bottom:12px;"></div>
+    <div id="capDesc" class="muted" style="margin-bottom:12px"></div>
     <label for="query" id="queryLabel" style="display:none">Task / keywords</label>
     <input type="text" id="query" value="celo" maxlength="512" placeholder="e.g. celo" style="display:none">
     <div id="flightFields">
@@ -126,6 +127,14 @@ let selectedCapId = 'flights.search';
 
 function currentCap() { return caps.find(c => c.id === selectedCapId) || caps[0] || {}; }
 
+// Short description shown on each service card, with the price per call.
+const CAP_DESC = {
+  'flights.search': 'Search flights — airline, times, price, booking link.',
+  'youtube.videos.search': 'Search YouTube videos — titles, views, channel.',
+  'instagram.profile': 'Read an Instagram profile — followers, bio, posts.',
+  'tiktok.profile': 'Read a TikTok profile — followers, bio, videos.',
+  'reddit.posts.search': 'Search Reddit posts — titles, subreddit, author.',
+};
 // The input field adapts to the service: search services take keywords,
 // profile services take a username, flights take origin/destination/date.
 function syncInput() {
@@ -133,6 +142,7 @@ function syncInput() {
   document.querySelectorAll('#serviceChips .chip').forEach(el => {
     el.classList.toggle('active', el.dataset.cap === cap.id);
   });
+  $('capDesc').textContent = (CAP_DESC[cap.id] || cap.title || '') + ' $' + cap.maxUsd + ' per call.';
   const isFlights = Array.isArray(cap.multi) && cap.multi.length > 0;
   $('flightFields').style.display = isFlights ? '' : 'none';
   $('query').style.display = isFlights ? 'none' : '';
