@@ -84,7 +84,7 @@
 
   <div id="quoteModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:50; align-items:center; justify-content:center; padding:16px;">
     <div class="card" style="width:100%; max-width:420px; margin:0;">
-      <h3 style="margin-top:0">Price</h3>
+      <h3 id="quoteModalTitle" style="margin-top:0">Price</h3>
       <div id="quoteModalBody" class="muted" style="line-height:1.8;"></div>
       <div class="row">
         <button class="ghost" id="quoteCancelBtn">Cancel</button>
@@ -111,7 +111,11 @@
     <div id="ledgerBox" class="muted">Loading…</div>
   </div>
 
-  <p class="muted">Celo hackathon “Agents Open for Business”, Agent Vault track. Payments are tested on Celo Sepolia (test USDC, free from the faucet). Mainnet only with VAULT_NETWORK=mainnet and VAULT_MAINNET_OK=1. Attribution tag: <span id="tagLine">celo_2da564e80a18</span> — required in every mainnet transaction.</p>
+  <div style="text-align:center; margin:16px 0;">
+    <button class="ghost" id="refreshBtn" style="padding:10px 20px; font-size:15px;">↻ Refresh</button>
+  </div>
+
+  <p class="muted" style="text-align:center">Built for the Celo “Agents Open for Business” hackathon — Agent Vault track.</p>
 
   <p class="footer-fixed">© 2026 Sanjaya Purba</p>
 </div>
@@ -340,7 +344,16 @@ function taskSummary() {
   return $('query').value.trim() || (key === 'username' ? 'binance' : 'celo');
 }
 
+function resetQuoteModal() {
+  $('quoteModalTitle').textContent = 'Price';
+  $('quotePayBtn').textContent = 'Pay & run';
+  $('quotePayBtn').disabled = false;
+  $('quotePayBtn').onclick = () => { runPayment(); };
+  $('quoteCancelBtn').style.display = '';
+}
+
 function showQuoteModal(priceText) {
+  resetQuoteModal();
   const cap = currentCap();
   const p = parseQuotePrice(priceText);
   $('quoteModalBody').innerHTML =
@@ -360,6 +373,8 @@ $('quoteCancelBtn').onclick = hideQuoteModal;
 $('quotePayBtn').onclick = () => {
   runPayment();
 };
+
+$('refreshBtn').onclick = () => { location.reload(); };
 
 function flightInputError() {
   const cap = currentCap();
@@ -408,6 +423,7 @@ async function runPayment() {
   const ferr = flightInputError() || queryInputError();
   if (ferr) { showFormError(ferr); return; }
   showFormError('');
+  $('quoteModalTitle').textContent = 'Paying…';
   $('quotePayBtn').disabled = true;
   $('quoteCancelBtn').style.display = 'none';
   $('quotePayBtn').textContent = 'Processing…';
@@ -427,14 +443,22 @@ async function runPayment() {
     const out = e.result || {};
     $('resultCard').style.display = '';
     $('resultBox').innerHTML = renderResult(out);
+    // Completion popup in the modal (item 24).
+    $('quoteModalTitle').textContent = '✓ Payment successful';
+    $('quoteModalBody').innerHTML = `<div class="quote">The agent paid $${e.priceUsd} USDC for this task — the results are below.</div><div class="muted" style="margin-top:8px">Transaction: <a href="https://celo-sepolia.blockscout.com/tx/${e.txHash}" target="_blank" rel="noopener">${e.txHash}</a></div>`;
+    $('quotePayBtn').disabled = false;
+    $('quotePayBtn').textContent = 'See results';
+    $('quotePayBtn').onclick = () => { hideQuoteModal(); resetQuoteModal(); };
   } else {
     $('receiptCard').style.display = '';
     $('receiptCard').innerHTML = `<span class="bad">✗ ${e.status === 'ambiguous' ? 'Status unclear' : 'Failed'}</span><br>${escapeHtml(e.error || j.error || 'Payment did not complete. Check the ledger before retrying.')}<br><span class="muted">${e.status === 'ambiguous' ? 'Payment status is unclear. Check the ledger before retrying.' : 'Payment did not go through. No money was charged. You can try again.'}</span>`;
+    // Completion popup in the modal (item 24).
+    $('quoteModalTitle').textContent = '✗ Payment failed';
+    $('quoteModalBody').innerHTML = `<div class="quote">${escapeHtml(e.error || j.error || 'Payment did not complete.')}</div><div class="muted" style="margin-top:8px">No money was charged. You can try again.</div>`;
+    $('quotePayBtn').disabled = false;
+    $('quotePayBtn').textContent = 'Close';
+    $('quotePayBtn').onclick = () => { hideQuoteModal(); resetQuoteModal(); };
   }
-  $('quotePayBtn').disabled = false;
-  $('quoteCancelBtn').style.display = '';
-  $('quotePayBtn').textContent = 'Pay & run';
-  hideQuoteModal();
   loadLedger();
 }
 
