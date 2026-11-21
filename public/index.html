@@ -61,8 +61,8 @@
     <label for="query" id="queryLabel">Task / keywords</label>
     <input type="text" id="query" value="celo" maxlength="512" placeholder="e.g. celo">
     <div id="flightFields" style="display:none">
-      <label for="origin">Origin (city or airport code, e.g. Jakarta or CGK)</label>
-      <input type="text" id="origin" value="Jakarta" maxlength="32" placeholder="Jakarta or CGK">
+      <label for="origin">Origin (city or airport code, e.g. Dubai or DXB)</label>
+      <input type="text" id="origin" value="Dubai" maxlength="32" placeholder="Dubai or DXB">
       <label for="destination">Destination (city or airport code, e.g. Singapura or SIN)</label>
       <input type="text" id="destination" value="Singapura" maxlength="32" placeholder="Singapura or SIN">
       <label for="flightDate">Departure date (YYYY-MM-DD)</label>
@@ -127,7 +127,7 @@ function requestBody() {
   const cap = currentCap();
   if (Array.isArray(cap.multi) && cap.multi.length > 0) {
     return {
-      origin: resolveAirport($('origin').value) || 'CGK',
+      origin: resolveAirport($('origin').value) || 'DXB',
       destination: resolveAirport($('destination').value) || 'SIN',
       date: $('flightDate').value.trim() || '2026-12-15',
     };
@@ -245,7 +245,7 @@ function renderChips() {
 
 // Random foreign-city destination for the flight form, picked fresh on
 // every page load so the demo never shows the same route twice in a row.
-const RANDOM_DESTINATIONS = ['Tokyo', 'London', 'Paris', 'Seoul', 'Bangkok', 'Dubai', 'Hong Kong', 'Taipei', 'Osaka', 'Amsterdam'];
+const RANDOM_DESTINATIONS = ['Tokyo', 'London', 'Paris', 'Seoul', 'Bangkok', 'Hong Kong', 'Taipei', 'Osaka', 'Amsterdam'];
 function randomDestination() {
   const pick = RANDOM_DESTINATIONS[Math.floor(Math.random() * RANDOM_DESTINATIONS.length)];
   $('destination').value = pick;
