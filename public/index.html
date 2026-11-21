@@ -503,7 +503,7 @@ async function runPayment() {
     $('quoteModalBody').innerHTML = `<div class="quote">The agent paid $${e.priceUsd} USDC for this task — the results are below.</div><div class="muted" style="margin-top:8px">Transaction: <a href="https://celo-sepolia.blockscout.com/tx/${e.txHash}" target="_blank" rel="noopener">${e.txHash}</a></div>`;
     $('quotePayBtn').disabled = false;
     $('quotePayBtn').textContent = 'See results';
-    $('quotePayBtn').onclick = () => { hideQuoteModal(); resetQuoteModal(); };
+    $('quotePayBtn').onclick = () => { hideQuoteModal(); resetQuoteModal(); $('receiptCard').scrollIntoView({ behavior: 'smooth', block: 'start' }); };
   } else {
     $('receiptCard').style.display = '';
     $('receiptCard').innerHTML = `<span class="bad">✗ ${e.status === 'ambiguous' ? 'Status unclear' : 'Failed'}</span><br>${escapeHtml(e.error || j.error || 'Payment did not complete. Check the ledger before retrying.')}<br><span class="muted">${e.status === 'ambiguous' ? 'Payment status is unclear. Check the ledger before retrying.' : 'Payment did not go through. No money was charged. You can try again.'}</span>`;
@@ -512,7 +512,7 @@ async function runPayment() {
     $('quoteModalBody').innerHTML = `<div class="quote">${escapeHtml(e.error || j.error || 'Payment did not complete.')}</div><div class="muted" style="margin-top:8px">No money was charged. You can try again.</div>`;
     $('quotePayBtn').disabled = false;
     $('quotePayBtn').textContent = 'Close';
-    $('quotePayBtn').onclick = () => { hideQuoteModal(); resetQuoteModal(); };
+    $('quotePayBtn').onclick = () => { hideQuoteModal(); resetQuoteModal(); $('receiptCard').scrollIntoView({ behavior: 'smooth', block: 'start' }); };
   }
   loadLedger();
 }
