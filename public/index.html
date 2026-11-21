@@ -429,6 +429,39 @@ async function loadCaps() {
   } catch { /* keep the static list if the catalog is unreachable */ }
 }
 
+// Ledger pagination: 5 rows per page, with page numbers.
+const LEDGER_PAGE_SIZE = 5;
+let ledgerEntriesAll = [];
+let ledgerPage = 0;
+
+function renderLedgerPage() {
+  const total = ledgerEntriesAll.length;
+  const pages = Math.max(1, Math.ceil(total / LEDGER_PAGE_SIZE));
+  if (ledgerPage >= pages) ledgerPage = pages - 1;
+  if (ledgerPage < 0) ledgerPage = 0;
+  if (!total) { $('ledgerBox').textContent = 'No payments yet.'; return; }
+  const start = ledgerPage * LEDGER_PAGE_SIZE;
+  const pageEntries = ledgerEntriesAll.slice(start, start + LEDGER_PAGE_SIZE);
+  let html = '<table><tr><th>Time</th><th>Service</th><th>Price</th><th>Status</th></tr>' +
+    pageEntries.map(e => `<tr><td><small>${String(e.ts || '').replace('T', ' ').slice(0, 19)}</small></td><td>${e.capabilityId}<br><small>${e.query || ''}</small></td><td>${e.priceUsd != null ? '$' + e.priceUsd : '—'}</td><td>${e.status}${e.txHash ? `<br><small><a href="https://celo-sepolia.blockscout.com/tx/${e.txHash}" target="_blank" rel="noopener">tx ↗</a></small>` : ''}</td></tr>`).join('') + '</table>';
+  if (pages > 1) {
+    html += '<div class="row" style="margin-top:10px; justify-content:center;">' +
+      `<button class="ghost" id="ledgerPrevBtn" ${ledgerPage === 0 ? 'disabled' : ''} style="min-width:0; flex:0 0 auto; padding:8px 12px;">‹ Prev</button>` +
+      Array.from({ length: pages }, (_, i) =>
+        `<button class="ghost" data-page="${i}" style="min-width:0; flex:0 0 auto; padding:8px 12px; ${i === ledgerPage ? 'background:var(--accent); color:#fff; border-color:var(--accent);' : ''}">${i + 1}</button>`).join('') +
+      `<button class="ghost" id="ledgerNextBtn" ${ledgerPage === pages - 1 ? 'disabled' : ''} style="min-width:0; flex:0 0 auto; padding:8px 12px;">Next ›</button>` +
+      '</div>';
+  }
+  $('ledgerBox').innerHTML = html;
+  const prev = $('ledgerPrevBtn');
+  const next = $('ledgerNextBtn');
+  if (prev) prev.onclick = () => { if (ledgerPage > 0) { ledgerPage--; renderLedgerPage(); } };
+  if (next) next.onclick = () => { if (ledgerPage < pages - 1) { ledgerPage++; renderLedgerPage(); } };
+  document.querySelectorAll('#ledgerBox [data-page]').forEach(btn => {
+    btn.onclick = () => { ledgerPage = Number(btn.dataset.page); renderLedgerPage(); };
+  });
+}
+
 async function loadLedger() {
   const r = await fetch('/api/ledger');
   const j = await r.json();
@@ -436,7 +469,7 @@ async function loadLedger() {
   // Merge this browser's saved entries so the Ledger survives a refresh
   // even when the server-side ledger file is empty (item 31).
   let local = [];
-  try { local = JSON.parse(localStorage.getItem('vaultLedger') || '[]'); } catch (err) { local = []; }
+  try { local = JSON.parse(localStorage.getItem('vaultLedgerV2') || '[]'); } catch (err) { local = []; }
   const seen = new Set(entries.map(e => e.txHash).filter(Boolean));
   const extra = local.filter(e => e.txHash && !seen.has(e.txHash));
   entries = [...entries, ...extra].sort((a, b) => String(b.ts || '').localeCompare(String(a.ts || '')));
@@ -444,9 +477,9 @@ async function loadLedger() {
   const today = new Date().toISOString().slice(0, 10);
   extra.forEach(e => { if (String(e.ts || '').startsWith(today) && e.status === 'settled') spent += Number(e.priceUsd || 0); });
   $('spentLine').textContent = `— spent today $${spent.toFixed(3)} of $${j.dailyCapUsd} cap`;
-  if (!entries.length) { $('ledgerBox').textContent = 'No payments yet.'; return; }
-  $('ledgerBox').innerHTML = '<table><tr><th>Time</th><th>Service</th><th>Price</th><th>Status</th></tr>' +
-    entries.map(e => `<tr><td><small>${e.ts.replace('T', ' ').slice(0, 19)}</small></td><td>${e.capabilityId}<br><small>${e.query || ''}</small></td><td>${e.priceUsd != null ? '$' + e.priceUsd : '—'}</td><td>${e.status}${e.txHash ? `<br><small><a href="https://celo-sepolia.blockscout.com/tx/${e.txHash}" target="_blank" rel="noopener">tx ↗</a></small>` : ''}</td></tr>`).join('') + '</table>';
+  ledgerEntriesAll = entries;
+  ledgerPage = 0;
+  renderLedgerPage();
 }
 
 function parseQuotePrice(text) {
@@ -587,9 +620,9 @@ async function runPayment() {
       <span class="muted">Payment successful. The agent paid $${e.priceUsd} USDC for this task — the results are below.</span>`;
     // Save a copy in this browser so the Ledger survives a refresh (item 31).
     try {
-      const local = JSON.parse(localStorage.getItem('vaultLedger') || '[]');
+      const local = JSON.parse(localStorage.getItem('vaultLedgerV2') || '[]');
       local.push({ ts: e.ts || new Date().toISOString(), capabilityId: e.capabilityId, query: e.query || '', priceUsd: e.priceUsd, status: e.status, txHash: e.txHash });
-      localStorage.setItem('vaultLedger', JSON.stringify(local.slice(-50)));
+      localStorage.setItem('vaultLedgerV2', JSON.stringify(local.slice(-50)));
     } catch (err) { /* localStorage unavailable */ }
     const out = e.result || {};
     $('resultCard').style.display = '';
