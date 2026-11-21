@@ -50,6 +50,7 @@
   <p class="sub">An agent that shops for itself on Celo. You type a task, the agent checks the price first, then pays per call over x402 with buy. Every payment is bounded by its agent card: only approved services, with a per-call cap and a daily cap. The agent never holds a wallet key.</p>
 
   <div class="card">
+    <div id="formError" class="bad" style="display:none; margin-bottom:12px; line-height:1.5;"></div>
     <label for="service">Service (approved)</label>
     <select id="service"></select>
     <label for="query" id="queryLabel">Task / keywords</label>
@@ -250,9 +251,17 @@ function flightInputError() {
   return bad.join(' and ') + ' is not a city or airport code. Try a city name like Beijing, Shanghai, Tokyo, or Jakarta, or a 3-letter airport code like PEK, SIN, or CGK. A country name like "China" has no single airport code.';
 }
 
+function showFormError(msg) {
+  const el = $('formError');
+  if (!msg) { el.style.display = 'none'; el.textContent = ''; return; }
+  el.textContent = msg;
+  el.style.display = '';
+}
+
 $('quoteBtn').onclick = async () => {
   const ferr = flightInputError();
-  if (ferr) { $('quoteBox').innerHTML = '<div class="quote">' + escapeHtml(ferr) + '</div>'; return; }
+  if (ferr) { showFormError(ferr); return; }
+  showFormError('');
   $('quoteBtn').disabled = true;
   $('quoteBox').innerHTML = '<div class="quote">Asking for a price…</div>';
   const r = await fetch('/api/quote', { method: 'POST', headers: { 'content-type': 'application/json' },
@@ -264,11 +273,8 @@ $('quoteBtn').onclick = async () => {
 
 $('runBtn').onclick = async () => {
   const ferr = flightInputError();
-  if (ferr) {
-    $('receiptCard').style.display = '';
-    $('receiptCard').innerHTML = `<span class="bad">✗ ${escapeHtml(ferr)}</span>`;
-    return;
-  }
+  if (ferr) { showFormError(ferr); return; }
+  showFormError('');
   $('runBtn').disabled = true;
   $('receiptCard').style.display = 'none';
   $('resultCard').style.display = 'none';
