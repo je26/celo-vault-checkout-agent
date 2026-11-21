@@ -63,7 +63,7 @@
 
   <div class="chips" id="serviceChips"></div>
 
-  <div class="card">
+  <div class="card" id="serviceCard">
     <div id="formError" style="display:none; margin-bottom:12px;"></div>
     <div id="capDesc" class="muted" style="margin-bottom:12px"></div>
     <label for="query" id="queryLabel" style="display:none">Task / keywords</label>
@@ -80,6 +80,21 @@
       <button class="ghost" id="quoteBtn">Check price</button>
     </div>
     <div id="quoteBox"></div>
+  </div>
+
+  <div class="card" id="altanaCard" style="display:none">
+    <h3 style="margin-top:0">Altana — agent wallet</h3>
+    <div class="muted">A non-custodial agent wallet on Celo. The owner grants a scoped session key — per-token daily cap, contract allowlist, expiry — enforced on-chain. The session pays for APIs with x402. The agent never holds a wallet key.</div>
+    <table style="margin-top:12px;">
+      <tr><td>Wallet</td><td><a href="https://celo-sepolia.blockscout.com/address/0x0D89830F241383535c3708b6c521F09Ee7cddb1e" target="_blank" rel="noopener">0x0D89…cddb1e</a></td></tr>
+      <tr><td>Session key</td><td>granted — <a href="https://celo-sepolia.blockscout.com/tx/0x8ad58db9195e85facbc3330a463e3399c35a906ec9207238623e2cd34a3b1b9b" target="_blank" rel="noopener">tx ↗</a><br><small>0.5 USDC/day + 2 CELO/day · expires 28 Nov 2026</small></td></tr>
+      <tr><td>Keystore</td><td><a href="https://explorer.altana.network" target="_blank" rel="noopener">explorer.altana.network ↗</a><br><small>grant recorded in the public Keystore</small></td></tr>
+      <tr><td>x402 paid</td><td>$0.005/call — settled: <a href="https://celo-sepolia.blockscout.com/tx/0x85763827f3df0e07f9e656ebd86e527b23bd7b893d700930e23ab3ba69832563" target="_blank" rel="noopener">tx ↗</a></td></tr>
+    </table>
+    <div class="muted" style="margin-top:10px;">The buy gateway does not accept smart-account signatures, so this demo pays its own x402 API (same Celo facilitator, same $0.005 price) and gets live data back.</div>
+    <div class="row">
+      <a href="https://altana-x402-api.vercel.app" target="_blank" rel="noopener" style="flex:1; text-align:center; padding:13px; border-radius:10px; border:1px solid var(--accent); color:var(--accent); text-decoration:none; font-weight:700;">Open the x402 API ↗</a>
+    </div>
   </div>
 
   <div id="quoteModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.75); z-index:50; align-items:center; justify-content:center; padding:16px;">
@@ -132,6 +147,8 @@ const DEFAULT_CAPS = [
 ];
 let caps = [...DEFAULT_CAPS];
 let selectedCapId = 'flights.search';
+// Altana is not a buy service — it is a separate tab showing the agent wallet.
+const ALTANA_ID = 'altana';
 
 function currentCap() { return caps.find(c => c.id === selectedCapId) || caps[0] || {}; }
 
@@ -145,11 +162,16 @@ const CAP_DESC = {
 };
 // The input field adapts to the service: search services take keywords,
 // profile services take a username, flights take origin/destination/date.
+// Altana hides the form and shows its own panel instead.
 function syncInput() {
-  const cap = currentCap();
+  const isAltana = selectedCapId === ALTANA_ID;
   document.querySelectorAll('#serviceChips .chip').forEach(el => {
-    el.classList.toggle('active', el.dataset.cap === cap.id);
+    el.classList.toggle('active', el.dataset.cap === selectedCapId);
   });
+  $('serviceCard').style.display = isAltana ? 'none' : '';
+  $('altanaCard').style.display = isAltana ? '' : 'none';
+  if (isAltana) return;
+  const cap = currentCap();
   $('capDesc').textContent = (CAP_DESC[cap.id] || cap.title || '') + ' $' + cap.maxUsd + ' per call.';
   const isFlights = Array.isArray(cap.multi) && cap.multi.length > 0;
   $('flightFields').style.display = isFlights ? '' : 'none';
@@ -306,7 +328,8 @@ function renderChips() {
   const order = ['flights.search', 'youtube.videos.search', 'instagram.profile', 'tiktok.profile', 'reddit.posts.search'];
   const sorted = [...caps].sort((a, b) => order.indexOf(a.id) - order.indexOf(b.id));
   $('serviceChips').innerHTML = sorted.map(c =>
-    `<button class="chip${c.id === selectedCapId ? ' active' : ''}" data-cap="${c.id}">${shortName(c.id)}</button>`).join('');
+    `<button class="chip${c.id === selectedCapId ? ' active' : ''}" data-cap="${c.id}">${shortName(c.id)}</button>`).join('') +
+    `<button class="chip${selectedCapId === ALTANA_ID ? ' active' : ''}" data-cap="${ALTANA_ID}">Altana</button>`;
   document.querySelectorAll('#serviceChips .chip').forEach(el => {
     el.onclick = () => {
       if (selectedCapId === el.dataset.cap) return;
@@ -339,7 +362,7 @@ async function loadCaps() {
     const j = await r.json();
     if (j.capabilities && j.capabilities.length) {
       caps = j.capabilities;
-      if (!caps.some(c => c.id === selectedCapId) && caps.length) selectedCapId = caps[0].id;
+      if (selectedCapId !== ALTANA_ID && !caps.some(c => c.id === selectedCapId) && caps.length) selectedCapId = caps[0].id;
       renderChips();
       syncInput();
       $('networkPill').textContent = 'Network: ' + (j.network === 'mainnet' ? 'Celo mainnet' : 'Celo Sepolia (sandbox, free)');
