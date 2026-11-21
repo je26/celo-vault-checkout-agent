@@ -32,8 +32,8 @@
   .ok { color: var(--green); font-weight: 700; }
   .bad { color: var(--red); font-weight: 700; }
   #formError { font-family: Georgia, "Times New Roman", serif; font-weight: 400; font-size: 15px; color: #fca5a5; line-height: 1.6; }
-  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 16px; }
-  .chip { flex: 0 0 auto; min-width: 0; padding: 8px 16px; border-radius: 999px; border: 1px solid #3a3a4d; background: #1b1b2a; color: var(--muted); font-size: 14px; font-weight: 600; cursor: pointer; }
+  .chips { display: flex; gap: 6px; flex-wrap: nowrap; margin: 0 0 16px; }
+  .chip { flex: 1 1 0; min-width: 0; padding: 8px 4px; border-radius: 999px; border: 1px solid #3a3a4d; background: #1b1b2a; color: var(--muted); font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; overflow: hidden; text-align: center; }
   .chip.active { background: var(--accent); border-color: var(--accent); color: #ffffff; }
   .result { margin-top: 12px; }
   .result a { color: var(--accent2); }
@@ -57,8 +57,6 @@
 
   <div class="card">
     <div id="formError" style="display:none; margin-bottom:12px;"></div>
-    <label for="service">Service (approved)</label>
-    <select id="service"></select>
     <label for="query" id="queryLabel">Task / keywords</label>
     <input type="text" id="query" value="celo" maxlength="512" placeholder="e.g. celo">
     <div id="flightFields" style="display:none">
@@ -95,12 +93,15 @@
   </div>
 
   <p class="muted">Celo hackathon “Agents Open for Business”, Agent Vault track. Payments are tested on Celo Sepolia (test USDC, free from the faucet). Mainnet only with VAULT_NETWORK=mainnet and VAULT_MAINNET_OK=1. Attribution tag: <span id="tagLine">celo_2da564e80a18</span> — required in every mainnet transaction.</p>
+
+  <p class="muted" style="text-align:center; margin-top:28px;">© 2026 Sanjaya Purba</p>
 </div>
 <script>
 const $ = (id) => document.getElementById(id);
 let caps = [];
+let selectedCapId = 'youtube.videos.search';
 
-function currentCap() { return caps.find(c => c.id === $('service').value) || caps[0] || {}; }
+function currentCap() { return caps.find(c => c.id === selectedCapId) || caps[0] || {}; }
 
 // The input field adapts to the service: search services take keywords,
 // profile services take a username, flights take origin/destination/date.
@@ -233,9 +234,9 @@ function shortName(id) {
 
 function renderChips() {
   $('serviceChips').innerHTML = caps.map(c =>
-    `<button class="chip${c.id === $('service').value ? ' active' : ''}" data-cap="${c.id}">${shortName(c.id)}</button>`).join('');
+    `<button class="chip${c.id === selectedCapId ? ' active' : ''}" data-cap="${c.id}">${shortName(c.id)}</button>`).join('');
   document.querySelectorAll('#serviceChips .chip').forEach(el => {
-    el.onclick = () => { $('service').value = el.dataset.cap; syncInput(); };
+    el.onclick = () => { selectedCapId = el.dataset.cap; syncInput(); };
   });
 }
 
@@ -243,9 +244,7 @@ async function loadCaps() {
   const r = await fetch('/api/catalog');
   const j = await r.json();
   caps = j.capabilities || [];
-  $('service').innerHTML = caps.map(c =>
-    `<option value="${c.id}">${c.title} — max $${c.maxUsd} / call</option>`).join('');
-  $('service').onchange = syncInput;
+  if (!caps.some(c => c.id === selectedCapId) && caps.length) selectedCapId = caps[0].id;
   renderChips();
   syncInput();
   $('networkPill').textContent = 'Network: ' + (j.network === 'mainnet' ? 'Celo mainnet' : 'Celo Sepolia (sandbox, free)');
@@ -287,7 +286,7 @@ $('quoteBtn').onclick = async () => {
   $('quoteBtn').disabled = true;
   $('quoteBox').innerHTML = '<div class="quote">Asking for a price…</div>';
   const r = await fetch('/api/quote', { method: 'POST', headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ capabilityId: $('service').value, body: requestBody() }) });
+    body: JSON.stringify({ capabilityId: selectedCapId, body: requestBody() }) });
   const j = await r.json();
   $('quoteBox').innerHTML = '<div class="quote">' + escapeHtml(j.output || JSON.stringify(j)) + '</div>';
   $('quoteBtn').disabled = false;
@@ -302,7 +301,7 @@ $('runBtn').onclick = async () => {
   $('resultCard').style.display = 'none';
   $('quoteBox').innerHTML = '<div class="quote">Agent is paying and running…</div>';
   const r = await fetch('/api/run', { method: 'POST', headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ capabilityId: $('service').value, body: requestBody() }) });
+    body: JSON.stringify({ capabilityId: selectedCapId, body: requestBody() }) });
   const j = await r.json();
   const e = j.entry || {};
   $('quoteBox').innerHTML = '';
