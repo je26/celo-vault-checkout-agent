@@ -44,6 +44,8 @@
   td, th { text-align: left; padding: 8px 4px; border-bottom: 1px solid var(--border); vertical-align: top; }
   td small { color: var(--muted); }
   .muted { color: var(--muted); font-size: 13px; line-height: 1.5; }
+  .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid var(--accent); border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: -3px; margin-right: 8px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
   .footer-fixed { position: fixed; bottom: 0; left: 0; right: 0; text-align: center; background: #10101a; color: var(--muted); font-size: 13px; padding: 10px 16px; margin: 0; border-top: 1px solid var(--border); z-index: 10; }
 </style>
 </head>
@@ -381,7 +383,7 @@ async function runPayment() {
   $('quotePayBtn').textContent = 'Processing…';
   $('receiptCard').style.display = 'none';
   $('resultCard').style.display = 'none';
-  $('quoteModalBody').innerHTML = '<div class="quote">Agent is paying and running…</div>';
+  $('quoteModalBody').innerHTML = '<div class="quote"><span class="spinner"></span>Agent is paying and running…</div>';
   const r = await fetch('/api/run', { method: 'POST', headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ capabilityId: selectedCapId, body: requestBody() }) });
   const j = await r.json();
