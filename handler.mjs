@@ -26,7 +26,9 @@ import { createClient } from '@vercel/kv';
 // Marketplace (Upstash); the store's REST credentials arrive as
 // KV_REST_API_URL + KV_REST_API_TOKEN. When they are absent the ledger
 // falls back to the committed seed + /tmp file (see ledgerEntries).
-const KV_LEDGER_KEY = 'vault:ledger';
+// Sandbox keeps the original key; mainnet gets its own list so the two
+// networks never share a daily cap or history.
+const KV_LEDGER_KEY = process.env.VAULT_NETWORK === 'mainnet' ? 'vault:ledger:mainnet' : 'vault:ledger';
 let kvClient = null;
 function getKv() {
   if (kvClient) return kvClient;
@@ -115,6 +117,8 @@ async function ledgerEntries() {
   const out = [];
   const push = (e) => {
     if (!e || typeof e !== 'object') return;
+    // Entries are tagged with their network; never mix networks in one ledger.
+    if (e.network && e.network !== NETWORK) return;
     const k = (e.ts || '') + '|' + (e.capabilityId || '') + '|' + (e.txHash || '');
     if (seen.has(k)) return;
     seen.add(k);
