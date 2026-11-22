@@ -138,33 +138,33 @@
       <h3 style="margin-top:0">Altana wallet</h3>
       <div class="muted">A non-custodial wallet for the agent. You keep the keys and set the rules — the agent acts under a session key you grant and can revoke.</div>
       <p class="mono" style="margin-top:12px;">0x0D89830F241383535c3708b6c521F09Ee7cddb1e</p>
-      <p class="muted">Same address on Celo, BNB Chain and Ethereum.<br>Balance (Celo mainnet): 3.20 CELO, 0.98 USDC</p>
+      <p class="muted">Same address on Celo, BNB Chain and Ethereum.<br>Balance (Celo Sepolia, testnet): 0.53 CELO, 19.62 test USDC</p>
     </div>
     <div class="card" style="background:linear-gradient(135deg, rgba(212,175,55,.14), rgba(212,175,55,.03)); border:1px solid rgba(212,175,55,.45);">
       <h3 style="margin-top:0">Session key <span class="tag">REVOKED</span></h3>
       <table style="margin-top:12px;">
-        <tr><td>Status</td><td><span class="bad">Revoked</span> — granted on mainnet, then revoked onchain (see below)</td></tr>
-        <tr><td>Spend cap</td><td>0.5 USDC / day + 0.5 CELO / day</td></tr>
-        <tr><td>Allowed contracts</td><td>Permit2, USDC (mainnet), admin</td></tr>
-        <tr><td>Granted</td><td>2026-11-22 · <a href="https://celoscan.io/tx/0xff8337aedd83341670710fe29fb70bd0df788b427d403f5d0672b16be8aa08f9" target="_blank" rel="noopener">tx ↗</a></td></tr>
-        <tr><td>Expires</td><td>2026-11-29 01:48 UTC (grant expiry — session already revoked)</td></tr>
-        <tr><td>Revoked</td><td>2026-11-22 · <a href="https://celoscan.io/tx/0xfaffd9090eec391d94747ce5f279ca7c545aa4eef9ec44b8487cd312756a11b4" target="_blank" rel="noopener">tx ↗</a></td></tr>
-        <tr><td>Keystore proof</td><td><a href="https://explorer.altana.network" target="_blank" rel="noopener">explorer.altana.network ↗</a> · <a href="https://celoscan.io/address/0x83b30935f36d6ccf9B1ec3b5E47F2866b97cd27c" target="_blank" rel="noopener">Keystore (mainnet) ↗</a></td></tr>
+        <tr><td>Status</td><td><span class="bad">Revoked</span> — granted on Sepolia, then revoked onchain (see below)</td></tr>
+        <tr><td>Spend cap</td><td>0.5 USDC / day + 2 CELO / day</td></tr>
+        <tr><td>Allowed contracts</td><td>Permit2, Sepolia USDC, admin</td></tr>
+        <tr><td>Granted</td><td>2026-11-21 · <a href="https://celo-sepolia.blockscout.com/tx/0x8ad58db9195e85facbc3330a463e3399c35a906ec9207238623e2cd34a3b1b9b" target="_blank" rel="noopener">tx ↗</a></td></tr>
+        <tr><td>Expires</td><td>2026-11-28 16:12 UTC (grant expiry — session already revoked)</td></tr>
+        <tr><td>Revoked</td><td>2026-11-22 · <a href="https://celo-sepolia.blockscout.com/tx/0x41d1911136df9e19a30e208838cc23c1fde5d9750534de8b306e960192a27d6c" target="_blank" rel="noopener">tx ↗</a></td></tr>
+        <tr><td>Keystore proof</td><td><a href="https://explorer.altana.network" target="_blank" rel="noopener">explorer.altana.network ↗</a> · <a href="https://celo-sepolia.blockscout.com/address/0xCC3df52B6aD826781AAD86EcEB1459ed0b1Ae3F6" target="_blank" rel="noopener">Keystore (Sepolia) ↗</a></td></tr>
       </table>
       <button class="danger" id="revokeBtn" style="width:100%; margin-top:14px;">Revoke session (demo)</button>
       <p class="muted" id="revokeNote" style="margin-top:10px">Already revoked onchain (tx above). This button is a demo leftover — real revoking needs the wallet owner's signature (1 transaction) and takes effect before the agent's next action. The agent can never act beyond these limits — a call outside them reverts onchain.</p>
     </div>
     <div class="card">
-      <h3 style="margin-top:0">What the agent did with this wallet (Celo mainnet)</h3>
+      <h3 style="margin-top:0">What the agent did with this wallet (Celo Sepolia)</h3>
       <table>
-        <tr><td>Session granted</td><td>onchain, Keystore · <a href="https://celoscan.io/tx/0xff8337aedd83341670710fe29fb70bd0df788b427d403f5d0672b16be8aa08f9" target="_blank" rel="noopener">tx ↗</a></td></tr>
-        <tr><td>Session execute</td><td>0.0001 CELO wallet → admin · <a href="https://celoscan.io/tx/0x5fc3d17dada00b7948a2803355fa2f3da97e74686d69a4433e7ced2a422d9faa" target="_blank" rel="noopener">tx ↗</a></td></tr>
-        <tr><td>Session revoked</td><td>delegation removed, wallet is a plain EOA again · <a href="https://celoscan.io/tx/0xfaffd9090eec391d94747ce5f279ca7c545aa4eef9ec44b8487cd312756a11b4" target="_blank" rel="noopener">tx ↗</a></td></tr>
-        <tr><td>Buy gateway (mainnet)</td><td>$0.005/call · settled: <a href="https://celoscan.io/tx/0xa35d820ffa66e6a9dd46c55a7590b9a553c00d3b9cb8c16e9e5f958f7cddba46" target="_blank" rel="noopener">tx ↗</a></td></tr>
+        <tr><td>Session granted</td><td>onchain, Keystore · <a href="https://celo-sepolia.blockscout.com/tx/0x8ad58db9195e85facbc3330a463e3399c35a906ec9207238623e2cd34a3b1b9b" target="_blank" rel="noopener">tx ↗</a></td></tr>
+        <tr><td>Session execute</td><td>0.0001 CELO wallet → admin · <a href="https://celo-sepolia.blockscout.com/tx/0x3e84f904ab9b6f2efad2cc4d1d0e10f92fd7263e7c4824adb3b23df21c4c19d7" target="_blank" rel="noopener">tx ↗</a></td></tr>
+        <tr><td>x402 API</td><td>$0.005/call · settled: <a href="https://celo-sepolia.blockscout.com/tx/0x85763827f3df0e07f9e656ebd86e527b23bd7b893d700930e23ab3ba69832563" target="_blank" rel="noopener">tx ↗</a></td></tr>
+        <tr><td>Session revoked</td><td>delegation removed, wallet is a plain EOA again · <a href="https://celo-sepolia.blockscout.com/tx/0x41d1911136df9e19a30e208838cc23c1fde5d9750534de8b306e960192a27d6c" target="_blank" rel="noopener">tx ↗</a></td></tr>
       </table>
-      <div class="muted" style="margin-top:10px;">This demo now pays the buy gateway on Celo mainnet directly (plain EOA, EIP-3009). The Altana session above was granted, used once, then revoked so the wallet could pay buy — the grant, execute and revoke are all onchain. A Sepolia x402 API demo also exists.</div>
+      <div class="muted" style="margin-top:10px;">The buy gateway does not accept smart-account signatures, so this demo pays its own x402 API (same Celo facilitator, same $0.005 price) and gets live data back. A mainnet version will live on a separate domain later.</div>
       <div class="row" style="margin-top:14px;">
-        <a href="https://altana-x402-api.vercel.app" target="_blank" rel="noopener" style="flex:1; text-align:center; padding:13px; border-radius:10px; border:1px solid var(--accent); color:var(--accent); text-decoration:none; font-weight:700;">Open the x402 API (Sepolia) ↗</a>
+        <a href="https://altana-x402-api.vercel.app" target="_blank" rel="noopener" style="flex:1; text-align:center; padding:13px; border-radius:10px; border:1px solid var(--accent); color:var(--accent); text-decoration:none; font-weight:700;">Open the x402 API ↗</a>
       </div>
     </div>
   </div>
