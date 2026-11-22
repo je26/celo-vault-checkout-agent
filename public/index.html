@@ -309,9 +309,10 @@ function profileRows(uname, name, bio, followers, following, media, verified, pr
   return rows.map(r => `<div class="item">${r}</div>`).join('');
 }
 
-// Flight results: one at a time (item 28), with prev/next navigation.
+// Flight results: 5 rows per page, rest on the next page.
+const FLIGHT_PAGE_SIZE = 5;
 let currentFlights = [];
-let flightIdx = 0;
+let flightPage = 0;
 let flightHead = '';
 
 function flightItemHtml(f) {
@@ -325,31 +326,37 @@ function flightItemHtml(f) {
 function renderFlightsPage() {
   const n = currentFlights.length;
   if (!n) return '';
-  const nav = `<div class="row" style="margin-top:10px;">
-    <button class="ghost" id="flightPrevBtn" ${flightIdx === 0 ? 'disabled' : ''}>‹ Previous</button>
-    <span class="muted" style="align-self:center">${flightIdx + 1} of ${n}</span>
-    <button class="ghost" id="flightNextBtn" ${flightIdx === n - 1 ? 'disabled' : ''}>Next ›</button>
-  </div>`;
-  return flightHead + flightItemHtml(currentFlights[flightIdx]) + nav;
+  const pages = Math.max(1, Math.ceil(n / FLIGHT_PAGE_SIZE));
+  if (flightPage >= pages) flightPage = pages - 1;
+  if (flightPage < 0) flightPage = 0;
+  const start = flightPage * FLIGHT_PAGE_SIZE;
+  const pageFlights = currentFlights.slice(start, start + FLIGHT_PAGE_SIZE);
+  const nav = pages > 1 ? `<div class="row" style="margin-top:10px;">
+    <button class="ghost" id="flightPrevBtn" ${flightPage === 0 ? 'disabled' : ''}>‹ Previous</button>
+    <span class="muted" style="align-self:center">Page ${flightPage + 1} of ${pages}</span>
+    <button class="ghost" id="flightNextBtn" ${flightPage === pages - 1 ? 'disabled' : ''}>Next ›</button>
+  </div>` : '';
+  return flightHead + pageFlights.map(flightItemHtml).join('') + nav;
 }
 
 function bindFlightNav() {
   const prev = $('flightPrevBtn');
   const next = $('flightNextBtn');
-  if (prev) prev.onclick = () => { if (flightIdx > 0) { flightIdx--; $('resultBox').innerHTML = renderFlightsPage(); bindFlightNav(); } };
-  if (next) next.onclick = () => { if (flightIdx < currentFlights.length - 1) { flightIdx++; $('resultBox').innerHTML = renderFlightsPage(); bindFlightNav(); } };
+  const pages = Math.max(1, Math.ceil(currentFlights.length / FLIGHT_PAGE_SIZE));
+  if (prev) prev.onclick = () => { if (flightPage > 0) { flightPage--; $('resultBox').innerHTML = renderFlightsPage(); bindFlightNav(); } };
+  if (next) next.onclick = () => { if (flightPage < pages - 1) { flightPage++; $('resultBox').innerHTML = renderFlightsPage(); bindFlightNav(); } };
 }
 
 function renderResult(out) {
   currentFlights = [];
-  flightIdx = 0;
+  flightPage = 0;
   flightHead = '';
   const flightList = (out.flights && out.flights.flights) || [];
   if (Array.isArray(flightList) && flightList.length) {
     const sp = out.search_params || {};
     flightHead = sp.origin && sp.destination ? `<div class="item"><b>${escapeHtml(sp.origin)} → ${escapeHtml(sp.destination)}</b><small>${escapeHtml(sp.depart_date || '')} · one-way · prices in USD</small></div>` : '';
     currentFlights = flightList.slice(0, 10);
-    flightIdx = 0;
+    flightPage = 0;
     setTimeout(bindFlightNav, 0);
     return renderFlightsPage();
   }
