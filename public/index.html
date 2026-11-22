@@ -140,7 +140,7 @@
       <h3 style="margin-top:0">Altana wallet</h3>
       <div class="muted">A non-custodial wallet for the agent. You keep the keys and set the rules — the agent acts under a session key you grant and can revoke.</div>
       <p class="mono" style="margin-top:12px;">0x0D89830F241383535c3708b6c521F09Ee7cddb1e</p>
-      <p class="muted">Same address on Celo, BNB Chain and Ethereum.<br>Balance (Celo Sepolia, testnet): 0.53 CELO, 19.62 test USDC</p>
+      <p class="muted">Same address on Celo, BNB Chain and Ethereum.<br><span id="altanaBal">Balance (Celo Sepolia, testnet): loading…</span></p>
     </div>
     <div class="card" style="background:linear-gradient(135deg, rgba(212,175,55,.14), rgba(212,175,55,.03)); border:1px solid rgba(212,175,55,.45);">
       <h3 style="margin-top:0">Session key <span class="tag">REVOKED</span></h3>
@@ -153,8 +153,7 @@
         <tr><td>Revoked</td><td>2026-11-22 · <a href="https://celo-sepolia.blockscout.com/tx/0x41d1911136df9e19a30e208838cc23c1fde5d9750534de8b306e960192a27d6c" target="_blank" rel="noopener">tx ↗</a></td></tr>
         <tr><td>Keystore proof</td><td><a href="https://explorer.altana.network" target="_blank" rel="noopener">explorer.altana.network ↗</a> · <a href="https://celo-sepolia.blockscout.com/address/0xCC3df52B6aD826781AAD86EcEB1459ed0b1Ae3F6" target="_blank" rel="noopener">Keystore (Sepolia) ↗</a></td></tr>
       </table>
-      <button class="danger" id="revokeBtn" style="width:100%; margin-top:14px;">Revoke session (demo)</button>
-      <p class="muted" id="revokeNote" style="margin-top:10px">Already revoked onchain (tx above). This button does nothing — real revoking needs the wallet owner's signature.</p>
+      <p class="muted" style="margin-top:10px">Revoked onchain (tx above). Real revoking needs the wallet owner's signature.</p>
     </div>
     <div class="card">
       <h3 style="margin-top:0">What the agent did with this wallet (Celo Sepolia)</h3>
@@ -186,7 +185,7 @@
     </div>
     <div class="card">
       <h3 style="margin-top:0">How it works</h3>
-      <div class="muted">1. Scan your document in the Self app.<br>2. Self issues a verified Agent ID on Celo mainnet.<br>3. The agent signs every request with that identity — judges can verify it onchain.</div>
+      <div class="muted">1. Scan your document in the Self app.<br>2. Self issues a verified Agent ID — testnet done (agentId 96), mainnet needs a passport.<br>3. The agent signs every request with that identity — judges can verify it onchain.</div>
     </div>
   </div>
 
@@ -199,8 +198,7 @@
       <label>Pay in</label>
       <input type="text" value="IDRX (Indonesian rupiah)" readonly>
       <p class="muted" style="margin-top:10px">Rate via Textile FX (RFQ): 1 USDC ≈ 16,400 IDRX<br>Recipient gets: ≈ 164,000 IDRX</p>
-      <button class="primary" id="corridorBtn" style="width:100%; margin-top:14px;">Check rate &amp; pay</button>
-      <p class="muted" id="corridorNote" style="margin-top:10px">No corridor payments yet — this track is the hardest and comes last.</p>
+      <p class="muted" style="margin-top:10px">No corridor payments yet — this track is the hardest and comes last.</p>
     </div>
   </div>
 
@@ -700,13 +698,18 @@ document.querySelectorAll('#trackTabs .track').forEach(t => {
   });
 });
 // Revoke needs the wallet owner's signature — not available in this demo.
-$('revokeBtn').onclick = () => {
-  $('revokeNote').textContent = 'Revoking needs the wallet owner\u2019s signature — it cannot be done from this demo page.';
-};
-// Corridors track is not started yet.
-$('corridorBtn').onclick = () => {
-  $('corridorNote').textContent = 'Corridors is not started yet — this track is the hardest and comes last.';
-};
+// Altana balance, live from /api/wallet (the static text goes stale).
+async function loadAltanaBal() {
+  try {
+    const r = await fetch('/api/wallet');
+    const j = await r.json();
+    if (j.balances) {
+      const net = j.network === 'mainnet' ? 'Celo mainnet' : 'Celo Sepolia, testnet';
+      $('altanaBal').textContent = `Balance (${net}): ${j.balances.celo.toFixed(2)} CELO, ${j.balances.usdc.toFixed(2)} ${j.network === 'mainnet' ? 'USDC' : 'test USDC'}`;
+    }
+  } catch { /* keep the loading text if the wallet is unreachable */ }
+}
+loadAltanaBal();
 
 function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 // Open the native calendar when the date field is tapped (some browsers only

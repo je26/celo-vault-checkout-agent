@@ -13,7 +13,8 @@ payment settles in test USDC with a receipt and a Blockscout link.
 > Production deployment on the owner's Vercel account (project
 > `celo-agent-vault`, team bambang9) — permanent, no expiry. Deployed
 > 2026-11-21 ~12:57 WIB with 4 services (YouTube, Reddit, Instagram,
-> TikTok). First paid call from this deployment settled: tx
+> TikTok); Flights search added 2026-11-21 as the 5th service ($0.023/call).
+> First paid call from this deployment settled: tx
 > `0xee1a4ac94f08547ecb43e6a18d32a5e732e517e4be949d6de8c38d02f010440f` (0.005 test USDC, YouTube search). The deployed
 > function auto-creates its own sandbox wallet and is auto-funded from the
 > faucet — no private key is shipped or stored in the repo. (Earlier
@@ -34,9 +35,10 @@ mainnet only** (chain 42220); testnet activity does not count.
 You type a task ("search YouTube for celo", or look up an Instagram/TikTok
 profile). The agent:
 
-Approved services (4, each 0.005 USDC per call): YouTube video search,
-Reddit post search, Instagram profile, TikTok profile. (X post search was
-removed 2026-11-21 ~12:31 WIB: the buy gateway route 502s at the provider.)
+Approved services (5): YouTube video search, Reddit post search, Instagram
+profile, TikTok profile — each 0.005 USDC per call — plus Flights search at
+0.023 USDC per call. (X post search was removed 2026-11-21 ~12:31 WIB: the
+buy gateway route 502s at the provider.)
 
 1. **Quotes first** — asks buy for the exact price before any money moves.
 2. **Checks the agent card** — only allowlisted (approved) services can be

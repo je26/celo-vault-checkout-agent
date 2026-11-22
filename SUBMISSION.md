@@ -17,8 +17,8 @@ settlement transaction hash.
 ## Live demo
 
 - **https://celo-agent-vault.vercel.app** — Vercel serverless, sandbox.
-  Production deployment (2026-11-21 ~12:57 WIB, 4 services: YouTube, Reddit,
-  Instagram, TikTok) on the owner's Vercel account, project
+  Production deployment (2026-11-21 ~12:57 WIB, 5 services: YouTube, Reddit,
+  Instagram, TikTok, Flights) on the owner's Vercel account, project
   `celo-agent-vault` — permanent. First paid call from it settled 2026-11-21:
   tx `0xee1a4ac94f08547ecb43e6a18d32a5e732e517e4be949d6de8c38d02f010440f` (0.005 test USDC, YouTube search). The function auto-creates its own
   sandbox wallet and is auto-funded from the faucet; no private key is

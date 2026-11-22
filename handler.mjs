@@ -87,12 +87,17 @@ const DAILY_CAP_USD = 0.5;
 // Ledger: local file in dev, /tmp on serverless (set LEDGER_PATH there).
 const LEDGER = process.env.LEDGER_PATH || path.join(__dirname, 'agent', 'ledger.jsonl');
 
+// Seed: verified past payments, committed in the repo so every visitor
+// sees real history even though serverless /tmp does not persist.
+const LEDGER_SEED = path.join(__dirname, 'agent', 'ledger-seed.jsonl');
+
 function ledgerEntries() {
-  // Read the deployed ledger and the /tmp fallback (serverless writes go
-  // there when the deployed path is read-only), deduplicated.
+  // Read the deployed ledger, the committed seed, and the /tmp fallback
+  // (serverless writes go there when the deployed path is read-only),
+  // deduplicated.
   const seen = new Set();
   const out = [];
-  for (const p of [LEDGER, '/tmp/ledger.jsonl']) {
+  for (const p of [LEDGER, LEDGER_SEED, '/tmp/ledger.jsonl']) {
     try {
       if (!fs.existsSync(p)) continue;
       for (const l of fs.readFileSync(p, 'utf8').split('\n').filter(Boolean)) {
@@ -268,7 +273,9 @@ export async function handleRequest(req, res) {
     await ensureBuySetup();
     const args = ['--sandbox', 'whoami'];
     const r = await runBuy(args);
-    sendJson(res, 200, { network: NETWORK, attributionTag: ATTRIBUTION_TAG, output: r.out });
+    // Structured balances for the live Altana pane (parsed from whoami).
+    const m = String(r.out || '').match(/balances\s+([\d.]+)\s+S-CELO,\s+([\d.]+)\s+USDC/);
+    sendJson(res, 200, { network: NETWORK, attributionTag: ATTRIBUTION_TAG, output: r.out, balances: m ? { celo: Number(m[1]), usdc: Number(m[2]) } : null });
     return;
   }
 
