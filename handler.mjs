@@ -16,6 +16,10 @@ import { promisify } from 'node:util';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { wrapFetchWithPayment } from '@x402/fetch';
+import { x402Client } from '@x402/core/client';
+import { registerExactEvmScheme } from '@x402/evm/exact/client';
+import { privateKeyToAccount } from 'viem/accounts';
 
 const execFileAsync = promisify(execFile);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -154,6 +158,46 @@ async function runBuy(args) {
   }
 }
 
+// Mainnet direct x402 (Task 10 option 1): buy's file keystore refuses mainnet,
+// so the agent signs EIP-3009 authorizations itself with the burner key from
+// VAULT_BURNER_KEY and pays the buy gateway through @x402/fetch. The wallet
+// must be a plain EOA (delegation revoked) or USDC's SignatureChecker rejects
+// the authorization. Returns { ok, out } shaped like runBuy.
+let mainnetFetch = null;
+function getMainnetFetch() {
+  if (mainnetFetch) return mainnetFetch;
+  const key = process.env.VAULT_BURNER_KEY;
+  if (!key || !/^0x[0-9a-fA-F]{64}$/.test(key)) {
+    throw new Error('VAULT_BURNER_KEY env var missing or malformed.');
+  }
+  const account = privateKeyToAccount(key);
+  const client = new x402Client();
+  registerExactEvmScheme(client, { signer: account });
+  mainnetFetch = wrapFetchWithPayment(fetch, client);
+  return mainnetFetch;
+}
+
+async function runMainnetDirect(url, bodyJson) {
+  try {
+    const f = getMainnetFetch();
+    const res = await f(url, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: bodyJson,
+    });
+    const out = await res.text();
+    return { ok: res.status === 200, out };
+  } catch (err) {
+    return { ok: false, out: String(err.message || err) };
+  }
+}
+
+function mainnetWalletAddress() {
+  const key = process.env.VAULT_BURNER_KEY;
+  if (!key || !/^0x[0-9a-fA-F]{64}$/.test(key)) return null;
+  return privateKeyToAccount(key).address;
+}
+
 // Serverless cold start: import the demo key as the sandbox account when the
 // file keystore is in use and no sandbox account exists yet. Runs once per
 // instance; the key comes from BUY_IMPORT_KEY (a demo-only test wallet).
@@ -213,8 +257,16 @@ export async function handleRequest(req, res) {
   }
 
   if (req.method === 'GET' && url.pathname === '/api/wallet') {
+    if (!SANDBOX) {
+      const addr = mainnetWalletAddress();
+      return sendJson(res, 200, {
+        network: NETWORK,
+        attributionTag: ATTRIBUTION_TAG,
+        output: addr ? `agent wallet (mainnet, direct signing): ${addr}` : 'VAULT_BURNER_KEY not configured',
+      });
+    }
     await ensureBuySetup();
-    const args = SANDBOX ? ['--sandbox', 'whoami'] : ['whoami'];
+    const args = ['--sandbox', 'whoami'];
     const r = await runBuy(args);
     sendJson(res, 200, { network: NETWORK, attributionTag: ATTRIBUTION_TAG, output: r.out });
     return;
@@ -241,18 +293,22 @@ export async function handleRequest(req, res) {
   }
 
   if (req.method === 'POST' && url.pathname === '/api/quote') {
-    await ensureBuySetup();
     let body;
     try { body = await readBody(req); } catch { return sendJson(res, 400, { error: 'bad json' }); }
     const cap = ALLOWLIST[body.capabilityId];
     if (!cap) return sendJson(res, 403, { error: 'capability not on the approved list' });
+    if (!SANDBOX) {
+      // Mainnet has no buy CLI quote (file keystore refuses mainnet); the
+      // price is the allowlist per-call cap, paid in USDC on Celo mainnet.
+      return sendJson(res, 200, { output: JSON.stringify({ capability: body.capabilityId, maxUsd: cap.maxUsd, network: 'mainnet', note: 'price is the per-call cap; payment settles in USDC on Celo mainnet' }) });
+    }
+    await ensureBuySetup();
     const r = await runBuy(buyArgs('quote', cap.url, JSON.stringify(body.body || {})));
     sendJson(res, 200, { output: r.out });
     return;
   }
 
   if (req.method === 'POST' && url.pathname === '/api/run') {
-    await ensureBuySetup();
     let body;
     try { body = await readBody(req); } catch { return sendJson(res, 400, { error: 'bad json' }); }
     const cap = ALLOWLIST[body.capabilityId];
@@ -260,7 +316,13 @@ export async function handleRequest(req, res) {
     if (spentTodayUsd() + cap.maxUsd > DAILY_CAP_USD) {
       return sendJson(res, 403, { error: 'daily spending cap reached', spentTodayUsd: spentTodayUsd(), dailyCapUsd: DAILY_CAP_USD });
     }
-    const r = await runBuy(buyArgs('curl', cap.url, JSON.stringify(body.body || {}), ['--max-amount', String(cap.maxUsd)]));
+    let r;
+    if (!SANDBOX) {
+      r = await runMainnetDirect(cap.url, JSON.stringify(body.body || {}));
+    } else {
+      await ensureBuySetup();
+      r = await runBuy(buyArgs('curl', cap.url, JSON.stringify(body.body || {}), ['--max-amount', String(cap.maxUsd)]));
+    }
     const entry = {
       ts: new Date().toISOString(),
       capabilityId: body.capabilityId,
