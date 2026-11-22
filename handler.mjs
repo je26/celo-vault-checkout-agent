@@ -20,6 +20,22 @@ import { wrapFetchWithPayment } from '@x402/fetch';
 import { x402Client } from '@x402/core/client';
 import { registerExactEvmScheme } from '@x402/evm/exact/client';
 import { privateKeyToAccount } from 'viem/accounts';
+import { createClient } from '@vercel/kv';
+
+// Durable ledger (Vercel KV / Upstash Redis). Created via the Vercel
+// Marketplace (Upstash); the store's REST credentials arrive as
+// KV_REST_API_URL + KV_REST_API_TOKEN. When they are absent the ledger
+// falls back to the committed seed + /tmp file (see ledgerEntries).
+const KV_LEDGER_KEY = 'vault:ledger';
+let kvClient = null;
+function getKv() {
+  if (kvClient) return kvClient;
+  if (!process.env.KV_REST_API_URL || !process.env.KV_REST_API_TOKEN) return null;
+  try {
+    kvClient = createClient({ url: process.env.KV_REST_API_URL, token: process.env.KV_REST_API_TOKEN });
+    return kvClient;
+  } catch { return null; }
+}
 
 const execFileAsync = promisify(execFile);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -91,30 +107,40 @@ const LEDGER = process.env.LEDGER_PATH || path.join(__dirname, 'agent', 'ledger.
 // sees real history even though serverless /tmp does not persist.
 const LEDGER_SEED = path.join(__dirname, 'agent', 'ledger-seed.jsonl');
 
-function ledgerEntries() {
-  // Read the deployed ledger, the committed seed, and the /tmp fallback
+async function ledgerEntries() {
+  // Read the deployed ledger, the committed seed, the /tmp fallback
   // (serverless writes go there when the deployed path is read-only),
-  // deduplicated.
+  // and the durable KV list when configured — deduplicated by txHash.
   const seen = new Set();
   const out = [];
+  const push = (e) => {
+    if (!e || typeof e !== 'object') return;
+    const k = (e.ts || '') + '|' + (e.capabilityId || '') + '|' + (e.txHash || '');
+    if (seen.has(k)) return;
+    seen.add(k);
+    out.push(e);
+  };
   for (const p of [LEDGER, LEDGER_SEED, '/tmp/ledger.jsonl']) {
     try {
       if (!fs.existsSync(p)) continue;
       for (const l of fs.readFileSync(p, 'utf8').split('\n').filter(Boolean)) {
-        const e = JSON.parse(l);
-        const k = (e.ts || '') + '|' + (e.capabilityId || '') + '|' + (e.txHash || '');
-        if (seen.has(k)) continue;
-        seen.add(k);
-        out.push(e);
+        push(JSON.parse(l));
       }
     } catch { /* ignore a bad ledger file */ }
+  }
+  const kv = getKv();
+  if (kv) {
+    try {
+      const items = await kv.lrange(KV_LEDGER_KEY, 0, -1);
+      for (const raw of items || []) push(typeof raw === 'string' ? JSON.parse(raw) : raw);
+    } catch { /* KV unreachable: file sources above still apply */ }
   }
   return out;
 }
 
-function spentTodayUsd() {
+async function spentTodayUsd() {
   const today = new Date().toISOString().slice(0, 10);
-  return ledgerEntries()
+  return (await ledgerEntries())
     .filter((e) => e.status === 'settled' && e.ts.startsWith(today))
     .reduce((s, e) => s + Number(e.priceUsd || 0), 0);
 }
@@ -126,14 +152,22 @@ function appendLedger(entry) {
   const line = JSON.stringify(entry) + '\n';
   const candidates = [LEDGER];
   if (LEDGER !== '/tmp/ledger.jsonl') candidates.push('/tmp/ledger.jsonl');
+  let wrote = false;
   for (const p of candidates) {
     try {
       fs.mkdirSync(path.dirname(p), { recursive: true });
       fs.appendFileSync(p, line);
-      return;
+      wrote = true;
+      break;
     } catch { /* try the next path */ }
   }
-  console.error('ledger write failed for', entry.capabilityId);
+  if (!wrote) console.error('ledger file write failed for', entry.capabilityId);
+  // Durable copy in KV (fire-and-forget: a KV failure must never delay
+  // or break the payment response).
+  const kv = getKv();
+  if (kv) {
+    kv.rpush(KV_LEDGER_KEY, line.trim()).catch(() => { /* KV write failed; file copy above still applies */ });
+  }
 }
 
 // Resolve the buy CLI: explicit BUY_BIN, else the bundled @celo/buy package,
@@ -280,7 +314,8 @@ export async function handleRequest(req, res) {
   }
 
   if (req.method === 'GET' && url.pathname === '/api/ledger') {
-    sendJson(res, 200, { entries: ledgerEntries().slice(-50).reverse(), spentTodayUsd: spentTodayUsd(), dailyCapUsd: DAILY_CAP_USD });
+    const entries = await ledgerEntries();
+    sendJson(res, 200, { entries: entries.slice(-50).reverse(), spentTodayUsd: await spentTodayUsd(), dailyCapUsd: DAILY_CAP_USD });
     return;
   }
 
@@ -320,8 +355,9 @@ export async function handleRequest(req, res) {
     try { body = await readBody(req); } catch { return sendJson(res, 400, { error: 'bad json' }); }
     const cap = ALLOWLIST[body.capabilityId];
     if (!cap) return sendJson(res, 403, { error: 'capability not on the approved list' });
-    if (spentTodayUsd() + cap.maxUsd > DAILY_CAP_USD) {
-      return sendJson(res, 403, { error: 'daily spending cap reached', spentTodayUsd: spentTodayUsd(), dailyCapUsd: DAILY_CAP_USD });
+    const spent = await spentTodayUsd();
+    if (spent + cap.maxUsd > DAILY_CAP_USD) {
+      return sendJson(res, 403, { error: 'daily spending cap reached', spentTodayUsd: spent, dailyCapUsd: DAILY_CAP_USD });
     }
     let r;
     if (!SANDBOX) {
