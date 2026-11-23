@@ -141,3 +141,37 @@ Route: USDC -> USDT -> IDRX (via USDT, no direct USDC-IDRX pair).
 An earlier successful run of the same route (0xc5966dbb... /
 0x504330ab...) is the first retest after the fix; the run above is the
 recorded demo run.
+
+## Mainnet proof — Agent Vault website sign-in and Altana revoke (2026-11-23)
+
+### Agent Vault website sign-in (Figma)
+On 2026-11-23 the agent signed in to figma.com with a saved login
+(Blyjeje@gmail.com) using Agent Vault mock tokens, through the Agent Vault
+MCP connector (open_page, fill_login 2/2, then the Figma home "Drafts"
+loaded). Free sign-in, no purchase. This is the website flow for the
+Agent Vault track: the agent signs in to a regular website without seeing
+the password.
+
+### Altana session revoke demo
+A separate 1-day test session (0.1 USDC/day + 0.1 CELO/day, fresh key)
+was granted and then revoked to demonstrate the revoke flow, without
+touching the permanent 365-day session (expiry 2027-11-22, caps 0.5 USDC +
+0.5 CELO per day).
+- Test session grant tx:
+  `0xa12ad2fca5f7a523d462a08675d6c54b96a60f9ee98160a9b4b0fe1ff151f68b`
+  (block 83539578, CONFIRMED; cost 9.09 CELO).
+- Revoke tx:
+  `0xd58ec995c8e6bb50d66773192d9aa93ed210722524e2251fbdd348c915564dea`
+  (block 83539650, Status Success).
+The permanent session was not touched (different session key).
+
+### Corridors attribution tag and IDRX payout
+Corridor swap transactions now carry the hackathon attribution tag
+(`celo_2da564e80a18`) as a calldata suffix, appended in
+`textileSwapLegOnce`. First tagged swap:
+`0x9a8197f50368dca444334551b87cd0c02b6f5e2de89ccd4856a4af7048b070fe`
+(2026-11-23 19:13 WIB, Status Success, tag verified at the end of the
+input data). A real IDRX payout outside the agent wallet was also sent:
+500 IDRX to `0xbdeCC64F2478B2DA074DdF3FFF87d84778f60991`, tx
+`0xa0ac4a0d55080052f5773c76a7b48f60c8570cde04f72d2ff14e18a2a5a94b21`
+(block 83536029, Status Success).
