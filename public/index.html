@@ -76,7 +76,7 @@
   <span class="pill" id="networkPill">…</span>
   <h1>Vault <span>Checkout</span> Agent</h1>
   <div class="rule"></div>
-  <p class="sub">An agent that shops for itself on Celo. You type a task, the agent checks the price first, then pays per call over x402 with buy. Every payment is bounded by its agent card: only approved services, with a per-call cap and a daily cap. The agent never holds a wallet key.</p>
+  <p class="sub">An agent that shops for itself on Celo. You type a task, the agent checks the price first, then pays per call over x402 with buy. Every payment is bounded by its agent card: only approved services, with a per-call cap and a daily cap.</p>
 
   <div class="tracks" id="trackTabs">
     <div class="track active" data-track="vault">Agent Vault</div>
@@ -173,7 +173,7 @@
       <table style="margin-top:12px;">
         <tr><td>Status</td><td><span class="ok">Active</span>, granted on Celo mainnet</td></tr>
         <tr><td>Spend cap</td><td>0.5 USDC / day + 0.5 CELO / day</td></tr>
-        <tr><td>Allowed contracts</td><td>Permit2, USDC (mainnet), admin</td></tr>
+        <tr><td>Allowed contracts</td><td>Permit2, USDC, agent wallet</td></tr>
         <tr><td>Granted</td><td>2026-11-22 · <a href="https://celoscan.io/tx/0x082b5bfaa2b6508809bbbbcc2d9adcc975cb8905615af69d88c9d8042866bbde" target="_blank" rel="noopener">tx ↗</a></td></tr>
         <tr><td>Expires</td><td>2027-11-22 (365 days)</td></tr>
         <tr><td>Keystore proof</td><td><a href="https://explorer.altana.network" target="_blank" rel="noopener">explorer.altana.network ↗</a> · <a href="https://celoscan.io/address/0x83b30935f36d6ccf9B1ec3b5E47F2866b97cd27c" target="_blank" rel="noopener">Keystore (mainnet) ↗</a></td></tr>
@@ -192,7 +192,7 @@
         <tr><td>Revoke demo (test session)</td><td>1-day test session granted + revoked 2026-11-23 · <a href="https://celoscan.io/tx/0xa12ad2fca5f7a523d462a08675d6c54b96a60f9ee98160a9b4b0fe1ff151f68b" target="_blank" rel="noopener">grant ↗</a> · <a href="https://celoscan.io/tx/0xd58ec995c8e6bb50d66773192d9aa93ed210722524e2251fbdd348c915564dea" target="_blank" rel="noopener">revoke ↗</a> · permanent session untouched</td></tr>
       </table>
       <p class="muted" style="margin-top:10px">How it fits together: the agent wallet is delegated to Porto for the Altana session. A delegated wallet cannot sign EIP-3009 (USDC checks ERC-1271, which the delegation fails), so the session key, a plain EOA holding its own USDC and funded from the wallet through the session, signs the x402 payments. Session and payments both live on mainnet.</p>
-      <div class="muted" style="margin-top:10px;">All proofs above are on Celo mainnet. The demo pays per call in USDC through x402, signed directly by the agent wallet.</div>
+      <div class="muted" style="margin-top:10px;">All proofs above are on Celo mainnet. The demo pays per call in USDC through x402, signed by the session key.</div>
       <div class="row" style="margin-top:14px;">
         <a href="https://altana-x402-api.vercel.app" target="_blank" rel="noopener" style="flex:1; text-align:center; padding:13px; border-radius:10px; border:1px solid var(--accent); color:var(--accent); text-decoration:none; font-weight:700;">Open the x402 API ↗</a>
       </div>
@@ -214,14 +214,15 @@
     </div>
     <div class="card">
       <h3 style="margin-top:0">How it works</h3>
-      <div class="muted">1. Scan your document in the Self app.<br>2. Self issues a verified Agent ID. Testnet done (agentId 96), mainnet needs a passport.<br>3. The agent signs every request with that identity. Judges can verify it onchain.</div>
+      <div class="muted">1. Scan your document in the Self app.<br>2. Self issues a verified Agent ID. Testnet done (agentId 96), mainnet needs a passport.<br>3. Once mainnet registration is done, the agent signs requests with that identity. Judges can verify it onchain.</div>
     </div>
   </div>
 
   <div id="pane-corridors" style="display:none">
     <div class="card">
       <h3 style="margin-top:0">Stablecoin Corridors</h3>
-      <div class="muted">Swap USDC and USDT for rupiah (IDRX) and back, on Textile FX. No direct USDC to IDRX pair, so that route goes through USDT.</div>
+      <div class="muted">Swap USDC and USDT for rupiah (IDRX) and back, on Textile FX. No direct USDC to IDRX pair, so that route goes through USDT. Daily cap $100.</div>
+      <div class="muted" style="margin-top:10px;">IDRX payout proof (2026-11-23): 500 IDRX paid to <code style="word-break:break-all;">0xbdeCC64F2478B2DA074DdF3FFF87d84778f60991</code>, a recipient outside the team. Status Success, block 83536029. <a href="https://celoscan.io/tx/0xa0ac4a0d55080052f5773c76a7b48f60c8570cde04f72d2ff14e18a2a5a94b21" target="_blank" rel="noopener">tx ↗</a></div>
       <label style="margin-top:12px;">You pay</label>
       <div class="row" style="margin-top:0; align-items:stretch;">
         <input type="number" id="corrAmount" value="1.5" min="1.5" step="0.5" style="flex:1; min-width:0;">

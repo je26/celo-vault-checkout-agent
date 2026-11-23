@@ -1,4 +1,4 @@
-// Vault Checkout Agent — shared request handler.
+// Vault Checkout Agent - shared request handler.
 // Used by server.mjs (local dev) and api/index.mjs (Vercel serverless).
 //
 // Rules (mirrors an Agent Vault agent card):
@@ -54,7 +54,7 @@ const SANDBOX = NETWORK === 'sandbox';
 // Hackathon attribution (Loops House, "Agents Open for Business").
 // Every transaction the agent sends directly must carry this ERC-8021 tag.
 // x402 settlements go through buy's facilitator, which sends the settlement
-// tx itself, so those attribute via the agent wallet address instead — the
+// tx itself, so those attribute via the agent wallet address instead - the
 // wallet registered at submission time.
 const ATTRIBUTION_TAG = 'celo_2da564e80a18';
 
@@ -124,7 +124,7 @@ const LEDGER_SEED = path.join(__dirname, 'agent', 'ledger-seed.jsonl');
 async function ledgerEntries() {
   // Read the deployed ledger, the committed seed, the /tmp fallback
   // (serverless writes go there when the deployed path is read-only),
-  // and the durable KV list when configured — deduplicated by txHash.
+  // and the durable KV list when configured - deduplicated by txHash.
   const seen = new Set();
   const out = [];
   const push = (e) => {
@@ -156,7 +156,7 @@ async function ledgerEntries() {
 
 async function spentTodayUsd() {
   // The $0.50/day cap covers only the 5 Agent Vault services. Corridor
-  // conversions have their own $50/day cap and must not inflate this
+  // conversions have their own $100/day cap and must not inflate this
   // number, or the ledger reads "Spent today $21 of $0.5 cap".
   const today = new Date().toISOString().slice(0, 10);
   return (await ledgerEntries())
@@ -231,7 +231,7 @@ function getMainnetFetch() {
   if (mainnetFetch) return mainnetFetch;
   const key = process.env.VAULT_SESSION_KEY || process.env.VAULT_BURNER_KEY;
   if (!key || !/^0x[0-9a-fA-F]{64}$/.test(key)) {
-    throw new Error('VAULT_SESSION_KEY env var missing or malformed.');
+    throw new Error('VAULT_SESSION_KEY or VAULT_BURNER_KEY env var missing or malformed.');
   }
   const account = privateKeyToAccount(key);
   const client = new x402Client();
@@ -276,7 +276,9 @@ const MAINNET_IDRX = '0x18bc5bcc660cf2b9ce3cd51a404afe1a0cbd3c22';
 // balance shows at once and a swap's result still appears within seconds.
 // 10s is short enough that a balance changed by a swap shows up almost
 // immediately.
-const BAL_KV_KEY = 'vault:balances:mainnet';
+// Balance KV cache, keyed per wallet address so a different address can
+// never read this wallet's cached balances.
+const balKvKey = (addr) => 'vault:balances:mainnet:' + String(addr || '').toLowerCase();
 let balCache = { at: 0, addr: '', value: null };
 // RPC endpoints for balance reads. Ankr first (often faster and more
 // reliable than Forno), Forno as fallback. Both return the same data;
@@ -318,14 +320,14 @@ async function mainnetBalances(address) {
   // Shared KV cache: return at once, refresh in the background.
   if (kv) {
     try {
-      const raw = await kv.get(BAL_KV_KEY);
+      const raw = await kv.get(balKvKey(address));
       if (raw) {
         const out = typeof raw === 'string' ? JSON.parse(raw) : raw;
         balCache = { at: Date.now(), addr: address, value: out };
         // Background refresh so the next read is fresh; never blocks the reply.
         fetchBalancesFromForno(address).then(fresh => {
           balCache = { at: Date.now(), addr: address, value: fresh };
-          kv.set(BAL_KV_KEY, JSON.stringify(fresh), { ex: 10 }).catch(() => {});
+          kv.set(balKvKey(address), JSON.stringify(fresh), { ex: 10 }).catch(() => {});
         }).catch(() => {});
         return out;
       }
@@ -334,7 +336,7 @@ async function mainnetBalances(address) {
   try {
     const out = await fetchBalancesFromForno(address);
     balCache = { at: Date.now(), addr: address, value: out };
-    if (kv) kv.set(BAL_KV_KEY, JSON.stringify(out), { ex: 10 }).catch(() => {});
+    if (kv) kv.set(balKvKey(address), JSON.stringify(out), { ex: 10 }).catch(() => {});
     return out;
   } catch { return balCache.value || null; }
 }
@@ -351,6 +353,9 @@ const TEXTILE_TOKENS = {
 };
 const TEXTILE_DECIMALS = { USDC: 6, USDT: 6, IDRX: 2 };
 const TEXTILE_MIN_USD = 1; // Textile dollar floor per swap
+const DEMO_MIN_USD = 1.5; // Demo policy: the site rejects USDC/USDT below 1.5; enforce it server-side too, not only in the frontend
+const IDRX_MIN_BUY = 19000; // Round-trip guard: a to=IDRX conversion must quote at least 19,000 IDRX, else the way back is not worth it
+const TEXTILE_REACTOR = '0xa9AA0a64769cBed4d3B1Ceb4Df01CdE915C235b3'; // Textile LimitOrderReactor on Celo mainnet; quotes must come from this reactor
 const CORRIDOR_DAILY_CAP_USD = 100; // demo safety cap for corridor conversions (raised from 50 on 2026-11-22: a heavy testing day hit 50 through legitimate demo runs, blocking the owner from finishing a conversion)
 // Approximate USD value of an amount, for the minimum and daily-cap checks.
 // USDC/USDT are ~$1; IDRX is ~$0.0000544 (about 18,370 IDRX per USD).
@@ -471,6 +476,11 @@ async function textileSwapLegOnce(pub, wallet, taker, from, to, sellAmountAtomic
   if (q.status === 'no_quote') throw new Error('Textile has no quote for this route right now. Please try again in a moment.');
   const takerPays = BigInt(q.quote.takerPays);
   const reactor = q.quote.reactor;
+  // The quote must come from Textile's known LimitOrderReactor. Never
+  // approve or swap against a reactor the API returns unexpectedly.
+  if (reactor.toLowerCase() !== TEXTILE_REACTOR.toLowerCase()) {
+    throw new Error('unexpected Textile reactor in quote: ' + reactor);
+  }
   // Final preflight: the swap reverts as TRANSFER_FROM_FAILED if the
   // balance is even 1 atomic unit below takerPays. Fail here with a
   // clear message instead of paying gas for a reverted swap.
@@ -703,7 +713,7 @@ export async function handleRequest(req, res) {
       entry.error = parsed.error?.message || parsed.error?.code || 'provider error';
     } else if (r.out.includes('502') || r.out.includes('provider_error')) {
       entry.status = 'ambiguous';
-      entry.error = 'provider returned 502; payment may still settle — do not retry blindly';
+      entry.error = 'provider returned 502; payment may still settle - do not retry blindly';
     }
     appendLedger(entry);
     sendJson(res, entry.status === 'settled' ? 200 : 502, { entry });
@@ -738,7 +748,11 @@ export async function handleRequest(req, res) {
       }
       const buyHuman = Number(buyAtomic) / 10 ** TEXTILE_DECIMALS[to];
       rate = buyHuman / amount;
-      const body = { from, to, amount, buyAmount: buyHuman, rate, legs: legPreviews, minUsd: TEXTILE_MIN_USD };
+      // Round-trip guard: a to=IDRX quote must buy at least 19,000 IDRX.
+      if (to === 'IDRX' && buyHuman < IDRX_MIN_BUY) {
+        return sendJson(res, 400, { error: `quoted buy amount ${buyHuman} IDRX is below the ${IDRX_MIN_BUY} IDRX minimum` });
+      }
+      const body = { from, to, amount, buyAmount: buyHuman, rate, legs: legPreviews, minUsd: DEMO_MIN_USD };
       rateCache.set(cacheKey, { at: Date.now(), body });
       return sendJson(res, 200, body);
     } catch (e) {
@@ -762,9 +776,35 @@ export async function handleRequest(req, res) {
     if (usdValue < TEXTILE_MIN_USD) {
       return sendJson(res, 400, { error: `amount must be at least $${TEXTILE_MIN_USD}` });
     }
+    // Demo policy minimum: the site rejects USDC/USDT below $1.50, and the
+    // server must too, so a direct API caller cannot bypass the frontend.
+    if (usdValue < DEMO_MIN_USD) {
+      return sendJson(res, 400, { error: `amount must be at least $${DEMO_MIN_USD} (demo minimum)` });
+    }
     const spent = await corridorSpentTodayUsd();
     if (spent + usdValue > CORRIDOR_DAILY_CAP_USD) {
       return sendJson(res, 403, { error: 'corridor daily cap reached', spentTodayUsd: spent, dailyCapUsd: CORRIDOR_DAILY_CAP_USD });
+    }
+    // Round-trip guard: preview the full path first so a to=IDRX
+    // conversion that would buy under 19,000 IDRX is rejected before any
+    // leg settles. The preview is free and does not lock funds.
+    if (to === 'IDRX') {
+      try {
+        const guardLegs = corridorLegs(from, to);
+        let guardSell = BigInt(Math.round(amount * 10 ** TEXTILE_DECIMALS[from]));
+        let guardBuy = null;
+        for (const [gf, gt] of guardLegs) {
+          const gp = await textilePreview(gf, gt, guardSell);
+          guardBuy = BigInt(gp.buyAmount);
+          guardSell = guardBuy;
+        }
+        const guardBuyHuman = Number(guardBuy) / 10 ** TEXTILE_DECIMALS[to];
+        if (guardBuyHuman < IDRX_MIN_BUY) {
+          return sendJson(res, 400, { error: `quoted buy amount ${guardBuyHuman} IDRX is below the ${IDRX_MIN_BUY} IDRX minimum` });
+        }
+      } catch (e) {
+        return sendJson(res, 502, { error: 'could not preview the conversion: ' + String(e.message || e) });
+      }
     }
     const legs = corridorLegs(from, to);
     // Each leg records an equal share of the USD value, so one conversion
@@ -797,7 +837,7 @@ export async function handleRequest(req, res) {
       // The previous leg's tx may be settled on Textile's side while the
       // wallet/RPC balance has not updated yet. Poll briefly until the
       // balance actually rises instead of failing on the first stale read
-      // — that stale read is what produced "no USDT balance for the next
+      // - that stale read is what produced "no USDT balance for the next
       // leg" on a live USDC->IDRX swap. The poll here is SHORT (15s) on
       // purpose: Vercel serverless maxDuration is 60s, and this call still
       // has to run the leg-2 swap after the poll. The long wait lives in
@@ -838,7 +878,30 @@ export async function handleRequest(req, res) {
     const results = [];
     try {
       let sellAtomic = BigInt(Math.round(amount * 10 ** TEXTILE_DECIMALS[from]));
-      for (const [lf, lt] of legs) {
+      for (let i = 0; i < legs.length; i++) {
+        const [lf, lt] = legs[i];
+        // Later legs: use the amount that ACTUALLY landed (real on-chain
+        // balance minus a tiny buffer), not the quoted buyAmount. Same fix
+        // as single-leg mode: the quote can be a few atomic units more than
+        // what landed, and even 1 atomic unit short makes transferFrom
+        // revert.
+        if (i > 0) {
+          const taker = corridorTaker();
+          if (taker) {
+            const pub = createPublicClient({ chain: celo, transport: viemHttp('https://forno.celo.org') });
+            const tokenAddr = TEXTILE_TOKENS[lf];
+            let bal = 0n;
+            const deadline = Date.now() + 15000;
+            while (Date.now() < deadline) {
+              bal = await pub.readContract({ address: tokenAddr, abi: ERC20_MIN_ABI, functionName: 'balanceOf', args: [taker.address] });
+              if (bal > 10n) break;
+              await new Promise(r => setTimeout(r, 2000));
+            }
+            const cap = bal > 10n ? bal - 10n : 0n;
+            if (cap <= 0n) throw new Error(`no ${lf} balance for the next leg`);
+            sellAtomic = cap;
+          }
+        }
         const leg = await textileSwapLeg(lf, lt, sellAtomic);
         results.push({ from: lf, to: lt, txHash: leg.txHash, buyAmount: leg.buyAmount, feeAmount: leg.feeAmount, rfqId: leg.rfqId });
         sellAtomic = BigInt(leg.buyAmount);

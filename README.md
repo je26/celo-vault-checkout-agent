@@ -2,34 +2,41 @@
 
 An agent that checks out and pays for data services on Celo, under Agent Vault
 rules. Built for the Celo **Agents Open for Business** hackathon (Nov 20 – Dec 7,
-2026), track **Agent Vault** ($1,000).
+2026). Entered in all four tracks: Agent Vault ($1,000), Stablecoin Corridors
+($2,000), Self Agent ID ($1,000), and Altana Agent Wallets ($750 + $250 + XP).
+A project can win in at most two tracks.
 
 ## Live demo
 
-**https://vault.sanjayapurba.com** — the agent running on Celo mainnet (project
+**https://vault.sanjayapurba.com** - the agent running on Celo mainnet (project
 `celo-agent-vault-mainnet`, team bambang9). Type a task, check the price, then
 Pay & run; the payment settles in USDC on Celo mainnet with a receipt and a
 Celoscan link. This is the demo the hackathon scores: mainnet only.
 
 > Testnet / sandbox deployment: https://celo-agent-vault.vercel.app (project
-> `celo-agent-vault`, team bambang9) — permanent, no expiry. Deployed
+> `celo-agent-vault`, team bambang9) - permanent, no expiry. Deployed
 > 2026-11-21 ~12:57 WIB with 4 services (YouTube, Reddit, Instagram,
 > TikTok); Flights search added 2026-11-21 as the 5th service ($0.023/call).
 > First paid call from this deployment settled: tx
 > `0xee1a4ac94f08547ecb43e6a18d32a5e732e517e4be949d6de8c38d02f010440f` (0.005 test USDC, YouTube search). The deployed
 > function auto-creates its own sandbox wallet and is auto-funded from the
-> faucet — no private key is shipped or stored in the repo. (Earlier
+> faucet - no private key is shipped or stored in the repo. (Earlier
 > temporary deployments `nimble-basalt-d2dqfhk`, `rushing-monsoon-bxnh1pk`,
 > `zippy-monsoon-aijmunw` and `turbo-agate-o4df0vp` were deleted
 > 2026-11-21 ~12:53 WIB.)
 
 ## Hackathon
 
-Celo **Agents Open for Business** (Nov 20 – Dec 7, 2026), track **Agent Vault**
-($1,000). Registration on **Loops House**. Attribution tag
-`celo_2da564e80a18` — required in every transaction the agent sends directly;
+Celo **Agents Open for Business** (Nov 20 – Dec 7, 2026). Entered in all four
+tracks: Agent Vault ($1,000), Stablecoin Corridors ($2,000), Self Agent ID
+($1,000), and Altana Agent Wallets ($750 + $250 + XP); a project can win in
+at most two. Registration on **Loops House**. Attribution tag
+`celo_2da564e80a18` - required in every transaction the agent sends directly;
 x402 settlements attribute via the agent wallet address. **Scoring is Celo
-mainnet only** (chain 42220); testnet activity does not count.
+mainnet only** (chain 42220); testnet activity does not count. ERC-8004 agent
+ID **10093** on Celo mainnet (registry
+`0x8004A169FB4a3325136EB29fA0ceB6D2e539a432`), auto-registered by Altana on
+the first mainnet grant.
 
 ## What it does
 
@@ -37,32 +44,33 @@ You type a task ("search YouTube for celo", or look up an Instagram/TikTok
 profile). The agent:
 
 Approved services (5): YouTube video search, Reddit post search, Instagram
-profile, TikTok profile — each 0.005 USDC per call — plus Flights search at
+profile, TikTok profile - each 0.005 USDC per call - plus Flights search at
 0.023 USDC per call. (X post search was removed 2026-11-21 ~12:31 WIB: the
 buy gateway route 502s at the provider.)
 
-1. **Quotes first** — asks buy for the exact price before any money moves.
-2. **Checks the agent card** — only allowlisted (approved) services can be
+1. **Quotes first** - asks buy for the exact price before any money moves.
+2. **Checks the agent card** - only allowlisted (approved) services can be
    bought, each with a per-call spending cap, plus a daily cap.
 3. **Pays per call over x402** with buy, in USDC on Celo. The agent never sees
    a private key: buy signs from the OS keychain.
-4. **Shows the receipt** — amount, token, settlement transaction hash, and a
-   link to the explorer — and writes every payment to an append-only ledger
+4. **Shows the receipt** - amount, token, settlement transaction hash, and a
+   link to the explorer - and writes every payment to an append-only ledger
    (`agent/ledger.jsonl`).
 
 ## Agent Vault rules, in code
 
 This mirrors an Agent Vault agent card:
 
-- `ALLOWLIST` in `handler.mjs` (shared by `server.mjs` and `api/index.mjs`) —
+- `ALLOWLIST` in `handler.mjs` (shared by `server.mjs` and `api/index.mjs`) -
   approved sellers only. A capability outside the list is refused with 403.
-- `--max-amount` on every paid call — the per-call cap. buy refuses to sign
+- `--max-amount` on every paid call - the per-call cap. buy refuses to sign
   above it.
-- `DAILY_CAP_USD` — enforced from the ledger before each payment.
-- Planned production setup (not yet live — no Agent Vault account exists
-  yet): the deployment swaps the payer to the Agent Vault wallet, the Vault
-  holds the key, funds it with stablecoins, and the agent card's limits apply
-  to wallet payments exactly as they do to card fills.
+- `DAILY_CAP_USD` - enforced from the ledger before each payment.
+- Live production setup: an Agent Vault account exists (created 2026-11-22,
+  Visa ending 8203, Figma login saved). The agent connects through the Agent
+  Vault MCP connector (open_page, fill_login, fill_checkout) and signs in to
+  regular websites with mock tokens, without seeing the password or card
+  number. Figma sign-in proven 2026-11-23 (see Mainnet proof below).
 
 ## Run it
 
@@ -92,8 +100,8 @@ VAULT_NETWORK=mainnet VAULT_MAINNET_OK=1 npm start
 - A second paid call through the agent's own UI settled on Celo Sepolia:
   tx `0x8ce72a7e568df84b8cbca387c99b15bd6afed8c8b1619a0a232822da358ff71c`,
   0.005 USDC, 20 YouTube results. A screen recording of that run was made
-  locally (`demo/record_demo.py`); the video file is not in this repo
-  (binary), it will be uploaded to YouTube.
+  locally (`demo/record_demo.py`). The demo video is live on YouTube (v10,
+  103.5s, mainnet): https://www.youtube.com/watch?v=1Uc4fas4AwE.
 - Note: the buy gateway's X posts search route returned HTTP 502 repeatedly
   during testing (provider-side); the agent records such payments as
   `ambiguous` and never retries them blindly. X was removed from the
@@ -112,8 +120,9 @@ VAULT_NETWORK=mainnet VAULT_MAINNET_OK=1 npm start
 
 ## Stack
 
-Node.js only, zero dependencies. The buy CLI does the x402 payment flow;
-the agent is a thin policy + ledger layer around it.
+Node.js 22+. Dependencies (see package.json): `@celo/buy`, `@vercel/kv`,
+`@x402/evm`, `@x402/fetch`, and `viem`. The buy CLI does the x402 payment
+flow; the agent is a thin policy + ledger layer around it.
 
 ## Known limitations
 
@@ -124,8 +133,13 @@ the agent is a thin policy + ledger layer around it.
   until sufficient (up to 8s), retry the leg up to 3 times with a fresh
   quote on TRANSFER_FROM_FAILED, and use the real on-chain USDT balance
   (minus 10 atomic) as the leg-2 sell amount. A "Retry step 2" button now
-  appears if leg 1 settled but leg 2 failed. The fix is deployed but NOT
-  yet proven by a live two-leg run (Jeje tests it himself).
+  appears if leg 1 settled but leg 2 failed. The fix is deployed and proven
+  by live two-leg runs: Pair A
+  (`0xc5966dbb8e34180ba5902737c2bf109c6e5fccf084637e8b4f84fd3c21dc9403` /
+  `0x504330ab6ece993ee90c03158cec35fdfe5722f135d7576dd1ae2de6d4d495a8`) and
+  Pair B (`0x169ee00bcccee2e17068cc374bbae24156023828d0cc3bb7f38a6c2bd74ad9f5` /
+  `0x9b594c4d3f98cfe4c1373873c743dd6c60b2a2309e01e14253cea8d483e122b7`),
+  1.5 USDC to 27,566.45 IDRX, both legs Status Success on Celoscan.
 - The 2-minute frontend timeout path (intermediate token never arrives) is
   untested: the wait is bounded at 120s and then shows a red X, but no live
   run has exercised that timeout.
@@ -143,7 +157,14 @@ An earlier successful run of the same route (0xc5966dbb... /
 0x504330ab...) is the first retest after the fix; the run above is the
 recorded demo run.
 
-## Mainnet proof — Agent Vault website sign-in and Altana revoke (2026-11-23)
+## Mainnet proof - Agent Vault website sign-in and Altana revoke (2026-11-23)
+
+### Mainnet x402 payment (flight)
+A real paid call on Celo mainnet: flight search DXB to SIN, 2026-12-06,
+paid $0.023 USDC, tx
+`0x349d20fc63b1364de24035433faf49b3fbd7f5f5376e215074f7063047d3e047`
+(Status Success on Celoscan). This is the track's core proof: the agent
+pays per call over x402 in USDC on mainnet.
 
 ### Agent Vault website sign-in (Figma)
 On 2026-11-23 the agent signed in to figma.com with a saved login
@@ -164,7 +185,18 @@ touching the permanent 365-day session (expiry 2027-11-22, caps 0.5 USDC +
 - Revoke tx:
   `0xd58ec995c8e6bb50d66773192d9aa93ed210722524e2251fbdd348c915564dea`
   (block 83539650, Status Success).
-The permanent session was not touched (different session key).
+The permanent session was not touched (different session key). Permanent
+session grant tx:
+`0x082b5bfaa2b6508809bbbbcc2d9adcc975cb8905615af69d88c9d8042866bbde`
+(expiry 2027-11-22, caps 0.5 USDC + 0.5 CELO per day).
+
+### Altana product review
+Product review filed as a GitHub issue in the Altana SDK repo:
+https://github.com/altananetwork/altana-sdk/issues/166 (5,000 XP). It covers
+what worked (session grant, ERC-8004 auto-registration, session-key x402
+payments, revoke), what was hard (delegation prerequisite, relay fees,
+silent skip of self-sponsored authorization, keyId overwrite, revokeSession
+JSON TypeError), and suggestions.
 
 ### Corridors attribution tag and IDRX payout
 Corridor swap transactions now carry the hackathon attribution tag
