@@ -145,6 +145,12 @@
     <div class="muted">On 2026-11-23 the agent signed in to <b style="color:var(--text)">figma.com</b> with the saved login (Blyjeje@gmail.com) using Agent Vault mock tokens, free sign-in, no purchase. The Figma home ("Drafts") loaded after the login form was filled 2/2. This is the website flow: the agent signs in to a regular website without seeing the password.</div>
   </div>
 
+  <div class="card">
+    <h3 style="margin-top:0">How Agent Vault is integrated</h3>
+    <div class="muted">Agent Vault has no API key and no embeddable widget. The integration is its MCP server (<a href="https://mcp.agentvault.io/mcp" target="_blank" rel="noopener">mcp.agentvault.io/mcp</a>) over streamable HTTP with OAuth. The agent connects as an MCP client, drives a browser inside the Agent Vault proxy, and fills sign-in and checkout fields with mock tokens. The proxy swaps each token for the real value at the moment of the fill. The agent never sees the password or the card number.</div>
+    <div class="muted" style="margin-top:10px;">Proven 2026-11-23 ~19:56 WIB, session s_da500f7fe4306b032f583af9147c4de8: open figma.com/login, fill_login filled 2/2 fields with the saved login tokens, submit, then the Figma home ("Drafts") loaded and the login form was gone (email and password fields count 0). The login is saved by the owner in the Agent Vault dashboard. Connection scope: 1 card, 1 login. Docs: <a href="https://docs.agentvault.io/" target="_blank" rel="noopener">docs.agentvault.io</a>.</div>
+  </div>
+
   </div><!-- /pane-vault -->
 
   <div id="pane-altana" style="display:none">
