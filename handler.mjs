@@ -58,6 +58,15 @@ const SANDBOX = NETWORK === 'sandbox';
 // wallet registered at submission time.
 const ATTRIBUTION_TAG = 'celo_2da564e80a18';
 
+// Full ERC-8021 data suffix for direct transactions: tag bytes + tail.
+// Verified on-chain in the tagged Uniswap swap
+// 0xb89e553057f9e1b3b1535889402164f394796bf8b23a65e957e4372197bf5f6e
+// (tag at the end of its input data) and matches the Loops House record.
+// Appended to the corridor swap calldata so the conversion counts for the
+// Stablecoin Corridors track. Untagged transactions are never credited,
+// no backfill.
+const ATTRIBUTION_DATA_SUFFIX = '0x63656c6f5f326461353634653830613138110080218021802180218021802180218021';
+
 // Agent card: approved sellers and their per-call caps (USDC).
 // bodyKey is the request-body field the gateway expects for that service.
 const ALLOWLIST = {
@@ -513,7 +522,11 @@ async function textileSwapLegOnce(pub, wallet, taker, from, to, sellAmountAtomic
   // observed leg (IDRX->USDT used 514k); the user pays only gas actually
   // used, not the limit.
   const swapTx = q.transactions.swap;
-  const swapHash = await wallet.sendTransaction({ to: swapTx.to, data: swapTx.data, value: BigInt(swapTx.value || '0'), gas: 800000n });
+  // Attribution tag: append the ERC-8021 data suffix to the swap calldata
+  // so this conversion counts for the Stablecoin Corridors track. The
+  // reactor decodes its args from the start of calldata and ignores the
+  // trailing bytes (same pattern as the tagged Uniswap swap 0xb89e5530...).
+  const swapHash = await wallet.sendTransaction({ to: swapTx.to, data: swapTx.data + ATTRIBUTION_DATA_SUFFIX.slice(2), value: BigInt(swapTx.value || '0'), gas: 800000n });
   const receipt = await pub.waitForTransactionReceipt({ hash: swapHash });
   if (receipt.status !== 'success') throw new Error('textile swap tx failed onchain: ' + swapHash);
   return { txHash: swapHash, buyAmount: q.quote.buyAmount, feeAmount: q.quote.feeAmount, rfqId: q.rfqId };
