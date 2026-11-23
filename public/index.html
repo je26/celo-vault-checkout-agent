@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vault Checkout Agent — Celo</title>
+<title>Vault Checkout Agent | Celo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -16,37 +16,37 @@
   #capDesc { font-size: 14px; color: #c3c7d3; }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--text); font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif; }
-  .wrap { max-width: 720px; margin: 0 auto; padding: 24px 16px; }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 24px 16px; }
   h1 { font-family: "Space Grotesk", "Inter", system-ui, sans-serif; font-size: 30px; font-weight: 700; letter-spacing: -0.5px; margin: 8px 0 4px; }
   h1 span { color: var(--accent); }
   h3 { font-family: "Space Grotesk", "Inter", system-ui, sans-serif; font-weight: 600; letter-spacing: -0.2px; }
   .rule { width: 48px; height: 3px; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 2px; margin: 12px 0 16px; }
   p.sub { color: var(--muted); margin: 0 0 20px; line-height: 1.5; }
   .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; margin-bottom: 16px; box-shadow: 0 1px 8px rgba(0,0,0,.35); }
-  label { display: block; font-size: 13px; color: var(--muted); margin: 12px 0 6px; }
-  select, input[type=text], input[type=date] { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #3a3a4d; background: #23233a; color: var(--text); font-size: 16px; }
+  label { display: block; font-size: 14px; color: var(--muted); margin: 12px 0 6px; }
+  select, input[type=text], input[type=date], input[type=number] { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #3a3a4d; background: #23233a; color: var(--text); font-size: 16px; }
   .row { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
   button { flex: 1; min-width: 140px; padding: 13px; border-radius: 10px; border: none; font-size: 15px; font-weight: 700; cursor: pointer; }
   button.primary { background: var(--accent); color: #ffffff; }
   button.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
   button:disabled { opacity: .5; cursor: wait; }
-  .pill { display: inline-block; font-size: 12px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--accent); color: var(--accent); }
-  .quote { white-space: pre-wrap; font-family: ui-monospace, monospace; font-size: 13px; background: #23233a; border-radius: 10px; padding: 12px; margin-top: 12px; max-height: 220px; overflow: auto; }
+  .pill { display: inline-block; font-size: 13px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--accent); color: var(--accent); }
+  .quote { white-space: pre-wrap; font-family: ui-monospace, monospace; font-size: 14px; background: #23233a; border-radius: 10px; padding: 12px; margin-top: 12px; max-height: 220px; overflow: auto; }
   .receipt { border: 1px solid var(--green); }
   .receipt a { color: var(--link); text-decoration: underline; word-break: break-all; }
   .ok { color: var(--green); font-weight: 700; }
   .bad { color: var(--red); font-weight: 700; }
   #formError { font-family: Georgia, "Times New Roman", serif; font-weight: 400; font-size: 15px; color: #fca5a5; line-height: 1.6; }
   .chips { display: flex; gap: 6px; flex-wrap: nowrap; margin: 0 0 16px; }
-  .chip { flex: 1 1 0; min-width: 0; padding: 8px 4px; border-radius: 999px; border: 1px solid #3a3a4d; background: #1b1b2a; color: var(--muted); font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; overflow: hidden; text-align: center; }
+  .chip { flex: 1 1 0; min-width: 0; padding: 8px 4px; border-radius: 999px; border: 1px solid #3a3a4d; background: #1b1b2a; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; overflow: hidden; text-align: center; }
   .chip.active { background: var(--accent); border-color: var(--accent); color: #ffffff; }
-  /* Track tabs (one project, all tracks) — same shape as the multi-track mockup. */
+  /* Track tabs (one project, all tracks), same shape as the multi-track mockup. */
   .tracks { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: nowrap; }
-  .track { flex: 1 1 0; text-align: center; padding: 10px 4px; font-size: 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--muted); cursor: pointer; }
+  .track { flex: 1 1 0; text-align: center; padding: 12px 4px; font-size: 13px; min-height: 44px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--muted); cursor: pointer; }
   .track.active { background: var(--accent); color: #ffffff; border-color: var(--accent); font-weight: 700; }
-  .track .prize { display: block; font-size: 10px; margin-top: 2px; opacity: .8; }
-  .tag { font-size: 11px; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--accent); color: var(--accent); }
-  .mono { font-family: ui-monospace, monospace; font-size: 12px; word-break: break-all; }
+  .track .prize { display: block; font-size: 11px; margin-top: 2px; opacity: .8; }
+  .tag { font-size: 12px; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--accent); color: var(--accent); }
+  .mono { font-family: ui-monospace, monospace; font-size: 13px; word-break: break-all; }
   button.danger { background: #7f1d1d; color: #ffffff; }
   #pane-altana td:first-child, #pane-self td:first-child { color: var(--muted); width: 38%; }
   .result { margin-top: 12px; }
@@ -54,15 +54,21 @@
   .result .item { border-top: 1px solid var(--border); padding: 10px 0; }
   .result .item b { display: block; margin-bottom: 2px; }
   .result .item small { color: var(--muted); }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
   td, th { text-align: left; padding: 8px 4px; border-bottom: 1px solid var(--border); vertical-align: top; overflow-wrap: anywhere; }
+  #ledgerBox, #corrHistory { overflow-x: auto; scrollbar-width: none; }
+  #ledgerBox::-webkit-scrollbar, #corrHistory::-webkit-scrollbar { display: none; }
+  @media (max-width: 520px) {
+    .ledgerDate { display: none; }
+    td, th { padding: 8px 2px; }
+  }
   td a { overflow-wrap: anywhere; }
   #quoteModalBody a { word-break: break-all; }
   td small { color: var(--muted); }
-  .muted { color: var(--muted); font-size: 13px; line-height: 1.5; }
+  .muted { color: var(--muted); font-size: 14px; line-height: 1.5; }
   .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid var(--accent); border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: -3px; margin-right: 8px; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .footer { text-align: center; color: var(--muted); font-size: 13px; padding: 16px; margin: 0; border-top: 1px solid var(--border); }
+  .footer { text-align: center; color: var(--muted); font-size: 14px; padding: 16px; margin: 0; border-top: 1px solid var(--border); }
 </style>
 </head>
 <body>
@@ -114,7 +120,7 @@
 
   <div class="card" id="walletCard" style="display:none">
     <h3 style="margin-top:0">Agent wallet</h3>
-    <div class="muted">The agent pays from this wallet. No wallet connection needed — the agent never asks you to sign anything.</div>
+    <div class="muted">The agent pays from this wallet. No wallet connection needed. The agent never asks you to sign anything.</div>
     <div style="margin-top:10px; display:flex; gap:8px; align-items:center;">
       <code id="walletAddr" style="word-break:break-all; font-size:13px;">…</code>
       <button class="ghost" id="copyAddrBtn" style="flex:0 0 auto; min-width:0; padding:8px 12px;">Copy</button>
@@ -130,40 +136,51 @@
     <div id="ledgerBox" class="muted">Loading…</div>
   </div>
 
-  <div style="text-align:center; margin:16px 0;">
-    <button class="ghost" id="refreshBtn" style="padding:10px 20px; font-size:15px;">↻ Refresh</button>
+  <div class="card">
+    <div class="muted">Named user: <b style="color:var(--text)">Sanjaya Purba</b>. He uses this agent to pay for YouTube, Reddit, Instagram, TikTok, and flight searches. A few cents per call in USDC on Celo mainnet, under the limits on his Agent Vault card.</div>
   </div>
+
   </div><!-- /pane-vault -->
 
   <div id="pane-altana" style="display:none">
+    <div class="card" style="background:linear-gradient(135deg, rgba(212,175,55,.16), rgba(212,175,55,.04)); border:1px solid rgba(212,175,55,.5);">
+      <h3 style="margin-top:0">ERC-8004 agent ID</h3>
+      <div style="font-size:34px; font-weight:800; line-height:1.1; font-family:'Space Grotesk','Inter',system-ui,sans-serif;">10093</div>
+      <div class="muted" style="margin-top:6px;">Registered on Celo mainnet · <a href="https://celoscan.io/address/0x8004A169FB4a3325136EB29fA0ceB6D2e539a432" target="_blank" rel="noopener">registry ↗</a> · auto-registered by Altana on first grant</div>
+    </div>
     <div class="card">
       <h3 style="margin-top:0">Altana wallet</h3>
-      <div class="muted">A non-custodial wallet for the agent. You keep the keys and set the rules — the agent acts under a session key you grant and can revoke.</div>
-      <p class="mono" style="margin-top:12px;">0x0D89830F241383535c3708b6c521F09Ee7cddb1e</p>
-      <p class="muted">Same address on Celo, BNB Chain and Ethereum.<br><span id="altanaBal">Balance (Celo Sepolia, testnet): loading…</span></p>
+      <div class="muted">A non-custodial wallet for the agent. You keep the keys and set the rules. The agent acts under a session key you grant and can revoke.</div>
+      <div style="margin-top:12px; display:flex; gap:8px; align-items:center;">
+        <code class="mono" style="word-break:break-all;">0x0D89830F241383535c3708b6c521F09Ee7cddb1e</code>
+        <button class="ghost" id="copyAltanaBtn" style="flex:0 0 auto; min-width:0; padding:8px 12px;">Copy</button>
+      </div>
+      <p class="muted">Same address on Celo, BNB Chain and Ethereum.<br><span id="altanaBal">Balance (Celo mainnet): loading…</span></p>
     </div>
     <div class="card" style="background:linear-gradient(135deg, rgba(212,175,55,.14), rgba(212,175,55,.03)); border:1px solid rgba(212,175,55,.45);">
-      <h3 style="margin-top:0">Session key <span class="tag">REVOKED</span></h3>
+      <h3 style="margin-top:0">Session key <span class="tag">ACTIVE</span></h3>
       <table style="margin-top:12px;">
-        <tr><td>Status</td><td><span class="bad">Revoked</span> — was granted on Sepolia</td></tr>
-        <tr><td>Spend cap</td><td>0.5 USDC / day + 2 CELO / day</td></tr>
-        <tr><td>Allowed contracts</td><td>Permit2, Sepolia USDC, admin</td></tr>
-        <tr><td>Granted</td><td>2026-11-21 · <a href="https://celo-sepolia.blockscout.com/tx/0x8ad58db9195e85facbc3330a463e3399c35a906ec9207238623e2cd34a3b1b9b" target="_blank" rel="noopener">tx ↗</a></td></tr>
-        <tr><td>Expires</td><td>2026-11-28 (already revoked)</td></tr>
-        <tr><td>Revoked</td><td>2026-11-22 · <a href="https://celo-sepolia.blockscout.com/tx/0x41d1911136df9e19a30e208838cc23c1fde5d9750534de8b306e960192a27d6c" target="_blank" rel="noopener">tx ↗</a></td></tr>
-        <tr><td>Keystore proof</td><td><a href="https://explorer.altana.network" target="_blank" rel="noopener">explorer.altana.network ↗</a> · <a href="https://celo-sepolia.blockscout.com/address/0xCC3df52B6aD826781AAD86EcEB1459ed0b1Ae3F6" target="_blank" rel="noopener">Keystore (Sepolia) ↗</a></td></tr>
+        <tr><td>Status</td><td><span class="ok">Active</span>, granted on Celo mainnet</td></tr>
+        <tr><td>Spend cap</td><td>0.5 USDC / day + 0.5 CELO / day</td></tr>
+        <tr><td>Allowed contracts</td><td>Permit2, USDC (mainnet), admin</td></tr>
+        <tr><td>Granted</td><td>2026-11-22 · <a href="https://celoscan.io/tx/0x082b5bfaa2b6508809bbbbcc2d9adcc975cb8905615af69d88c9d8042866bbde" target="_blank" rel="noopener">tx ↗</a></td></tr>
+        <tr><td>Expires</td><td>2027-11-22 (365 days)</td></tr>
+        <tr><td>Keystore proof</td><td><a href="https://explorer.altana.network" target="_blank" rel="noopener">explorer.altana.network ↗</a> · <a href="https://celoscan.io/address/0x83b30935f36d6ccf9B1ec3b5E47F2866b97cd27c" target="_blank" rel="noopener">Keystore (mainnet) ↗</a></td></tr>
       </table>
-      <p class="muted" style="margin-top:10px">Revoked onchain (tx above). Real revoking needs the wallet owner's signature.</p>
+      <p class="muted" style="margin-top:10px">Session is live. The owner can revoke it onchain at any time.</p>
     </div>
     <div class="card">
-      <h3 style="margin-top:0">What the agent did with this wallet (Celo Sepolia)</h3>
+      <h3 style="margin-top:0">What the agent did with this wallet (Celo mainnet)</h3>
       <table>
-        <tr><td>Session granted</td><td>onchain, Keystore · <a href="https://celo-sepolia.blockscout.com/tx/0x8ad58db9195e85facbc3330a463e3399c35a906ec9207238623e2cd34a3b1b9b" target="_blank" rel="noopener">tx ↗</a></td></tr>
-        <tr><td>Session execute</td><td>0.0001 CELO wallet → admin · <a href="https://celo-sepolia.blockscout.com/tx/0x3e84f904ab9b6f2efad2cc4d1d0e10f92fd7263e7c4824adb3b23df21c4c19d7" target="_blank" rel="noopener">tx ↗</a></td></tr>
-        <tr><td>x402 API</td><td>$0.005/call · settled: <a href="https://celo-sepolia.blockscout.com/tx/0x85763827f3df0e07f9e656ebd86e527b23bd7b893d700930e23ab3ba69832563" target="_blank" rel="noopener">tx ↗</a></td></tr>
-        <tr><td>Session revoked</td><td>delegation removed, wallet is a plain EOA again · <a href="https://celo-sepolia.blockscout.com/tx/0x41d1911136df9e19a30e208838cc23c1fde5d9750534de8b306e960192a27d6c" target="_blank" rel="noopener">tx ↗</a></td></tr>
+        <tr><td>ERC-8004 agent ID</td><td><strong>10093</strong> · <a href="https://celoscan.io/address/0x8004A169FB4a3325136EB29fA0ceB6D2e539a432" target="_blank" rel="noopener">registry ↗</a>, auto-registered by Altana on first grant</td></tr>
+        <tr><td>Session granted</td><td>onchain, Keystore · <a href="https://celoscan.io/tx/0x082b5bfaa2b6508809bbbbcc2d9adcc975cb8905615af69d88c9d8042866bbde" target="_blank" rel="noopener">tx ↗</a></td></tr>
+        <tr><td>Session execute</td><td>0.0001 CELO wallet → admin · <a href="https://celoscan.io/tx/0x6fe77d9b778b5f98a8c732bb13ec3003bff38daac014dfa1bc1d52c19dbd4b87" target="_blank" rel="noopener">tx ↗</a></td></tr>
+        <tr><td>Session funds its key</td><td>0.3 USDC wallet → session key · <a href="https://celoscan.io/tx/0x100a3a4ce9b072ff02481d3ca19d91b7851341a0dabf525023207d67d9880567" target="_blank" rel="noopener">tx ↗</a></td></tr>
+        <tr><td>x402 payment</td><td>$0.005/call, paid by the session key · settled: <a href="https://celoscan.io/tx/0x67c4abc6dd1205d1ebff24600efd42edf1c0fdfff4e8fb17bbda4ae4128b3f6d" target="_blank" rel="noopener">tx ↗</a></td></tr>
+        <tr><td>Earlier session</td><td>granted + revoked 2026-11-22 · <a href="https://celoscan.io/tx/0xff8337aedd83341670710fe29fb70bd0df788b427d403f5d0672b16be8aa08f9" target="_blank" rel="noopener">grant ↗</a> · <a href="https://celoscan.io/tx/0xfaffd9090eec391d94747ce5f279ca7c545aa4eef9ec44b8487cd312756a11b4" target="_blank" rel="noopener">revoke ↗</a></td></tr>
       </table>
-      <div class="muted" style="margin-top:10px;">The buy gateway does not accept smart-account signatures, so this demo pays its own x402 API (same Celo facilitator, same $0.005 price) and gets live data back. A mainnet version will live on a separate domain later.</div>
+      <p class="muted" style="margin-top:10px">How it fits together: the agent wallet is delegated to Porto for the Altana session. A delegated wallet cannot sign EIP-3009 (USDC checks ERC-1271, which the delegation fails), so the session key, a plain EOA holding its own USDC and funded from the wallet through the session, signs the x402 payments. Session and payments both live on mainnet.</p>
+      <div class="muted" style="margin-top:10px;">All proofs above are on Celo mainnet. The demo pays per call in USDC through x402, signed directly by the agent wallet.</div>
       <div class="row" style="margin-top:14px;">
         <a href="https://altana-x402-api.vercel.app" target="_blank" rel="noopener" style="flex:1; text-align:center; padding:13px; border-radius:10px; border:1px solid var(--accent); color:var(--accent); text-decoration:none; font-weight:700;">Open the x402 API ↗</a>
       </div>
@@ -175,34 +192,74 @@
       <h3 style="margin-top:0">Self Agent ID</h3>
       <div class="muted">Proves a real, unique person stands behind this agent. The agent's requests are signed, and its identity is verifiable on Celo.</div>
       <table style="margin-top:12px;">
-        <tr><td>Status</td><td><span class="ok">Registered (testnet)</span> — agentId 96</td></tr>
-        <tr><td>Agent ID (testnet)</td><td><a href="https://celo-sepolia.blockscout.com/address/0x043DaCac8b0771DD5b444bCC88f2f8BBDBEdd379" target="_blank" rel="noopener">96</a> — Sepolia registry</td></tr>
-        <tr><td>Agent address</td><td><a href="https://celo-sepolia.blockscout.com/address/0x1e6Fba2BEb702777b38311c3d4E983414e40DFf6" target="_blank" rel="noopener">0x1e6F…40DFf6</a></td></tr>
+        <tr><td>Status</td><td><span class="ok">Registered (testnet)</span>, agentId 96</td></tr>
+        <tr><td>Agent ID (testnet)</td><td><a href="https://celo-sepolia.blockscout.com/address/0x043DaCac8b0771DD5b444bCC88f2f8BBDBEdd379" target="_blank" rel="noopener">96</a>, Sepolia registry</td></tr>
+        <tr><td>Agent address</td><td><a href="https://celo-sepolia.blockscout.com/address/0x1e6Fba2BEb702777b38311c3d4E983414e40DFf6" target="_blank" rel="noopener">0x1e6F…40DFf6</a> <button class="ghost" id="copySelfBtn" style="min-width:0; padding:4px 10px; font-size:13px;">Copy</button></td></tr>
         <tr><td>Verified person</td><td>Sanjaya Purba</td></tr>
-        <tr><td>Document</td><td>KTP — rejected by the registry. Mainnet needs a passport.</td></tr>
-        <tr><td>Agent ID (mainnet)</td><td>— pending</td></tr>
+        <tr><td>Document</td><td>KTP, rejected by the registry. Mainnet needs a passport.</td></tr>
+        <tr><td>Agent ID (mainnet)</td><td>Pending</td></tr>
       </table>
     </div>
     <div class="card">
       <h3 style="margin-top:0">How it works</h3>
-      <div class="muted">1. Scan your document in the Self app.<br>2. Self issues a verified Agent ID — testnet done (agentId 96), mainnet needs a passport.<br>3. The agent signs every request with that identity — judges can verify it onchain.</div>
+      <div class="muted">1. Scan your document in the Self app.<br>2. Self issues a verified Agent ID. Testnet done (agentId 96), mainnet needs a passport.<br>3. The agent signs every request with that identity. Judges can verify it onchain.</div>
     </div>
   </div>
 
   <div id="pane-corridors" style="display:none">
     <div class="card">
       <h3 style="margin-top:0">Stablecoin Corridors</h3>
-      <div class="muted">The agent pays and gets paid in a local stablecoin — rupiah (IDRX) — converting on Textile FX between USD and IDRX.</div>
-      <label style="margin-top:12px;">Amount (USDC)</label>
-      <input type="text" value="10" readonly>
-      <label>Pay in</label>
-      <input type="text" value="IDRX (Indonesian rupiah)" readonly>
-      <p class="muted" style="margin-top:10px">Rate via Textile FX (RFQ): 1 USDC ≈ 16,400 IDRX<br>Recipient gets: ≈ 164,000 IDRX</p>
-      <p class="muted" style="margin-top:10px">No corridor payments yet — this track is the hardest and comes last.</p>
+      <div class="muted">Swap USDC and USDT for rupiah (IDRX) and back, on Textile FX. No direct USDC to IDRX pair, so that route goes through USDT.</div>
+      <label style="margin-top:12px;">You pay</label>
+      <div class="row" style="margin-top:0; align-items:stretch;">
+        <input type="number" id="corrAmount" value="1.5" min="1.5" step="0.5" style="flex:1; min-width:0;">
+        <select id="corrFrom" style="flex:1; min-width:0;">
+          <option value="USDC">USDC</option>
+          <option value="USDT">USDT</option>
+          <option value="IDRX">IDRX</option>
+        </select>
+      </div>
+      <div style="margin-top:6px;">
+        <button class="ghost" id="corrMaxBtn" style="min-width:0; flex:0 0 auto; min-height:44px; padding:8px 14px; font-size:13px;">Max</button>
+        <span class="muted" id="corrBalance" style="margin-left:8px;"></span>
+      </div>
+      <div style="text-align:center; margin:8px 0 0;">
+        <button class="ghost" id="corrSwapBtn" style="min-width:44px; flex:0 0 auto; min-height:44px; padding:8px 16px; border-radius:999px;" title="Swap direction">&#8646;</button>
+      </div>
+      <label style="margin-top:4px;">You get (estimate)</label>
+      <div class="row" style="margin-top:0; align-items:stretch;">
+        <input type="text" id="corrBuy" readonly value="" placeholder="..." style="flex:1; min-width:0; background:#23233a;">
+        <select id="corrTo" style="flex:1; min-width:0;">
+          <option value="IDRX">IDRX</option>
+          <option value="USDC">USDC</option>
+          <option value="USDT">USDT</option>
+        </select>
+      </div>
+      <p class="muted" id="corrRate" style="margin-top:10px">Rate via Textile FX (RFQ): loading...</p>
+      <div class="row" style="margin-top:10px;">
+        <button class="primary" id="corrConvertBtn" style="min-height:44px;">Convert</button>
+        <button class="ghost" id="corrRateBtn" style="min-height:44px;">Check rate</button>
+      </div>
+      <p class="muted" id="corrMsg" style="margin-top:10px"></p>
+      <div id="corrConfirm" style="display:none; position:fixed; inset:0; z-index:50; background:rgba(0,0,0,0.7); align-items:center; justify-content:center; padding:16px;">
+        <div style="width:100%; max-width:420px; border:1px solid #2dd4a7; border-radius:14px; padding:16px; background:#23233a;">
+          <div id="corrConfirmTitle" style="font-weight:700; margin-bottom:8px;">Confirm this conversion?</div>
+          <div id="corrConfirmBody" style="font-size:14px; line-height:1.6;"></div>
+          <div id="corrConfirmBtns" style="display:flex; gap:8px; margin-top:12px;">
+            <button class="primary" id="corrConfirmYes" style="flex:1;">Yes, convert</button>
+            <button class="ghost" id="corrConfirmNo" style="flex:1;">Cancel</button>
+          </div>
+          <div id="corrProgressBtns" style="display:none; margin-top:12px;">
+            <button class="primary" id="corrRetryStep2" style="width:100%; display:none; margin-bottom:8px;">Retry step 2</button>
+            <button class="primary" id="corrProgressClose" style="width:100%;" disabled>Close</button>
+          </div>
+        </div>
+      </div>
+      <div id="corrSteps" style="display:none; margin-top:10px; border:1px solid #3a3a4d; border-radius:10px; padding:10px 12px; background:#23233a;"></div>
+      <h3 style="margin-top:16px">Corridor payments</h3>
+      <div id="corrHistory" class="muted">No corridor payments yet.</div>
     </div>
   </div>
-
-  <p class="muted" style="text-align:center">Built for the Celo “Agents Open for Business” hackathon — Agent Vault track.</p>
 
   <p class="footer">© 2026 Sanjaya Purba</p>
 </div>
@@ -222,17 +279,23 @@ const DEFAULT_CAPS = [
   { id: 'reddit.posts.search', title: 'Search Reddit', maxUsd: 0.01, bodyKey: 'query', inputLabel: 'Task / keywords', multi: null },
 ];
 let caps = [...DEFAULT_CAPS];
+// Remember the last service across refreshes, so the page does not
+// always fall back to Flights.
 let selectedCapId = 'flights.search';
+try {
+  const saved = localStorage.getItem('vaultService');
+  if (saved && ['flights.search', 'youtube.videos.search', 'instagram.profile', 'tiktok.profile', 'reddit.posts.search'].includes(saved)) selectedCapId = saved;
+} catch (err) { /* localStorage unavailable */ }
 
 function currentCap() { return caps.find(c => c.id === selectedCapId) || caps[0] || {}; }
 
 // Short description shown on each service card, with the price per call.
 const CAP_DESC = {
-  'flights.search': 'Search flights — airline, times, price, booking link.',
-  'youtube.videos.search': 'Search YouTube videos — titles, views, channel.',
-  'instagram.profile': 'Read an Instagram profile — followers, bio, posts.',
-  'tiktok.profile': 'Read a TikTok profile — followers, bio, videos.',
-  'reddit.posts.search': 'Search Reddit posts — titles, subreddit, author.',
+  'flights.search': 'Search flights: airline, times, price, booking link.',
+  'youtube.videos.search': 'Search YouTube videos: titles, views, channel.',
+  'instagram.profile': 'Read an Instagram profile: followers, bio, posts.',
+  'tiktok.profile': 'Read a TikTok profile: followers, bio, videos.',
+  'reddit.posts.search': 'Search Reddit posts: titles, subreddit, author.',
 };
 // The input field adapts to the service: search services take keywords,
 // profile services take a username, flights take origin/destination/date.
@@ -300,7 +363,7 @@ function resolveAirport(v) {
 
 function profileRows(uname, name, bio, followers, following, media, verified, profileUrl) {
   const rows = [];
-  if (uname) rows.push(`<b>${profileUrl ? `<a href="${escapeHtml(profileUrl)}" target="_blank" rel="noopener">@${escapeHtml(String(uname))}</a>` : '@' + escapeHtml(String(uname))}</b>${name ? ' — ' + escapeHtml(String(name)) : ''}`);
+  if (uname) rows.push(`<b>${profileUrl ? `<a href="${escapeHtml(profileUrl)}" target="_blank" rel="noopener">@${escapeHtml(String(uname))}</a>` : '@' + escapeHtml(String(uname))}</b>${name ? ', ' + escapeHtml(String(name)) : ''}`);
   if (bio) rows.push(`<small>${escapeHtml(String(bio))}</small>`);
   const stats = [followers != null ? Number(followers).toLocaleString() + ' followers' : '', following != null ? Number(following).toLocaleString() + ' following' : '', media != null && Number(media) > 0 ? Number(media).toLocaleString() + ' posts' : '', verified ? 'verified' : ''].filter(Boolean).join(' · ');
   if (stats) rows.push(`<small>${escapeHtml(stats)}</small>`);
@@ -409,6 +472,7 @@ function renderChips() {
     el.onclick = () => {
       if (selectedCapId === el.dataset.cap) return;
       selectedCapId = el.dataset.cap;
+      try { localStorage.setItem('vaultService', selectedCapId); } catch (err) { /* ignore */ }
       // Clear the previous service's receipt and results when switching.
       $('receiptCard').style.display = 'none';
       $('resultCard').style.display = 'none';
@@ -451,6 +515,27 @@ const LEDGER_PAGE_SIZE = 5;
 let ledgerEntriesAll = [];
 let ledgerPage = 0;
 
+// Short human names for the ledger Service column, instead of the
+// technical capability ids (youtube.videos.search, corridor.usdt-idrx).
+const LEDGER_SERVICE_NAMES = {
+  'youtube.videos.search': 'YouTube',
+  'reddit.posts.search': 'Reddit',
+  'instagram.profile': 'Instagram',
+  'tiktok.profile': 'TikTok',
+  'flights.search': 'Flights',
+};
+function ledgerShortTime(ts) {
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const m = String(ts || '').match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+  if (!m) return String(ts || '').slice(0, 16);
+  return `<span class="ledgerDate">${Number(m[3])} ${months[Number(m[2]) - 1]} </span>${m[4]}:${m[5]}`;
+}
+// Price with at most 3 decimals, trailing zeros trimmed, so a corridor
+// value like 1.9994447468698968 shows as $1.999 instead of 16 decimals.
+function fmtLedgerPrice(p) {
+  if (p == null) return '-';
+  return '$' + Number(p).toFixed(3).replace(/\.?0+$/, '');
+}
 function renderLedgerPage() {
   const total = ledgerEntriesAll.length;
   const pages = Math.max(1, Math.ceil(total / LEDGER_PAGE_SIZE));
@@ -460,13 +545,20 @@ function renderLedgerPage() {
   const start = ledgerPage * LEDGER_PAGE_SIZE;
   const pageEntries = ledgerEntriesAll.slice(start, start + LEDGER_PAGE_SIZE);
   let html = '<table><tr><th>Time</th><th>Service</th><th>Price</th><th>Status</th></tr>' +
-    pageEntries.map(e => `<tr><td><small>${String(e.ts || '').replace('T', ' ').slice(0, 19)}</small></td><td>${e.capabilityId}<br><small>${e.query || ''}</small></td><td>${e.priceUsd != null ? '$' + e.priceUsd : '—'}</td><td>${e.status}${e.txHash ? `<br><small><a href="${txUrl(e)}" target="_blank" rel="noopener">tx ↗</a></small>` : ''}</td></tr>`).join('') + '</table>';
+    pageEntries.map(e => {
+      // Corridor rows show the route (USDT -> IDRX) as the service;
+      // service rows show the short name and the query on the SAME line,
+      // so every page has the same single-line row shape as page 1.
+      const svc = e.kind === 'corridor'
+        ? `<span style="white-space:nowrap;">${escapeHtml(e.query || 'Corridor')}</span>`
+        : `${LEDGER_SERVICE_NAMES[e.capabilityId] || e.capabilityId}${e.query ? ` <small>· ${escapeHtml(e.query)}</small>` : ''}`;
+      return `<tr><td style="white-space:nowrap;"><small>${ledgerShortTime(e.ts)}</small></td><td>${svc}</td><td style="white-space:nowrap;">${fmtLedgerPrice(e.priceUsd)}</td><td style="white-space:nowrap;">${e.status}${e.txHash ? ` <small><a href="${txUrl(e)}" target="_blank" rel="noopener">tx ↗</a></small>` : ''}</td></tr>`;
+    }).join('') + '</table>';
   if (pages > 1) {
-    html += '<div class="row" style="margin-top:10px; justify-content:center;">' +
-      `<button class="ghost" id="ledgerPrevBtn" ${ledgerPage === 0 ? 'disabled' : ''} style="min-width:0; flex:0 0 auto; padding:8px 12px;">‹ Prev</button>` +
-      Array.from({ length: pages }, (_, i) =>
-        `<button class="ghost" data-page="${i}" style="min-width:0; flex:0 0 auto; padding:8px 12px; ${i === ledgerPage ? 'background:var(--accent); color:#fff; border-color:var(--accent);' : ''}">${i + 1}</button>`).join('') +
-      `<button class="ghost" id="ledgerNextBtn" ${ledgerPage === pages - 1 ? 'disabled' : ''} style="min-width:0; flex:0 0 auto; padding:8px 12px;">Next ›</button>` +
+    html += '<div style="display:flex; gap:6px; margin-top:6px; align-items:center; justify-content:center;">' +
+      `<button class="ghost" id="ledgerPrevBtn" ${ledgerPage === 0 ? 'disabled' : ''} style="min-width:0; flex:0 0 auto; min-height:44px; padding:6px 12px;">‹ Prev</button>` +
+      `<span class="muted" style="font-size:14px; padding:0 2px;">${ledgerPage + 1} / ${pages}</span>` +
+      `<button class="ghost" id="ledgerNextBtn" ${ledgerPage === pages - 1 ? 'disabled' : ''} style="min-width:0; flex:0 0 auto; min-height:44px; padding:6px 12px;">Next ›</button>` +
       '</div>';
   }
   $('ledgerBox').innerHTML = html;
@@ -474,9 +566,6 @@ function renderLedgerPage() {
   const next = $('ledgerNextBtn');
   if (prev) prev.onclick = () => { if (ledgerPage > 0) { ledgerPage--; renderLedgerPage(); } };
   if (next) next.onclick = () => { if (ledgerPage < pages - 1) { ledgerPage++; renderLedgerPage(); } };
-  document.querySelectorAll('#ledgerBox [data-page]').forEach(btn => {
-    btn.onclick = () => { ledgerPage = Number(btn.dataset.page); renderLedgerPage(); };
-  });
 }
 
 async function loadLedger() {
@@ -493,7 +582,7 @@ async function loadLedger() {
   let spent = Number(j.spentTodayUsd || 0);
   const today = new Date().toISOString().slice(0, 10);
   extra.forEach(e => { if (String(e.ts || '').startsWith(today) && e.status === 'settled') spent += Number(e.priceUsd || 0); });
-  $('spentLine').textContent = `— spent today $${spent.toFixed(3)} of $${j.dailyCapUsd} cap`;
+  $('spentLine').textContent = `Spent today $${spent.toFixed(3)} of $${j.dailyCapUsd} cap`;
   ledgerEntriesAll = entries;
   ledgerPage = 0;
   renderLedgerPage();
@@ -551,7 +640,7 @@ $('quotePayBtn').onclick = () => {
   runPayment();
 };
 
-$('refreshBtn').onclick = () => { location.reload(); };
+
 
 function flightInputError() {
   const cap = currentCap();
@@ -612,7 +701,7 @@ async function runPayment() {
   let j = null;
   try { j = await r.json(); } catch { j = null; }
   if (!j || !r.ok && !j.entry) {
-    // Server error (e.g. a crashed function) — show a real failure instead
+    // Server error (e.g. a crashed function): show a real failure instead
     // of leaving the modal stuck on "Paying...".
     $('receiptCard').style.display = '';
     $('receiptCard').innerHTML = `<span class="bad">✗ Failed</span><br>Payment did not complete (server error, HTTP ${r.status}). No money was charged. You can try again.`;
@@ -634,7 +723,7 @@ async function runPayment() {
         <tr><td>Transaction</td><td><a href="${txUrl(e)}" target="_blank" rel="noopener">${e.txHash}</a></td></tr>
         <tr><td>Status</td><td>settled</td></tr>
       </table>
-      <span class="muted">Payment successful. The agent paid $${e.priceUsd} USDC for this task — the results are below.</span>`;
+      <span class="muted">Payment successful. The agent paid $${e.priceUsd} USDC for this task. The results are below.</span>`;
     // Save a copy in this browser so the Ledger survives a refresh (item 31).
     try {
       const local = JSON.parse(localStorage.getItem('vaultLedgerV2') || '[]');
@@ -646,7 +735,7 @@ async function runPayment() {
     $('resultBox').innerHTML = renderResult(out);
     // Completion popup in the modal (item 24).
     $('quoteModalTitle').textContent = '✓ Payment successful';
-    $('quoteModalBody').innerHTML = `<div class="quote">The agent paid $${e.priceUsd} USDC for this task — the results are below.</div><div class="muted" style="margin-top:8px">Transaction: <a href="${txUrl(e)}" target="_blank" rel="noopener">${e.txHash}</a></div>`;
+    $('quoteModalBody').innerHTML = `<div class="quote">The agent paid $${e.priceUsd} USDC for this task. The results are below.</div><div class="muted" style="margin-top:8px">Transaction: <a href="${txUrl(e)}" target="_blank" rel="noopener">${e.txHash}</a></div>`;
     $('quotePayBtn').disabled = false;
     $('quotePayBtn').textContent = 'See results';
     $('quotePayBtn').onclick = () => { hideQuoteModal(); resetQuoteModal(); $('receiptCard').scrollIntoView({ behavior: 'smooth', block: 'start' }); };
@@ -671,8 +760,12 @@ async function loadWallet() {
     const addr = (out.match(/0x[a-fA-F0-9]{40}/) || [])[0];
     if (!addr) return;
     $('walletAddr').textContent = addr;
-    const bal = (out.match(/balances[^\n]*/) || [])[0];
-    $('walletBal').textContent = bal ? bal.replace('balances ', 'Balance: ') : '';
+    if (j.balances) {
+      $('walletBal').textContent = `Balance: ${j.balances.celo.toFixed(2)} CELO, ${j.balances.usdc.toFixed(2)} ${j.network === 'mainnet' ? 'USDC' : 'test USDC'}`;
+    } else {
+      const bal = (out.match(/balances[^\n]*/) || [])[0];
+      $('walletBal').textContent = bal ? bal.replace('balances ', 'Balance: ') : '';
+    }
     $('walletCard').style.display = '';
   } catch { /* wallet info is nice-to-have */ }
 }
@@ -684,20 +777,51 @@ $('copyAddrBtn').onclick = async () => {
   setTimeout(() => { $('copyAddrBtn').textContent = 'Copy'; }, 2000);
 };
 
+$('copyAltanaBtn').onclick = async () => {
+  const addr = '0x0D89830F241383535c3708b6c521F09Ee7cddb1e';
+  try { await navigator.clipboard.writeText(addr); $('copyAltanaBtn').textContent = 'Copied'; }
+  catch { $('copyAltanaBtn').textContent = addr; }
+  setTimeout(() => { $('copyAltanaBtn').textContent = 'Copy'; }, 2000);
+};
+
+$('copySelfBtn').onclick = async () => {
+  const addr = '0x1e6Fba2BEb702777b38311c3d4E983414e40DFf6';
+  try { await navigator.clipboard.writeText(addr); $('copySelfBtn').textContent = 'Copied'; }
+  catch { $('copySelfBtn').textContent = addr; }
+  setTimeout(() => { $('copySelfBtn').textContent = 'Copy'; }, 2000);
+};
+
 // Track tabs: one project, all tracks (same as the multi-track mockup).
 const TRACK_PANES = ['vault', 'altana', 'self', 'corridors'];
+
+function activateTrack(name, scroll) {
+  const t = document.querySelector(`#trackTabs .track[data-track="${name}"]`);
+  if (!t) return;
+  document.querySelectorAll('#trackTabs .track').forEach(x => x.classList.remove('active'));
+  t.classList.add('active');
+  TRACK_PANES.forEach(k => {
+    const pane = $('pane-' + k);
+    if (pane) pane.style.display = (k === name) ? '' : 'none';
+  });
+  if (scroll) {
+    const activePane = $('pane-' + name);
+    if (activePane) activePane.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
 document.querySelectorAll('#trackTabs .track').forEach(t => {
   t.addEventListener('click', () => {
-    document.querySelectorAll('#trackTabs .track').forEach(x => x.classList.remove('active'));
-    t.classList.add('active');
-    TRACK_PANES.forEach(k => {
-      const pane = $('pane-' + k);
-      if (pane) pane.style.display = (k === t.dataset.track) ? '' : 'none';
-    });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    try { localStorage.setItem('vaultTrack', t.dataset.track); } catch (err) { /* ignore */ }
+    activateTrack(t.dataset.track, true);
   });
 });
-// Revoke needs the wallet owner's signature — not available in this demo.
+// Restore the last track across refreshes, so the page does not always
+// fall back to Agent Vault.
+try {
+  const savedTrack = localStorage.getItem('vaultTrack');
+  if (savedTrack && TRACK_PANES.includes(savedTrack)) activateTrack(savedTrack, false);
+} catch (err) { /* localStorage unavailable */ }
+// Revoke needs the wallet owner's signature, not available in this demo.
 // Altana balance, live from /api/wallet (the static text goes stale).
 async function loadAltanaBal() {
   try {
@@ -718,6 +842,386 @@ $('flightDate').addEventListener('click', () => { try { $('flightDate').showPick
 randomDestination();
 loadCaps();
 loadWallet();
+
+// Stablecoin Corridors (Textile FX v2 RFQ).
+// Same stale-response guard as the balance: a slow rate fetch for the
+// previous token must not overwrite the line after the user switched.
+let corrRateSeq = 0;
+async function loadCorrRate() {
+  const seq = ++corrRateSeq;
+  const from = $('corrFrom').value;
+  const to = $('corrTo').value;
+  const amount = Number($('corrAmount').value || '1');
+  if (from === to) { $('corrRate').textContent = 'Pick two different tokens.'; $('corrBuy').value = ''; return; }
+  $('corrRate').textContent = 'Rate via Textile FX (RFQ): loading...';
+  $('corrBuy').value = '';
+  try {
+    const r = await fetch(`/api/corridor-rate?from=${from}&to=${to}&amount=${amount}`);
+    const j = await r.json();
+    if (seq !== corrRateSeq) return;
+    if (!r.ok) throw new Error(j.error || 'rate failed');
+    const buy = Number(j.buyAmount).toLocaleString('en-US', { maximumFractionDigits: 2 });
+    $('corrBuy').value = buy;
+    // IDRX is tiny in USD terms (1 IDRX is about 0.000054 USDC), so 2
+    // decimals would round the rate to 0. Show enough decimals to see it.
+    const rateNum = Number(j.rate);
+    const rateFmt = rateNum > 0 && rateNum < 0.01
+      ? rateNum.toLocaleString('en-US', { maximumFractionDigits: 6 })
+      : rateNum.toLocaleString('en-US', { maximumFractionDigits: 2 });
+    $('corrRate').textContent = `1 ${from} = ${rateFmt} ${to}${j.legs.length > 1 ? ' (via USDT)' : ''}. Live quote from Textile FX.`;
+  } catch (e) {
+    if (seq !== corrRateSeq) return;
+    $('corrRate').textContent = 'Rate via Textile FX (RFQ): unavailable right now. ' + String(e.message || e).slice(0, 120);
+  }
+}
+
+// Corridor payments: 5 rows per page, with Prev / Next to page through.
+let corrPage = 0;
+const CORR_PAGE_SIZE = 5;
+function renderCorrHistory() {
+  const rows = (ledgerEntriesAll || []).filter(e => e.kind === 'corridor');
+  if (!rows.length) { $('corrHistory').textContent = 'No corridor payments yet.'; return; }
+  // Tidy table: one line per row. Route shows only the human-readable
+  // pair (USDT -> IDRX), not the technical capability id, and the time
+  // is short (22 Nov 05:47) instead of a full timestamp.
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const shortTime = (ts) => {
+    const m = String(ts || '').match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+    if (!m) return String(ts || '').slice(0, 16);
+    return `<span class="ledgerDate">${Number(m[3])} ${months[Number(m[2]) - 1]} </span>${m[4]}:${m[5]}`;
+  };
+  const pages = Math.max(1, Math.ceil(rows.length / CORR_PAGE_SIZE));
+  if (corrPage >= pages) corrPage = pages - 1;
+  if (corrPage < 0) corrPage = 0;
+  const pageRows = rows.slice(corrPage * CORR_PAGE_SIZE, corrPage * CORR_PAGE_SIZE + CORR_PAGE_SIZE);
+  // Route cells never wrap, so every route stays on one line like the
+  // top row instead of splitting the second token onto its own line.
+  $('corrHistory').innerHTML = '<table><tr><th>Time</th><th>Route</th><th>Status</th></tr>' +
+    pageRows.map(e => `<tr><td><small>${shortTime(e.ts)}</small></td><td style="white-space:nowrap;">${escapeHtml(e.query || '')}</td><td>${e.status}${e.txHash ? ` <small><a href="${txUrl(e)}" target="_blank" rel="noopener">tx ↗</a></small>` : ''}</td></tr>`).join('') + '</table>' +
+    (pages > 1 ? `<div style="display:flex; gap:6px; margin-top:6px; align-items:center; justify-content:center;">` +
+      `<button class="ghost" id="corrPrevBtn" ${corrPage === 0 ? 'disabled' : ''} style="min-width:0; flex:0 0 auto; min-height:44px; padding:6px 12px;">‹ Prev</button>` +
+      `<span class="muted" style="font-size:14px; padding:0 2px;">${corrPage + 1} / ${pages}</span>` +
+      `<button class="ghost" id="corrNextBtn" ${corrPage === pages - 1 ? 'disabled' : ''} style="min-width:0; flex:0 0 auto; min-height:44px; padding:6px 12px;">Next ›</button>` +
+      `</div>` : '');
+  const prev = $('corrPrevBtn');
+  const next = $('corrNextBtn');
+  if (prev) prev.onclick = () => { if (corrPage > 0) { corrPage--; renderCorrHistory(); } };
+  if (next) next.onclick = () => { if (corrPage < pages - 1) { corrPage++; renderCorrHistory(); } };
+}
+
+let corrBalSeq = 0;
+async function loadCorrBalance() {
+  const seq = ++corrBalSeq;
+  // Clear the old value at once, so a stale balance from the previous
+  // token never sits on screen while the fresh one loads.
+  $('corrBalance').textContent = 'Balance: loading...';
+  try {
+    const r = await fetch('/api/wallet');
+    const j = await r.json();
+    // If the user switched tokens while this fetch was in flight, drop
+    // this stale result so it never shows the wrong token's balance.
+    if (seq !== corrBalSeq) return;
+    const b = j.balances || {};
+    const from = $('corrFrom').value;
+    const key = from.toLowerCase();
+    const bal = b[key];
+    if (bal == null) { $('corrBalance').textContent = ''; return; }
+    $('corrBalance').textContent = `Balance: ${Number(bal).toLocaleString('en-US', { maximumFractionDigits: 6 })} ${from}`;
+    $('corrBalance').dataset.balance = String(bal);
+  } catch { if (seq === corrBalSeq) $('corrBalance').textContent = ''; }
+}
+
+$('corrMaxBtn').onclick = async () => {
+  await loadCorrBalance();
+  const bal = Number($('corrBalance').dataset.balance || '0');
+  if (bal > 0) {
+    // Keep two decimals for IDRX, six for USD stablecoins.
+    $('corrAmount').value = $('corrFrom').value === 'IDRX' ? bal.toFixed(2) : bal.toFixed(6).replace(/0+$/, '').replace(/\.$/, '') || '0';
+    loadCorrRate();
+  }
+};
+
+$('corrFrom').onchange = () => {
+  if ($('corrFrom').value === $('corrTo').value) { const opts = [...$('corrTo').options].map(o => o.value); $('corrTo').value = opts.find(v => v !== $('corrFrom').value); }
+  // Reset the amount to the $1 default when the from-token changes, so a
+  // leftover amount from the previous token never carries over.
+  // IDRX is rupiah: 1 IDRX is about $0.000054, so $1 is ~18,370 IDRX.
+  $('corrAmount').value = $('corrFrom').value === 'IDRX' ? '20000' : '1.5';
+  loadCorrBalance();
+  loadCorrRate();
+};
+$('corrTo').onchange = () => { if ($('corrTo').value === $('corrFrom').value) { const opts = [...$('corrFrom').options].map(o => o.value); $('corrFrom').value = opts.find(v => v !== $('corrTo').value); } loadCorrRate(); };
+$('corrAmount').onchange = loadCorrRate;
+$('corrRateBtn').onclick = loadCorrRate;
+$('corrSwapBtn').onclick = () => {
+  const f = $('corrFrom').value;
+  $('corrFrom').value = $('corrTo').value;
+  $('corrTo').value = f;
+  // Same reset as the dropdown: a leftover amount never carries over.
+  $('corrAmount').value = $('corrFrom').value === 'IDRX' ? '20000' : '1.5';
+  loadCorrBalance();
+  loadCorrRate();
+};
+let corrPending = null;
+
+async function runCorridorConvert(from, to, amount) {
+  const twoLegs = (from === 'USDC' && to === 'IDRX') || (from === 'IDRX' && to === 'USDC');
+  const legsTotal = twoLegs ? 2 : 1;
+  const steps = [];
+  // The title always shows the full route (from -> to), so the destination
+  // is clear even when a 2-leg route hops through USDT in the middle.
+  const routeLabel = `${from} → ${to}${twoLegs ? ' (via USDT)' : ''}`;
+  // The process runs inside the popup: the title becomes Converting, the
+  // body lists each step, and Close unlocks when it finishes or fails.
+  $('corrConfirmTitle').textContent = 'Converting ' + routeLabel;
+  $('corrConfirmBtns').style.display = 'none';
+  // Hide Close while converting; it appears only when the run finishes.
+  $('corrProgressBtns').style.display = 'none';
+  $('corrRetryStep2').style.display = 'none';
+  $('corrConfirm').style.display = 'flex';
+  const showSteps = () => {
+    $('corrConfirmBody').innerHTML = steps.map(s => {
+      const color = s.state === 'done' ? '#2dd4a7' : s.state === 'fail' ? '#ff6b6b' : 'var(--accent)';
+      const icon = s.state === 'done'
+        ? '<span style="display:inline-flex; width:18px; height:18px; border-radius:50%; background:#2dd4a7; color:#06231c; align-items:center; justify-content:center; font-size:11px; font-weight:700;">✓</span>'
+        : s.state === 'fail'
+        ? '<span style="display:inline-flex; width:18px; height:18px; border-radius:50%; background:#ff6b6b; color:#2b0606; align-items:center; justify-content:center; font-size:11px; font-weight:700;">✗</span>'
+        : '<span class="corr-spin" style="display:inline-block; width:16px; height:16px; border-radius:50%; border:2px solid var(--accent); border-top-color:transparent; vertical-align:-3px;"></span>';
+      const text = s.text.replace(/\(tx (0x[0-9a-fA-F]+)\.\.\.\)/, '(<span class="muted" style="font-size:12px;">tx $1…</span>)');
+      return `<div style="display:flex; gap:10px; align-items:flex-start; padding:6px 0; font-size:14px; line-height:1.5;">` +
+        `<span style="flex:0 0 18px; text-align:center;">${icon}</span>` +
+        `<span>${text}</span></div>`;
+    }).join('') + `<style>.corr-spin{animation:corrSpin 0.8s linear infinite}@keyframes corrSpin{to{transform:rotate(360deg)}}</style>`;
+  };
+  $('corrMsg').textContent = '';
+  $('corrConvertBtn').disabled = true;
+  try {
+    let sellAtomic = null;
+    let finalBuy = null;
+    for (let leg = 0; leg < legsTotal; leg++) {
+      const legFrom = leg === 0 ? from : 'USDT';
+      const legTo = leg === legsTotal - 1 ? to : 'USDT';
+      const hopNote = (legsTotal > 1 && leg < legsTotal - 1) ? ` (hop toward ${to})` : '';
+      // Before a later leg, wait in the BROWSER (no serverless timeout
+      // here) until the previous leg's output actually lands in the wallet.
+      // The backend only polls briefly, because Vercel maxDuration is 60s
+      // and the leg-2 swap still has to run inside the same call.
+      // Wait for the balance to reach the amount leg 2 needs, not just
+      // "above zero": a dust remainder (e.g. 0.0022 USDT left over) would
+      // otherwise end the wait instantly and leg 2 would fail with
+      // "Amount too small". Bounded at 2 minutes, then a red X and a
+      // plain message, never a spinner that runs forever.
+      if (leg > 0) {
+        steps.push({ state: 'run', text: `Waiting for ${legFrom} to arrive...` });
+        showSteps();
+        const key = legFrom.toLowerCase();
+        const dec = { USDC: 6, USDT: 6, IDRX: 2 }[legFrom] ?? 6;
+        const need = sellAtomic != null ? Number(sellAtomic) / 10 ** dec : 0;
+        const deadline = Date.now() + 120000;
+        let arrived = false;
+        while (Date.now() < deadline) {
+          try {
+            const wr = await fetch('/api/wallet');
+            const wj = await wr.json();
+            const bal = (wj.balances || {})[key];
+            if (bal != null && Number(bal) >= need - 0.000001) { arrived = true; break; }
+          } catch { /* retry */ }
+          await new Promise(r => setTimeout(r, 2000));
+        }
+        steps[steps.length - 1] = arrived
+          ? { state: 'done', text: `${legFrom} arrived, continuing...` }
+          : { state: 'fail', text: `${legFrom} did not arrive yet. Try again in a moment.` };
+        showSteps();
+        if (!arrived) throw new Error(`${legFrom} from the previous step has not arrived yet. Wait a moment and try again.`);
+      }
+      steps.push({ state: 'run', text: `Step ${leg + 1} of ${legsTotal}: swapping ${legFrom} to ${legTo}${hopNote}...` });
+      showSteps();
+      const body = { from, to, amount, leg };
+      if (sellAtomic != null) body.sellAmountAtomic = sellAtomic;
+      const r = await fetch('/api/corridor-convert', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.error || 'convert failed');
+      steps[steps.length - 1] = { state: 'done', text: `Step ${leg + 1} of ${legsTotal}: ${legFrom} to ${legTo} done (tx ${j.txHash.slice(0, 10)}...).` };
+      showSteps();
+      sellAtomic = j.buyAmount;
+      finalBuy = j.buyAmount;
+    }
+    const dec = to === 'IDRX' ? 2 : 6;
+    const finalAmt = Number(finalBuy) / 10 ** dec;
+    steps.push({ state: 'done', text: `Done: ${amount} ${from} became about ${finalAmt.toLocaleString('en-US', { maximumFractionDigits: dec })} ${to}.` });
+    $('corrConfirmTitle').textContent = 'Conversion complete: ' + routeLabel;
+    showSteps();
+    // Show Close at once. The ledger refresh below can take seconds (the
+    // node is slow right after a tx), and holding the button hostage to it
+    // is what made Close appear late.
+    $('corrProgressBtns').style.display = 'block';
+    $('corrProgressClose').disabled = false;
+    loadLedger().then(renderCorrHistory).catch(() => {});
+    // The node can return a stale balance right after the tx, so refresh
+    // now and once more after a few seconds.
+    loadCorrBalance();
+    setTimeout(loadCorrBalance, 5000);
+  } catch (e) {
+    // Stop the spinner on the step that just failed: mark it failed too,
+    // or it keeps spinning under the failure message (the step's state
+    // was still 'run'). If an earlier leg already settled, it stays 'done'
+    // and only the failed leg turns red.
+    const running = steps.find(s => s.state === 'run');
+    if (running) running.state = 'fail';
+    steps.push({ state: 'fail', text: 'Failed: ' + String(e.message || e).slice(0, 200) });
+    $('corrConfirmTitle').textContent = 'Conversion failed: ' + routeLabel;
+    showSteps();
+    // If leg 1 settled but a later leg failed, offer a Retry step 2 button.
+    // It re-runs just the failed leg (USDT -> destination) with the actual
+    // USDT balance, so the user does not have to start the whole
+    // conversion over.
+    const doneLegs = steps.filter(s => s.state === 'done' && /Step \d+ of \d+:/.test(s.text)).length;
+    if (legsTotal > 1 && doneLegs >= 1) {
+      $('corrRetryStep2').style.display = 'block';
+      $('corrRetryStep2').onclick = async () => {
+        $('corrConfirm').style.display = 'none';
+        try {
+          const w = await fetch('/api/wallet').then(r => r.json());
+          const usdtBal = (w.balances || {}).usdt;
+          if (usdtBal == null || Number(usdtBal) <= 0) { $('corrMsg').textContent = 'No USDT to retry with.'; return; }
+          $('corrFrom').value = 'USDT';
+          $('corrTo').value = to;
+          $('corrAmount').value = String(Number(usdtBal).toFixed(6));
+          loadCorrBalance();
+          $('corrConvertBtn').click();
+        } catch { $('corrMsg').textContent = 'Could not read USDT balance. Try again.'; }
+      };
+    }
+  } finally {
+    $('corrConvertBtn').disabled = false;
+    $('corrProgressBtns').style.display = 'block';
+    $('corrProgressClose').disabled = false;
+  }
+}
+
+$('corrConvertBtn').onclick = async () => {
+  const from = $('corrFrom').value;
+  const to = $('corrTo').value;
+  let amount = Number($('corrAmount').value || '1');
+  if (from === to) { $('corrMsg').textContent = 'Pick two different tokens.'; return; }
+  if (!amount) { $('corrMsg').textContent = 'Enter an amount.'; return; }
+  // Demo minimum is $1.50, so a round trip always works: $1.50 buys about
+  // 27,600 IDRX, comfortably above the ~18,443 needed to swap back.
+  // (Textile itself only needs $1, but $1 strands the IDRX on the way back.)
+  if (from !== 'IDRX' && amount < 1.5) {
+    showCorrInfoPopup('Minimum $1.50', 'The smallest swap is $1.50.');
+    return;
+  }
+  // IDRX in IDRX units: the $1.50 minimum applies to USDC/USDT going in,
+  // not to IDRX going out. IDRX only needs Textile's own minimum (about
+  // 18,443), so lift a stale or typed-in amount below it to a safe
+  // 20,000. (28,000 was wrong: $1.50 only buys about 27,617 IDRX, so
+  // 28,000 is above the balance and the convert fails.) The note is
+  // carried into the confirm popup so the judge sees it there too.
+  let raisedNote = '';
+  if (from === 'IDRX' && amount < 20000) {
+    amount = 20000;
+    $('corrAmount').value = '20000';
+    raisedNote = 'Amount raised to 20,000 (minimum).';
+    $('corrMsg').textContent = 'Jumlah dinaikkan ke 20.000 (minimum).';
+  }
+  // Safety: check the wallet balance first, then ask for confirmation.
+  $('corrConvertBtn').disabled = true;
+  $('corrMsg').textContent = 'Checking balance and rate...';
+  try {
+    const [w, q] = await Promise.all([
+      fetch('/api/wallet').then(r => r.json()),
+      fetch(`/api/corridor-rate?from=${from}&to=${to}&amount=${amount}`).then(r => r.json()),
+    ]);
+    const bal = (w.balances || {})[from.toLowerCase()];
+    if (bal == null) throw new Error('could not read wallet balance');
+    if (bal < amount) throw new Error(`not enough ${from}: balance is ${Number(bal).toLocaleString('en-US', { maximumFractionDigits: 2 })} ${from}, you asked for ${amount}`);
+    if (q.error) throw new Error(q.error);
+    // Round-trip guard: $1 USDC buys only about 18,400 IDRX, but swapping
+    // IDRX back needs about 18,443, so a $1 swap into IDRX strands the
+    // judge. Require enough that the IDRX received can always be swapped
+    // back (19,000, with a buffer for the rate moving).
+    if (to === 'IDRX') {
+      const minIdrxBack = 19000;
+      const buyIdrx = Number(q.buyAmount);
+      if (buyIdrx < minIdrxBack) {
+        const need = (minIdrxBack / Math.max(buyIdrx, 1) * amount).toFixed(2);
+        showCorrInfoPopup('Amount too small', `Swap at least ${need} ${from}.`);
+        $('corrConvertBtn').disabled = false;
+        return;
+      }
+    }
+    const dec = to === 'IDRX' ? 2 : 6;
+    const buy = Number(q.buyAmount).toLocaleString('en-US', { maximumFractionDigits: dec });
+    const via = q.legs && q.legs.length > 1 ? ` via ${q.legs.map(l => l.to).join(' to ')}` : '';
+    $('corrConfirmBody').innerHTML =
+      (raisedNote ? `<span class="muted">${raisedNote}</span><br>` : '') +
+      `You pay: <b>${amount} ${from}</b><br>` +
+      `You get (estimate): <b>${buy} ${to}</b><br>` +
+      `Rate: 1 ${from} = ${Number(q.rate).toLocaleString('en-US', { maximumFractionDigits: 6 })} ${to}${via}<br>` +
+      `Your ${from} balance: ${Number(bal).toLocaleString('en-US', { maximumFractionDigits: 2 })} ${from}<br>` +
+      `<span class="muted">This spends real tokens on Celo mainnet. The quote is live and can move a little before it settles.</span>`;
+    corrPending = { from, to, amount };
+    $('corrSteps').style.display = 'none';
+    // Reset the popup to confirm mode (it may still be in progress mode
+    // from the previous conversion).
+    $('corrConfirmTitle').textContent = 'Confirm this conversion?';
+    $('corrConfirmBtns').style.display = 'flex';
+    $('corrProgressBtns').style.display = 'none';
+    $('corrConfirm').style.display = 'flex';
+    $('corrMsg').textContent = '';
+  } catch (e) {
+    $('corrMsg').textContent = 'Convert blocked: ' + String(e.message || e).slice(0, 200);
+  } finally {
+    $('corrConvertBtn').disabled = false;
+  }
+};
+
+$('corrConfirmYes').onclick = () => {
+  if (!corrPending) return;
+  const { from, to, amount } = corrPending;
+  corrPending = null;
+  // Keep the popup open: runCorridorConvert switches it to progress mode.
+  runCorridorConvert(from, to, amount);
+};
+$('corrConfirmNo').onclick = () => {
+  $('corrConfirm').style.display = 'none';
+  corrPending = null;
+  $('corrMsg').textContent = 'Cancelled. Nothing was converted.';
+};
+// Info popup: reuse the confirm modal for a message with just a Close
+// button (used for blocking validations like the $1.50 minimum, so the
+// judge cannot miss it in the small message line under the buttons).
+let corrInfoMode = false;
+function showCorrInfoPopup(title, body) {
+  corrInfoMode = true;
+  $('corrSteps').style.display = 'none';
+  $('corrConfirmTitle').textContent = title;
+  $('corrConfirmBody').innerHTML = body;
+  $('corrConfirmBtns').style.display = 'none';
+  $('corrProgressBtns').style.display = 'block';
+  $('corrProgressClose').disabled = false;
+  $('corrConfirm').style.display = 'flex';
+}
+$('corrProgressClose').onclick = () => {
+  $('corrConfirm').style.display = 'none';
+  corrInfoMode = false;
+};
+// Tapping outside the card cancels only while confirming, never while
+// a conversion is running. In info mode it just closes the popup.
+$('corrConfirm').onclick = (e) => {
+  if (e.target === $('corrConfirm') && ($('corrConfirmBtns').style.display !== 'none' || corrInfoMode)) {
+    $('corrConfirm').style.display = 'none';
+    corrPending = null;
+    corrInfoMode = false;
+    $('corrMsg').textContent = 'Cancelled. Nothing was converted.';
+  }
+};
+// Refresh the corridor history whenever the ledger loads.
+const _renderLedgerPage = renderLedgerPage;
+renderLedgerPage = function () { _renderLedgerPage(); renderCorrHistory(); };
+loadCorrRate();
+loadCorrBalance();
 </script>
 </body>
 </html>

@@ -113,3 +113,31 @@ VAULT_NETWORK=mainnet VAULT_MAINNET_OK=1 npm start
 
 Node.js only, zero dependencies. The buy CLI does the x402 payment flow;
 the agent is a thin policy + ledger layer around it.
+
+## Known limitations
+
+- Corridors two-leg swaps (e.g. USDC -> IDRX via USDT): fixed 2026-11-22
+  after a TRANSFER_FROM_FAILED on leg 2 (09:07 UTC). Cause: after the USDT
+  approve receipt, the code did not re-read the allowance before the swap
+  simulation, so a stale RPC read reverted it. Fix: re-read the allowance
+  until sufficient (up to 8s), retry the leg up to 3 times with a fresh
+  quote on TRANSFER_FROM_FAILED, and use the real on-chain USDT balance
+  (minus 10 atomic) as the leg-2 sell amount. A "Retry step 2" button now
+  appears if leg 1 settled but leg 2 failed. The fix is deployed but NOT
+  yet proven by a live two-leg run (Jeje tests it himself).
+- The 2-minute frontend timeout path (intermediate token never arrives) is
+  untested: the wait is bounded at 120s and then shows a red X, but no live
+  run has exercised that timeout.
+
+## Proof run: USDC -> IDRX 1.5 (two-leg, after the balance-poll fix)
+
+Recorded for the demo video. Both legs Success on Celoscan, amounts match
+the on-screen modal (1.5 USDC became about 27,566.45 IDRX).
+- Leg 1, USDC -> USDT:
+  `0x169ee00bcccee2e17068cc374bbae24156023828d0cc3bb7f38a6c2bd74ad9f5`
+- Leg 2, USDT -> IDRX:
+  `0x9b594c4d3f98cfe4c1373873c743dd6c60b2a2309e01e14253cea8d483e122b7`
+Route: USDC -> USDT -> IDRX (via USDT, no direct USDC-IDRX pair).
+An earlier successful run of the same route (0xc5966dbb... /
+0x504330ab...) is the first retest after the fix; the run above is the
+recorded demo run.
