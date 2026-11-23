@@ -140,6 +140,11 @@
     <div class="muted">Named user: <b style="color:var(--text)">Sanjaya Purba</b>. He uses this agent to pay for YouTube, Reddit, Instagram, TikTok, and flight searches. A few cents per call in USDC on Celo mainnet, under the limits on his Agent Vault card.</div>
   </div>
 
+  <div class="card">
+    <h3 style="margin-top:0">Website sign-in via Agent Vault</h3>
+    <div class="muted">On 2026-11-23 the agent signed in to <b style="color:var(--text)">figma.com</b> with the saved login (Blyjeje@gmail.com) using Agent Vault mock tokens, free sign-in, no purchase. The Figma home ("Drafts") loaded after the login form was filled 2/2. This is the website flow: the agent signs in to a regular website without seeing the password.</div>
+  </div>
+
   </div><!-- /pane-vault -->
 
   <div id="pane-altana" style="display:none">
@@ -177,7 +182,8 @@
         <tr><td>Session execute</td><td>0.0001 CELO wallet → admin · <a href="https://celoscan.io/tx/0x6fe77d9b778b5f98a8c732bb13ec3003bff38daac014dfa1bc1d52c19dbd4b87" target="_blank" rel="noopener">tx ↗</a></td></tr>
         <tr><td>Session funds its key</td><td>0.3 USDC wallet → session key · <a href="https://celoscan.io/tx/0x100a3a4ce9b072ff02481d3ca19d91b7851341a0dabf525023207d67d9880567" target="_blank" rel="noopener">tx ↗</a></td></tr>
         <tr><td>x402 payment</td><td>$0.005/call, paid by the session key · settled: <a href="https://celoscan.io/tx/0x67c4abc6dd1205d1ebff24600efd42edf1c0fdfff4e8fb17bbda4ae4128b3f6d" target="_blank" rel="noopener">tx ↗</a></td></tr>
-        <tr><td>Earlier session</td><td>granted + revoked 2026-11-22 · <a href="https://celoscan.io/tx/0xff8337aedd83341670710fe29fb70bd0df788b427d403f5d0672b16be8aa08f9" target="_blank" rel="noopener">grant ↗</a> · <a href="https://celoscan.io/tx/0xfaffd9090eec391d94747ce5f279ca7c545aa4eef9ec44b8487cd312756a11b4" target="_blank" rel="noopener">revoke ↗</a></td></tr>
+        <tr><td>Earlier 7-day session</td><td>granted 2026-11-22 · <a href="https://celoscan.io/tx/0xff8337aedd83341670710fe29fb70bd0df788b427d403f5d0672b16be8aa08f9" target="_blank" rel="noopener">grant ↗</a> · replaced by the permanent session (same key)</td></tr>
+        <tr><td>Revoke demo (test session)</td><td>1-day test session granted + revoked 2026-11-23 · <a href="https://celoscan.io/tx/0xa12ad2fca5f7a523d462a08675d6c54b96a60f9ee98160a9b4b0fe1ff151f68b" target="_blank" rel="noopener">grant ↗</a> · <a href="https://celoscan.io/tx/0xd58ec995c8e6bb50d66773192d9aa93ed210722524e2251fbdd348c915564dea" target="_blank" rel="noopener">revoke ↗</a> · permanent session untouched</td></tr>
       </table>
       <p class="muted" style="margin-top:10px">How it fits together: the agent wallet is delegated to Porto for the Altana session. A delegated wallet cannot sign EIP-3009 (USDC checks ERC-1271, which the delegation fails), so the session key, a plain EOA holding its own USDC and funded from the wallet through the session, signs the x402 payments. Session and payments both live on mainnet.</p>
       <div class="muted" style="margin-top:10px;">All proofs above are on Celo mainnet. The demo pays per call in USDC through x402, signed directly by the agent wallet.</div>
