@@ -6,11 +6,12 @@ rules. Built for the Celo **Agents Open for Business** hackathon (Nov 20 – Dec
 
 ## Live demo
 
-**https://celo-agent-vault.vercel.app** — the agent running on Vercel
-(serverless, sandbox). Type a task, check the price, then Pay & run; the
-payment settles in test USDC with a receipt and a Blockscout link.
+**https://vault.sanjayapurba.com** — the agent running on Celo mainnet (project
+`celo-agent-vault-mainnet`, team bambang9). Type a task, check the price, then
+Pay & run; the payment settles in USDC on Celo mainnet with a receipt and a
+Celoscan link. This is the demo the hackathon scores: mainnet only.
 
-> Production deployment on the owner's Vercel account (project
+> Testnet / sandbox deployment: https://celo-agent-vault.vercel.app (project
 > `celo-agent-vault`, team bambang9) — permanent, no expiry. Deployed
 > 2026-11-21 ~12:57 WIB with 4 services (YouTube, Reddit, Instagram,
 > TikTok); Flights search added 2026-11-21 as the 5th service ($0.023/call).
