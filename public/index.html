@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Vault Checkout Agent | Celo</title>
+<link rel="icon" type="image/webp" href="/logo.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -74,7 +75,10 @@
 <body>
 <div class="wrap">
   <span class="pill" id="networkPill">…</span>
-  <h1>Vault <span>Checkout</span> Agent</h1>
+  <div style="display:flex; align-items:center; gap:14px; margin:8px 0 4px;">
+    <img src="/logo.webp" alt="Vault Checkout Agent logo" width="64" height="64" style="border-radius:16px; border:1px solid var(--border); flex:0 0 auto; display:block;">
+    <h1 style="margin:0;">Vault <span>Checkout</span> Agent</h1>
+  </div>
   <div class="rule"></div>
   <p class="sub">An agent that shops for itself on Celo. You type a task, the agent checks the price first, then pays per call over x402 with buy. Every payment is bounded by its agent card: only approved services, with a per-call cap and a daily cap.</p>
 
