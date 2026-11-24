@@ -25,6 +25,74 @@ Celoscan link. This is the demo the hackathon scores: mainnet only.
 > `zippy-monsoon-aijmunw` and `turbo-agate-o4df0vp` were deleted
 > 2026-11-21 ~12:53 WIB.)
 
+## How to verify (for judges)
+
+Every claim below can be checked in under 10 minutes. All transactions are
+on Celo mainnet (chain 42220) — open each hash on
+https://celoscan.io/tx/<hash> and confirm **Status: Success**.
+
+### Step 1 — Watch the demo video (2 min)
+https://www.youtube.com/watch?v=1Uc4fas4AwE (v10, 103.5s, recorded on
+mainnet). It shows the live site, an x402 payment, and the Corridors swap.
+
+### Step 2 — Try the live demo (2 min)
+Open https://vault.sanjayapurba.com. Type a task (e.g. "search YouTube for
+celo"), check the quoted price, then Pay & run. The payment settles in USDC
+on Celo mainnet and the receipt shows a Celoscan link.
+
+### Step 3 — Confirm the agent identity
+ERC-8004 agent ID **10093** on Celo mainnet (registry
+`0x8004A169FB4a3325136EB29fA0ceB6D2e539a432`). Look it up on
+https://8004scan.io. Attribution tag `celo_2da564e80a18` — it appears as a
+calldata suffix at the end of the input data of every swap below.
+
+### Step 4 — Agent Vault track: website sign-in + x402 payment
+- **Website sign-in:** on 2026-11-23 the agent signed in to figma.com with a
+  saved login using Agent Vault mock tokens (MCP connector: open_page,
+  fill_login 2/2, Figma home "Drafts" loaded). Free sign-in, no purchase.
+- **Mainnet x402 payment:** flight search DXB to SIN, 2026-12-06, paid
+  $0.023 USDC, tx
+  `0x349d20fc63b1364de24035433faf49b3fbd7f5f5376e215074f7063047d3e047`
+  (Status Success on Celoscan).
+
+### Step 5 — Stablecoin Corridors track: USDC -> IDRX (two-leg)
+1.5 USDC became 27,566.45 IDRX, both legs Status Success on Celoscan:
+- Leg 1, USDC -> USDT:
+  `0x169ee00bcccee2e17068cc374bbae24156023828d0cc3bb7f38a6c2bd74ad9f5`
+- Leg 2, USDT -> IDRX:
+  `0x9b594c4d3f98cfe4c1373873c743dd6c60b2a2309e01e14253cea8d483e122b7`
+- First tagged swap (tag `celo_2da564e80a18` verified at the end of the input
+  data):
+  `0x9a8197f50368dca444334551b87cd0c02b6f5e2de89ccd4856a4af7048b070fe`
+- Real IDRX payout outside the agent wallet (500 IDRX):
+  `0xa0ac4a0d55080052f5773c76a7b48f60c8570cde04f72d2ff14e18a2a5a94b21`
+  (block 83536029, Status Success).
+
+### Step 6 — Altana track: session grant, revoke, product review
+- **Permanent session grant** (expiry 2027-11-22, caps 0.5 USDC + 0.5 CELO
+  per day):
+  `0x082b5bfaa2b6508809bbbbcc2d9adcc975cb8905615af69d88c9d8042866bbde`
+- **Revoke demo** (separate 1-day test session, permanent session untouched):
+  grant
+  `0xa12ad2fca5f7a523d462a08675d6c54b96a60f9ee98160a9b4b0fe1ff151f68b`,
+  revoke
+  `0xd58ec995c8e6bb50d66773192d9aa93ed210722524e2251fbdd348c915564dea`
+  (Status Success).
+- **Product review** (5,000 XP):
+  https://github.com/altananetwork/altana-sdk/issues/166
+
+### Step 7 — Self Agent ID track (honest note)
+Self Agent ID is **testnet only** (agent ID 96 on Celo Sepolia). Mainnet
+registration is blocked because the registry does not recognise the
+builder's KTP (Indonesian ID card); a passport is the only path and there
+was not time to obtain one during the hackathon. This track is therefore
+weaker than the other three — the limitation is stated here rather than
+hidden.
+
+### Step 8 — Project page
+Loops House project:
+https://www.loops.house/explore-projects/vault-checkout-agent-9e6e1
+
 ## Hackathon
 
 Celo **Agents Open for Business** (Nov 20 – Dec 7, 2026). Entered in all four
