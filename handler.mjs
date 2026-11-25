@@ -67,11 +67,16 @@ const ATTRIBUTION_TAG = 'celo_2da564e80a18';
 // no backfill.
 const ATTRIBUTION_DATA_SUFFIX = '0x63656c6f5f326461353634653830613138110080218021802180218021802180218021';
 
-// Agent card: approved sellers and their per-call caps (USDC).
-// bodyKey is the request-body field the gateway expects for that service.
+// Agent card: approved sellers, their per-call price, and per-call cap (USDC).
+// priceUsd is the gateway's actual per-call price (proven by the settled
+// receipts in the ledger: 0.005 for the four data services, 0.023 for
+// flights). maxUsd is the safety cap: the agent never pays above it, and
+// the quote shows the price, not the cap. bodyKey is the request-body
+// field the gateway expects for that service.
 const ALLOWLIST = {
   'youtube.videos.search': {
     url: 'https://gateway.usebuy.ai/v1/social/youtube/videos/search',
+    priceUsd: 0.005,
     maxUsd: 0.01,
     title: 'Search YouTube videos',
     bodyKey: 'query',
@@ -79,6 +84,7 @@ const ALLOWLIST = {
   },
   'reddit.posts.search': {
     url: 'https://gateway.usebuy.ai/v1/social/reddit/posts/search',
+    priceUsd: 0.005,
     maxUsd: 0.01,
     title: 'Search Reddit',
     bodyKey: 'query',
@@ -86,6 +92,7 @@ const ALLOWLIST = {
   },
   'instagram.profile': {
     url: 'https://gateway.usebuy.ai/v1/social/instagram/profile',
+    priceUsd: 0.005,
     maxUsd: 0.01,
     title: 'Read an Instagram profile',
     bodyKey: 'username',
@@ -93,6 +100,7 @@ const ALLOWLIST = {
   },
   'tiktok.profile': {
     url: 'https://gateway.usebuy.ai/v1/social/tiktok/profile',
+    priceUsd: 0.005,
     maxUsd: 0.01,
     title: 'Read a TikTok profile',
     bodyKey: 'username',
@@ -100,6 +108,7 @@ const ALLOWLIST = {
   },
   'flights.search': {
     url: 'https://gateway.usebuy.ai/v1/travel/flights/search',
+    priceUsd: 0.023,
     maxUsd: 0.03,
     title: 'Search flights',
     bodyKey: 'origin',
@@ -664,8 +673,10 @@ export async function handleRequest(req, res) {
     if (!cap) return sendJson(res, 403, { error: 'capability not on the approved list' });
     if (!SANDBOX) {
       // Mainnet has no buy CLI quote (file keystore refuses mainnet); the
-      // price is the allowlist per-call cap, paid in USDC on Celo mainnet.
-      return sendJson(res, 200, { output: JSON.stringify({ capability: body.capabilityId, maxUsd: cap.maxUsd, network: 'mainnet', note: 'price is the per-call cap; payment settles in USDC on Celo mainnet' }) });
+      // price is the gateway's per-call price (priceUsd), paid in USDC on
+      // Celo mainnet. maxUsd is the per-call safety cap, not the price:
+      // the receipt settles at priceUsd, never above the cap.
+      return sendJson(res, 200, { output: JSON.stringify({ capability: body.capabilityId, price: cap.priceUsd + ' USDC', priceUsd: cap.priceUsd, maxUsd: cap.maxUsd, network: 'mainnet', note: 'price is the gateway per-call price; maxUsd is the per-call safety cap; payment settles in USDC on Celo mainnet' }) });
     }
     await ensureBuySetup();
     const r = await runBuy(buyArgs('quote', cap.url, JSON.stringify(body.body || {})));

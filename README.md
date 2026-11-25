@@ -44,7 +44,9 @@ on Celo mainnet and the receipt shows a Celoscan link.
 ERC-8004 agent ID **10093** on Celo mainnet (registry
 `0x8004A169FB4a3325136EB29fA0ceB6D2e539a432`). Look it up on
 https://8004scan.io. Attribution tag `celo_2da564e80a18` — it appears as a
-calldata suffix at the end of the input data of every swap below.
+calldata suffix at the end of the input data of the tagged corridor swap
+below. (The two-leg Pair B swaps predate the tag implementation,
+2026-11-22, and do not carry it.)
 
 ### Step 4 — Agent Vault track: website sign-in + x402 payment
 - **Website sign-in:** on 2026-11-23 the agent signed in to figma.com with a
@@ -54,6 +56,11 @@ calldata suffix at the end of the input data of every swap below.
   $0.023 USDC, tx
   `0x349d20fc63b1364de24035433faf49b3fbd7f5f5376e215074f7063047d3e047`
   (Status Success on Celoscan).
+- **Second mainnet x402 payment:** flight search DXB to MAD, 2026-12-15,
+  paid $0.023 USDC, tx
+  `0x2d8d5c50d7055d7e47e5c6ffc6f92b244570782a648779750d4e27d8319a1bd0`
+  (Status Success on Celoscan). This was the builder's own search, a
+  second real job on mainnet.
 - **Named user:** Rian searched flights on the live demo himself —
   Jakarta (CGK) → Yogyakarta (YIA), Thu 2026-12-17, one-way — paid
   $0.023 USDC over x402, tx
@@ -119,7 +126,10 @@ profile). The agent:
 Approved services (5): YouTube video search, Reddit post search, Instagram
 profile, TikTok profile - each 0.005 USDC per call - plus Flights search at
 0.023 USDC per call. (X post search was removed 2026-11-21 ~12:31 WIB: the
-buy gateway route 502s at the provider.)
+buy gateway route 502s at the provider.) Each service also has a per-call
+safety cap (0.01 USDC for the four data services, 0.03 USDC for flights):
+the quote shows the exact price, the cap is the maximum the agent will
+ever pay, and the receipt settles at the price.
 
 1. **Quotes first** - asks buy for the exact price before any money moves.
 2. **Checks the agent card** - only allowlisted (approved) services can be
@@ -140,8 +150,8 @@ This mirrors an Agent Vault agent card:
   above it.
 - `DAILY_CAP_USD` - enforced from the ledger before each payment.
 - Live production setup: an Agent Vault account exists (created 2026-11-22,
-  Visa ending 8203, Figma login saved). The agent connects through the Agent
-  Vault MCP connector (open_page, fill_login, fill_checkout) and signs in to
+  card and Figma login saved). The agent connects through the Agent Vault
+  MCP connector (open_page, fill_login, fill_checkout) and signs in to
   regular websites with mock tokens, without seeing the password or card
   number. Figma sign-in proven 2026-11-23 (see Mainnet proof below).
 
@@ -230,14 +240,17 @@ An earlier successful run of the same route (0xc5966dbb... /
 0x504330ab...) is the first retest after the fix; the run above is the
 recorded demo run.
 
-## Mainnet proof - Agent Vault website sign-in and Altana revoke (2026-11-23)
+## Mainnet proof - Agent Vault website sign-in and Altana revoke (2026-11-23 – 2026-11-25)
 
 ### Mainnet x402 payment (flight)
 A real paid call on Celo mainnet: flight search DXB to SIN, 2026-12-06,
 paid $0.023 USDC, tx
 `0x349d20fc63b1364de24035433faf49b3fbd7f5f5376e215074f7063047d3e047`
 (Status Success on Celoscan). This is the track's core proof: the agent
-pays per call over x402 in USDC on mainnet.
+pays per call over x402 in USDC on mainnet. A second real paid call on
+mainnet: flight search DXB to MAD, 2026-12-15, paid $0.023 USDC, tx
+`0x2d8d5c50d7055d7e47e5c6ffc6f92b244570782a648779750d4e27d8319a1bd0`
+(Status Success on Celoscan).
 
 ### Named user: Rian — flight search for a real person (2026-11-25)
 A real person used the agent for a real job. **Rian** searched for flights
@@ -254,7 +267,7 @@ verifiable on Celoscan.
 
 ### Agent Vault website sign-in (Figma)
 On 2026-11-23 the agent signed in to figma.com with a saved login
-(Blyjeje@gmail.com) using Agent Vault mock tokens, through the Agent Vault
+(blyjeje@gmail.com) using Agent Vault mock tokens, through the Agent Vault
 MCP connector (open_page, fill_login 2/2, then the Figma home "Drafts"
 loaded). Free sign-in, no purchase. This is the website flow for the
 Agent Vault track: the agent signs in to a regular website without seeing
@@ -287,10 +300,12 @@ JSON TypeError), and suggestions.
 ### Corridors attribution tag and IDRX payout
 Corridor swap transactions now carry the hackathon attribution tag
 (`celo_2da564e80a18`) as a calldata suffix, appended in
-`textileSwapLegOnce`. First tagged swap:
+`textileSwapLegOnce`. First tagged corridor swap:
 `0x9a8197f50368dca444334551b87cd0c02b6f5e2de89ccd4856a4af7048b070fe`
 (2026-11-23 19:13 WIB, Status Success, tag verified at the end of the
-input data). A real IDRX payout outside the agent wallet was also sent:
+input data). The tag was first seen on the funding swap
+`0xb89e553057f9e1b3b1535889402164f394796bf8b23a65e957e4372197bf5f6e`
+(2026-11-21, 19.5 CELO to USDC). A real IDRX payout outside the agent wallet was also sent:
 500 IDRX to `0xbdeCC64F2478B2DA074DdF3FFF87d84778f60991`, tx
 `0xa0ac4a0d55080052f5773c76a7b48f60c8570cde04f72d2ff14e18a2a5a94b21`
 (block 83536029, Status Success).

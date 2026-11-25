@@ -5,4 +5,4 @@ agent/ledger.jsonl
 .vercel/
 .agents/
 .claude/
-.vercel
+.env*
