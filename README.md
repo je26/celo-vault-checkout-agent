@@ -54,6 +54,11 @@ calldata suffix at the end of the input data of every swap below.
   $0.023 USDC, tx
   `0x349d20fc63b1364de24035433faf49b3fbd7f5f5376e215074f7063047d3e047`
   (Status Success on Celoscan).
+- **Named user:** Rian searched flights on the live demo himself —
+  Jakarta (CGK) → Yogyakarta (YIA), Thu 2026-12-17, one-way — paid
+  $0.023 USDC over x402, tx
+  `0xa3a1cb4403cbc5d2d08c65f205e1c4d9c9b27fa8c052383b8415c60fa15a2c92`
+  (block 83708200, Status Success). See "Named user" in Mainnet proof.
 
 ### Step 5 — Stablecoin Corridors track: USDC -> IDRX (two-leg)
 1.5 USDC became 27,566.45 IDRX, both legs Status Success on Celoscan:
@@ -233,6 +238,19 @@ paid $0.023 USDC, tx
 `0x349d20fc63b1364de24035433faf49b3fbd7f5f5376e215074f7063047d3e047`
 (Status Success on Celoscan). This is the track's core proof: the agent
 pays per call over x402 in USDC on mainnet.
+
+### Named user: Rian — flight search for a real person (2026-11-25)
+A real person used the agent for a real job. **Rian** searched for flights
+on the live demo site (vault.sanjayapurba.com): Jakarta (CGK) →
+Yogyakarta (YIA), Thursday 17 December 2026, one-way. The agent paid
+$0.023 USDC over x402 — the permanent Altana session key
+(`0x54b31C517bd1bd8cC5ef0a895a3C095064c1f559`) signed the EIP-3009
+transferWithAuthorization — tx
+`0xa3a1cb4403cbc5d2d08c65f205e1c4d9c9b27fa8c052383b8415c60fa15a2c92`
+(block 83708200, Status Success on Celoscan). Results: Lion Air JT 312 /
+JT 336 / JT 314 ($60), Batik Air ID 6368 / ID 6344 ($69). This is the
+named-user proof: a job done for a named person, paid on mainnet,
+verifiable on Celoscan.
 
 ### Agent Vault website sign-in (Figma)
 On 2026-11-23 the agent signed in to figma.com with a saved login
