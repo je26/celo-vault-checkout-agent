@@ -269,10 +269,10 @@ named-user proof: a job done for a named person, paid on mainnet,
 verifiable on Celoscan.
 
 ### Agent Vault website sign-in (Figma)
-On 2026-11-23 the agent signed in to figma.com with a saved login
-(blyjeje@gmail.com) using Agent Vault mock tokens, through the Agent Vault
-MCP connector (open_page, fill_login 2/2, then the Figma home "Drafts"
-loaded). Free sign-in, no purchase. This is the website flow for the
+On 2026-11-23 the agent signed in to figma.com with a saved login using
+Agent Vault mock tokens, through the Agent Vault MCP connector (open_page,
+fill_login 2/2, then the Figma home "Drafts" loaded). Free sign-in, no
+purchase. This is the website flow for the
 Agent Vault track: the agent signs in to a regular website without seeing
 the password.
 

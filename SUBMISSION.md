@@ -86,8 +86,7 @@ settlement transaction hash.
   2026-11-21; project SUBMITTED 2026-11-23 (see below).
 - Enroll URL: https://www.loops.house/agents-open-for-business/enroll
 - Loops CLI skill INSTALLED 2026-11-21 ~11:33 WIB (Loops CLI v0.7.1).
-  Auth DONE 2026-11-21 ~11:38 WIB via email code to blyjeje@gmail.com
-  (authenticated: true, userId `594a0b98-afe7-41b4-bf58-6e4adf4515b5`).
+  Auth DONE 2026-11-21 ~11:38 WIB via email code (authenticated: true).
 - **Attribution tag: `celo_2da564e80a18`** - must be in every transaction the
   agent sends directly; untagged transactions are never credited, no backfill.
   Confirmed by the platform via `loops project get` (2026-11-21 ~11:38).
@@ -145,9 +144,9 @@ registry, and mainnet needs a passport, which he does not have. Submitted
 in Loops as testnet 96 with this note.
 Agent Vault integration (live): the account exists (created 2026-11-22,
 card and Figma login saved). The agent connects through the Agent Vault
-MCP connector and signed in to figma.com on 2026-11-23 (session
-`s_da500f7fe4306b032f583af9147c4de8`, fill_login 2/2, Figma home "Drafts"
-loaded). The integration is documented on the demo site.
+MCP connector and signed in to figma.com on 2026-11-23 (fill_login 2/2,
+Figma home "Drafts" loaded). The integration is documented on the demo
+site.
 Submission flow: `loops project fields` first, then `loops project create`
 WITHOUT --confirm (draft), show the draft, re-run with --confirm only
 after the owner's yes. Then `loops evaluate --sponsor agent-vault`.
