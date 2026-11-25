@@ -134,8 +134,11 @@ ever pay, and the receipt settles at the price.
 1. **Quotes first** - asks buy for the exact price before any money moves.
 2. **Checks the agent card** - only allowlisted (approved) services can be
    bought, each with a per-call spending cap, plus a daily cap.
-3. **Pays per call over x402** with buy, in USDC on Celo. The agent never sees
-   a private key: buy signs from the OS keychain.
+3. **Pays per call over x402** with buy, in USDC on Celo. On sandbox, buy
+   signs from the OS keychain and the agent never sees a key. On mainnet,
+   buy's file keystore refuses mainnet, so the server signs EIP-3009
+   authorizations with the Altana session key (VAULT_SESSION_KEY), held as
+   a Vercel Production secret - the burn wallet itself never signs.
 4. **Shows the receipt** - amount, token, settlement transaction hash, and a
    link to the explorer - and writes every payment to an append-only ledger
    (`agent/ledger.jsonl`).
