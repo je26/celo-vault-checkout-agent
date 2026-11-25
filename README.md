@@ -49,7 +49,7 @@ All transactions are on Celo mainnet (chain 42220). Open each hash on `https://c
 Watch the video above, or open https://vault.sanjayapurba.com, check a price, then Pay & run. The receipt links to Celoscan.
 
 ### 2. Agent identity
-- ERC-8004 agent ID **10093** on Celo mainnet. Registry: `0x8004A169FB4a3325136EB29fA0ceB6D2e539a432`. Auto-registered by Altana on the first mainnet grant.
+- ERC-8004 agent ID **10093** on Celo mainnet. Registry: `0x8004A169FB4a3325136EB29fA0ceB6D2e539a432`. Auto-registered by Altana on the first mainnet grant. The owner address shown on 8004scan is `0x08eef13fd03088ae1db72ed84a7eed7b255cbfe1`, which is not the agent wallet above.
 - Agent wallet: `0x0D89830F241383535c3708b6c521F09Ee7cddb1e`.
 - Attribution tag `celo_2da564e80a18` appears at the end of the input data of the tagged corridor swap in Step 5. x402 payments are attributed through the agent wallet address.
 

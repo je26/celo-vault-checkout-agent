@@ -21,7 +21,7 @@ An agent that does one real job: buy a data service on Celo and pay for it per c
 ## Identity and attribution
 
 - Agent wallet (Celo mainnet): `0x0D89830F241383535c3708b6c521F09Ee7cddb1e`
-- ERC-8004 agent ID: **10093** (registry `0x8004A169FB4a3325136EB29fA0ceB6D2e539a432`), auto-registered by Altana on the first mainnet grant
+- ERC-8004 agent ID: **10093** (registry `0x8004A169FB4a3325136EB29fA0ceB6D2e539a432`), auto-registered by Altana on the first mainnet grant. The owner address shown on 8004scan is `0x08eef13fd03088ae1db72ed84a7eed7b255cbfe1`, which is not the agent wallet above.
 - Attribution tag: `celo_2da564e80a18`. Direct transactions carry it as a calldata suffix. x402 payments are attributed through the agent wallet address.
 - Self Agent ID: testnet agentId 96 (see "Known gap" below)
 
