@@ -40,6 +40,8 @@ An agent that does one real job: buy a data service on Celo and pay for it per c
 | Altana session grant | Expires 2027-11-22, caps 0.5 USDC + 0.5 CELO per day | `0x082b5bfaa2b6508809bbbbcc2d9adcc975cb8905615af69d88c9d8042866bbde` |
 | Altana revoke demo | Separate 1-day test session, granted then revoked | grant `0xa12ad2fca5f7a523d462a08675d6c54b96a60f9ee98160a9b4b0fe1ff151f68b`, revoke `0xd58ec995c8e6bb50d66773192d9aa93ed210722524e2251fbdd348c915564dea` |
 
+The 0.023 USDC for Rian's flight search was paid from the builder-funded vault for this demo.
+
 Altana product review: https://github.com/altananetwork/altana-sdk/issues/166
 
 Open each hash on https://celoscan.io and confirm Status: Success.

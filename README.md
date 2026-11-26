@@ -54,7 +54,7 @@ Watch the video above, or open https://vault.sanjayapurba.com, check a price, th
 - Attribution tag `celo_2da564e80a18` appears at the end of the input data of the tagged corridor swap in Step 5. x402 payments are attributed through the agent wallet address.
 
 ### 3. Named user, real job
-**Rian** searched flights on the live site himself: Jakarta (CGK) → Yogyakarta (YIA), Thu 17 Dec 2026, one-way. The agent paid 0.023 USDC over x402, signed by the Altana session key.
+**Rian** searched flights on the live site himself: Jakarta (CGK) → Yogyakarta (YIA), Thu 17 Dec 2026, one-way. The agent paid 0.023 USDC over x402, signed by the Altana session key. The 0.023 USDC was paid from the builder-funded vault for this demo.
 Tx `0xa3a1cb4403cbc5d2d08c65f205e1c4d9c9b27fa8c052383b8415c60fa15a2c92` (block 83708200).
 
 ### 4. Agent Vault track
