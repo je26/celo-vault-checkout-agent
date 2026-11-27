@@ -19,6 +19,10 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.join(__dirname, '..');
 const FAKE_BUY = path.join(__dirname, 'fake-buy.mjs');
+// The handler runs the fake buy CLI directly (execFile + shebang), which
+// needs the execute bit. Git does not always preserve it on push, so make
+// the file executable here instead of relying on the stored mode.
+fs.chmodSync(FAKE_BUY, 0o755);
 
 // --- isolation setup (before handler import) ---
 const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'vault-test-'));
