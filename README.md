@@ -4,9 +4,8 @@ An agent that buys data services on Celo and pays for each call in USDC over x40
 
 Built for the Celo **Agents Open for Business** hackathon (Nov 20 – Dec 7, 2026). Entered in four tracks: Agent Vault, Stablecoin Corridors, Self Agent ID, and Altana Agent Wallets.
 
-- **Live demo (Celo mainnet):** https://vault.sanjayapurba.com
+- **Live demo (Celo mainnet):** https://vault.sanjayapurba.com (also at https://celo-agent-vault.vercel.app; sandbox/test-USDC mode available in-app)
 - **Demo video (103 s, mainnet):** https://www.youtube.com/watch?v=1Uc4fas4AwE
-- **Sandbox deployment (test USDC):** https://celo-agent-vault.vercel.app
 - **Project page:** https://www.loops.house/explore-projects/vault-checkout-agent-9e6e1
 
 ## What it does
@@ -49,8 +48,20 @@ All transactions are on Celo mainnet (chain 42220). Open each hash on `https://c
 Watch the video above, or open https://vault.sanjayapurba.com, check a price, then Pay & run. The receipt links to Celoscan.
 
 ### 2. Agent identity
-- ERC-8004 agent ID **10093** on Celo mainnet. Registry: `0x8004A169FB4a3325136EB29fA0ceB6D2e539a432`. Auto-registered by Altana on the first mainnet grant. The owner address shown on 8004scan is `0x08eef13fd03088ae1db72ed84a7eed7b255cbfe1`, which is not the agent wallet above.
-- Agent wallet: `0x0D89830F241383535c3708b6c521F09Ee7cddb1e`.
+
+#### ERC-8004 Agent Registration
+
+Vault Checkout Agent runs on a registered ERC-8004 agent (Celo mainnet):
+
+- Agent ID: **10093**
+- Registered name: **"Altana Agent"** (the Altana agentic wallet that powers Vault Checkout Agent)
+- Owner / agent wallet: `0x0D89830F241383535c3708b6c521F09Ee7cddb1e`
+- Registry: `0x8004A169FB4a3325136EB29fA0ceB6D2e539a432`
+- Registration tx: `0x3eafbed0f0b4a55088b5273ef1853bd6907ce3a175a5e40027e144eb01db1cf1` (block 83411380, 22 Nov 2026, Status: Success)
+- Explorer: https://celoscan.io/tx/0x3eafbed0f0b4a55088b5273ef1853bd6907ce3a175a5e40027e144eb01db1cf1
+
+Auto-registered by Altana on the first mainnet grant. "Altana Agent" is the registration name of this same agent; the name is not changed on-chain.
+
 - Attribution tag `celo_2da564e80a18` appears at the end of the input data of the tagged corridor swap in Step 5. x402 payments are attributed through the agent wallet address.
 
 ### 3. Named user, real job
