@@ -128,6 +128,9 @@ Node.js 22+, `@celo/buy`, `@x402/core`, `@x402/evm`, `@x402/fetch`, `@vercel/kv`
 - Corridor leg 2 once failed with `TRANSFER_FROM_FAILED` because of a stale allowance read. It now re-reads the allowance, retries with a fresh quote, and offers a "Retry step 2" button. Two live runs passed after the fix.
 - X (Twitter) post search was removed from the allowlist because the provider route returned HTTP 502.
 - Self Agent ID is testnet only (see Step 7).
+- Mainnet endpoints (`/api/run`, `/api/corridor-convert`) are public and unauthenticated by design for this demo. Spending is bounded by per-call caps, a $0.50/day cap for data services and a $100/day cap for corridors. Corridor swaps are signed by the agent wallet, which is the taker of each swap.
+- Daily caps are checked per request and are not atomic, so concurrent requests can slightly exceed them.
+- A later corridor leg (leg > 0) sells the on-chain balance of the intermediate token rather than the requested amount; the output stays in the agent wallet.
 
 ## License
 
