@@ -107,6 +107,17 @@ VAULT_NETWORK=mainnet VAULT_MAINNET_OK=1 npm start
 
 Copy `.env.example` and set secrets as environment variables. Never commit keys.
 
+## Testing
+
+Automated tests cover the payment flow (quote, Pay & run, receipt parsing) and the agent flow (catalog allowlist, ledger, corridor validation), using Node's built-in `node:test` runner. No extra test dependencies.
+
+```sh
+npm ci
+npm test
+```
+
+Tests never touch the real ledger, the network, real keys, or mainnet. The `buy` CLI is replaced by a fake (`test/fake-buy.mjs`, via `BUY_BIN`), HTTP calls are mocked, and the ledger uses a temporary file that is deleted afterwards. Mainnet paths are not tested: they need real keys and real money. `test-mainnet-direct.mjs` is a manual mainnet script, not part of the test suite.
+
 ## Stack
 
 Node.js 22+, `@celo/buy`, `@x402/core`, `@x402/evm`, `@x402/fetch`, `@vercel/kv`, `viem`. The `buy` CLI runs the x402 payment flow. The agent is a thin policy and ledger layer around it.
